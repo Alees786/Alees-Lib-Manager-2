@@ -515,13 +515,17 @@ function apiCall(action, payload, silent) {
   payload = payload || {};
   payload.token = getToken();
   setSyncing(true);
+  // Google Apps Script CORS fix: must NOT set Content-Type header.
+  // Send JSON as plain text body — Apps Script reads e.postData.contents fine.
   return fetch(getApiUrl(), {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ action: action, payload: payload })
   })
-  .then(function(r) { return r.json(); })
-  .then(function(d) {
+  .then(function(r) { return r.text(); })
+  .then(function(txt) {
+    // Strip any BOM / JSONP wrapper Apps Script sometimes adds
+    var clean = txt.replace(/^\)\]\}\'/, '').trim();
+    var d = JSON.parse(clean);
     setSyncing(false);
     if (!d.ok) throw new Error(d.error || 'API error');
     return d;
