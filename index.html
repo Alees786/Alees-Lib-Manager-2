@@ -227,7 +227,7 @@
       <div class="nav-item" data-page="a-backup"><i class="fas fa-shield-alt"></i> Export / Import</div>
     </nav>
     <div class="sidebar-footer">
-      <span class="sync-dot" id="syncDot"></span><span id="syncStatus">Synced with Google Sheets</span>
+      <span class="sync-dot" id="syncDot"></span><span id="syncStatus">Synced with Alees Server</span>
     </div>
   </aside>
 
@@ -558,7 +558,7 @@ function setSyncing(on, err) {
   var txt = document.getElementById('syncStatus');
   if (!dot) return;
   dot.className = 'sync-dot' + (on ? ' syncing' : (err ? ' error' : ''));
-  txt.textContent = on ? 'Syncing…' : (err ? 'Sync error' : 'Synced with Google Sheets');
+  txt.textContent = on ? 'Syncing…' : (err ? 'Sync error' : 'Synced with Alees Server');
 }
 
 // ============================================================
@@ -768,7 +768,7 @@ document.querySelectorAll('#adminSidebar .nav-item').forEach(function(n){
 });
 document.getElementById('aMobileBtn').addEventListener('click', function(){ document.getElementById('adminSidebar').classList.toggle('open'); });
 document.getElementById('aRefreshBtn').addEventListener('click', function() {
-  loadAll().then(function(){ refreshAllAdmin(); toast('Synced from Google Sheets','i'); });
+  loadAll().then(function(){ refreshAllAdmin(); toast('Synced from Alees Server','i'); });
 });
 
 function studentNav(pg) {
