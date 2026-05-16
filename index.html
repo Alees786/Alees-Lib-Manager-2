@@ -1,0 +1,1417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alees Lib-Manager - School Library</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<style>
+  :root{--bg:#0f1a14;--bg2:#162019;--card:#1a2b21;--border:#2a4035;--fg:#e8efe9;--muted:#8fa898;--accent:#d4a24e;--accent-glow:rgba(212,162,78,0.15);--accent-h:#e0b565;--ok:#4aba7a;--err:#d94f4f;--err-bg:rgba(217,79,79,0.1);--warn:#e0a030;--info:#4a9aba;--r:10px}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--fg);min-height:100vh;overflow-x:hidden}
+  body::before{content:'';position:fixed;top:-30%;left:-20%;width:60vw;height:60vw;background:radial-gradient(circle,rgba(212,162,78,0.04) 0%,transparent 70%);pointer-events:none;z-index:0}
+  body::after{content:'';position:fixed;bottom:-20%;right:-10%;width:50vw;height:50vw;background:radial-gradient(circle,rgba(74,186,122,0.03) 0%,transparent 70%);pointer-events:none;z-index:0}
+  ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+  .sidebar{position:fixed;top:0;left:0;width:260px;height:100vh;background:var(--bg2);border-right:1px solid var(--border);z-index:100;display:flex;flex-direction:column;transition:transform .3s}
+  .sidebar-brand{padding:24px;border-bottom:1px solid var(--border)}
+  .sidebar-brand h1{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:var(--accent)}
+  .sidebar-brand p{font-size:11px;color:var(--muted);margin-top:2px}
+  .sidebar-brand .role-tag{display:inline-block;margin-top:6px;padding:2px 10px;border-radius:20px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px}
+  .role-admin{background:var(--accent-glow);color:var(--accent)}
+  .role-student{background:rgba(74,154,186,0.12);color:var(--info)}
+  .sidebar-nav{flex:1;padding:12px;overflow-y:auto}
+  .nav-label{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);padding:12px 12px 6px;font-weight:600}
+  .nav-item{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:8px;cursor:pointer;transition:all .2s;font-size:14px;font-weight:500;color:var(--muted);position:relative;margin-bottom:2px;user-select:none}
+  .nav-item:hover{background:var(--card);color:var(--fg)}
+  .nav-item.active{background:var(--accent-glow);color:var(--accent);font-weight:600}
+  .nav-item.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:20px;background:var(--accent);border-radius:0 3px 3px 0}
+  .nav-item i{width:20px;text-align:center;font-size:15px}
+  .nav-badge{margin-left:auto;background:var(--err);color:#fff;font-size:10px;padding:2px 7px;border-radius:10px;font-weight:700}
+  .sidebar-footer{padding:14px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);text-align:center}
+  .sync-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--ok);margin-right:4px;vertical-align:middle}
+  .sync-dot.syncing{background:var(--warn);animation:pulse 1s infinite}
+  .sync-dot.error{background:var(--err)}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+  .main{margin-left:260px;min-height:100vh;position:relative;z-index:1}
+  .topbar{position:sticky;top:0;background:rgba(15,26,20,.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;z-index:50}
+  .topbar-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700}
+  .topbar-right{display:flex;align-items:center;gap:12px}
+  .btn-logout{background:none;border:1px solid var(--border);color:var(--muted);padding:7px 14px;border-radius:8px;font-size:12px;cursor:pointer;font-family:inherit;transition:all .2s}
+  .btn-logout:hover{border-color:var(--err);color:var(--err)}
+  .mobile-menu{display:none;background:none;border:none;color:var(--fg);font-size:20px;cursor:pointer}
+  .page-content{padding:24px 28px 60px}
+  .page{display:none}.page.active{display:block;animation:fadeIn .3s}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:24px}
+  .stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;position:relative;overflow:hidden;transition:transform .2s,border-color .2s}
+  .stat-card:hover{transform:translateY(-2px);border-color:var(--accent)}
+  .stat-icon{font-size:22px;margin-bottom:10px;color:var(--accent)}
+  .stat-val{font-size:32px;font-weight:700;font-family:'Playfair Display',serif}
+  .stat-lbl{font-size:12px;color:var(--muted);margin-top:2px}
+  .section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px}
+  .section-hdr h2{font-family:'Playfair Display',serif;font-size:20px}
+  .btn{display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:8px;border:none;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s}
+  .btn-p{background:var(--accent);color:#1a1a0e}.btn-p:hover{background:var(--accent-h)}
+  .btn-ok{background:rgba(74,186,122,.15);color:var(--ok);border:1px solid rgba(74,186,122,.3)}.btn-ok:hover{background:rgba(74,186,122,.25)}
+  .btn-d{background:var(--err-bg);color:var(--err);border:1px solid rgba(217,79,79,.3)}.btn-d:hover{background:rgba(217,79,79,.2)}
+  .btn-w{background:rgba(224,160,48,.12);color:var(--warn);border:1px solid rgba(224,160,48,.3)}.btn-w:hover{background:rgba(224,160,48,.2)}
+  .btn-i{background:rgba(74,154,186,.12);color:var(--info);border:1px solid rgba(74,154,186,.3)}.btn-i:hover{background:rgba(74,154,186,.2)}
+  .btn-sm{padding:6px 12px;font-size:12px}
+  .btn-icon{padding:7px 10px}
+  .tbl-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  thead{background:var(--bg2)}
+  th{padding:12px 14px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);font-weight:600}
+  td{padding:11px 14px;border-top:1px solid var(--border);vertical-align:middle}
+  tr:hover td{background:rgba(255,255,255,.02)}
+  .tbl-empty{text-align:center;padding:48px;color:var(--muted)}
+  .tbl-empty i{font-size:28px;margin-bottom:10px;display:block;opacity:.4}
+  .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
+  .b-ok{background:rgba(74,186,122,.12);color:var(--ok)}
+  .b-err{background:var(--err-bg);color:var(--err)}
+  .b-i{background:rgba(74,154,186,.12);color:var(--info)}
+  .b-w{background:rgba(224,160,48,.12);color:var(--warn)}
+  .act-btns{display:flex;gap:6px;align-items:center}
+  .filters{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+  .fi{background:var(--bg2);border:1px solid var(--border);color:var(--fg);padding:9px 12px;border-radius:8px;font-size:13px;font-family:inherit;outline:none;transition:border-color .2s;width:100%}
+  .fi:focus{border-color:var(--accent)}
+  .fi-search{max-width:280px}
+  .fi-sel{max-width:180px}
+  select.fi option{background:var(--bg2)}
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px}
+  .modal{background:var(--card);border:1px solid var(--border);border-radius:14px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto}
+  .modal-hdr{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+  .modal-hdr h3{font-family:'Playfair Display',serif;font-size:18px}
+  .modal-close{background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:4px}
+  .modal-close:hover{color:var(--fg)}
+  .modal-body{padding:22px 24px}
+  .modal-foot{padding:14px 24px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end}
+  .fg{margin-bottom:16px}
+  .fl{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:600}
+  .fe{color:var(--err);font-size:11px;margin-top:4px;display:none}
+  .confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:300;display:flex;align-items:center;justify-content:center;padding:20px}
+  .confirm-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px;max-width:380px;width:100%}
+  .confirm-box h3{margin-bottom:12px;font-family:'Playfair Display',serif}
+  .confirm-box p{font-size:14px;color:var(--muted);margin-bottom:20px;line-height:1.6}
+  .confirm-btns{display:flex;gap:10px;justify-content:flex-end}
+  .toast-wrap{position:fixed;bottom:24px;right:24px;z-index:400;display:flex;flex-direction:column;gap:8px}
+  .toast{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 18px;font-size:13px;font-weight:500;display:flex;align-items:center;gap:10px;animation:slideIn .3s;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+  @keyframes slideIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+  .toast.ok{border-color:rgba(74,186,122,.4);color:var(--ok)}
+  .toast.err{border-color:rgba(217,79,79,.4);color:var(--err)}
+  .toast.i{border-color:rgba(74,154,186,.4);color:var(--info)}
+  .recent-item{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--border)}
+  .recent-item:last-child{border-bottom:none}
+  .ri-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+  .ri-info{flex:1;min-width:0}
+  .ri-title{font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ri-sub{font-size:12px;color:var(--muted)}
+  .settings-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:22px;margin-bottom:18px}
+  .settings-card h3{font-size:16px;margin-bottom:16px;display:flex;align-items:center;gap:8px;color:var(--accent)}
+  .fine-info-box{background:var(--err-bg);border:1px solid rgba(217,79,79,.3);border-radius:8px;padding:14px;margin-top:12px}
+  .fi-title{font-size:12px;font-weight:700;color:var(--err);margin-bottom:6px}
+  .fi-detail{font-size:13px;color:var(--muted)}
+  .fi-amount{color:var(--err);font-weight:700}
+  .hidden{display:none!important}
+  /* Login */
+  .login-page{position:fixed;top:0;left:0;width:100%;height:100%;z-index:500;display:flex;align-items:center;justify-content:center;background:var(--bg);padding:20px}
+  .login-page::before{content:'';position:absolute;top:50%;left:50%;width:600px;height:600px;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(212,162,78,.06) 0%,transparent 70%);pointer-events:none}
+  .login-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:36px;width:100%;max-width:400px;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+  .login-brand{text-align:center;margin-bottom:28px}
+  .login-brand h1{font-family:'Playfair Display',serif;font-size:28px;font-weight:900;color:var(--accent);margin-bottom:4px}
+  .login-brand p{font-size:12px;color:var(--muted)}
+  .login-tabs{display:flex;border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:22px}
+  .login-tab{flex:1;padding:10px;text-align:center;font-size:13px;font-weight:600;cursor:pointer;border:none;background:var(--bg);color:var(--muted);font-family:inherit;transition:all .2s}
+  .login-tab.active{background:var(--accent);color:#1a1a0e}
+  .login-err{color:var(--err);font-size:13px;margin-bottom:12px;text-align:center;display:none}
+  .login-hint{text-align:center;font-size:11px;color:var(--muted);margin-top:16px;opacity:.7}
+  /* Config banner */
+  .config-banner{background:rgba(212,162,78,.1);border:1px solid rgba(212,162,78,.3);border-radius:10px;padding:14px 18px;margin-bottom:20px;font-size:13px;color:var(--accent);display:flex;align-items:flex-start;gap:10px}
+  .config-banner i{margin-top:2px;flex-shrink:0}
+  /* Loading overlay */
+  .loading-overlay{position:fixed;inset:0;background:var(--bg);z-index:600;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
+  .spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  /* Backup cards */
+  .backup-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-bottom:28px}
+  .backup-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:24px;text-align:center;transition:border-color .2s,transform .2s}
+  .backup-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+  .backup-card i{font-size:32px;margin-bottom:14px}
+  .backup-card h3{font-size:16px;margin-bottom:6px}
+  .backup-card p{font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.5}
+  /* Mobile */
+  @media(max-width:768px){
+    .sidebar{transform:translateX(-100%)}
+    .sidebar.open{transform:none}
+    .main{margin-left:0}
+    .mobile-menu{display:block}
+    .topbar{padding:12px 16px}
+    .page-content{padding:16px 14px 60px}
+    .fi-search{max-width:100%}
+    .fi-sel{max-width:100%}
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== LOADING ===== -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div style="color:var(--muted);font-size:14px" id="loadingMsg">Connecting to server...</div>
+</div>
+
+<!-- ===== SETUP SCREEN ===== -->
+<div class="login-page hidden" id="setupPage">
+  <div class="login-card" style="max-width:500px">
+    <div class="login-brand">
+      <h1>⚙️ Setup Required</h1>
+      <p>Configure your Google Sheets backend</p>
+    </div>
+    <div class="config-banner"><i class="fas fa-info-circle"></i><div>Paste the URL of your deployed Google Apps Script Web App. See <code>README.md</code> for setup instructions.</div></div>
+    <div class="fg">
+      <label class="fl">Apps Script Web App URL</label>
+      <input class="fi" id="setupUrl" placeholder="https://script.google.com/macros/s/YOUR_ID/exec">
+      <div class="fe" id="setupErr">Please enter a valid URL</div>
+    </div>
+    <button class="btn btn-p" style="width:100%;justify-content:center;padding:12px" id="setupSaveBtn"><i class="fas fa-save"></i> Save & Connect</button>
+    <p class="login-hint">This URL is stored locally in your browser only</p>
+  </div>
+</div>
+
+<!-- ===== LOGIN ===== -->
+<div class="login-page hidden" id="loginPage">
+  <div class="login-card">
+    <div class="login-brand">
+      <h1>Alees Lib-Manager</h1>
+      <p>Nusrath Secondary School Library System</p>
+    </div>
+    <div class="login-tabs">
+      <button class="login-tab active" data-role="admin" id="tabAdmin">Admin / Librarian</button>
+      <button class="login-tab" data-role="student" id="tabStudent">Student</button>
+    </div>
+    <div id="adminForm">
+      <div class="fg"><label class="fl">Username</label><input class="fi" id="loginUser" placeholder="Enter username"></div>
+      <div class="fg"><label class="fl">Password</label><input class="fi" type="password" id="loginPass" placeholder="Enter password"></div>
+    </div>
+    <div id="studentForm" class="hidden">
+      <div class="fg"><label class="fl">Roll Number</label><input class="fi" id="loginRoll" placeholder="Enter your roll number"></div>
+    </div>
+    <div class="login-err" id="loginErr"></div>
+    <button class="btn btn-p" style="width:100%;justify-content:center;padding:12px" id="loginBtn"><i class="fas fa-sign-in-alt"></i> Sign In</button>
+    <p class="login-hint">Created by Alees | Nusrath Secondary School</p>
+    <p style="text-align:center;margin-top:8px;font-size:11px;color:var(--border)"><a href="#" id="changeUrlLink" style="color:var(--border);text-decoration:none">⚙ Change server URL</a></p>
+  </div>
+</div>
+
+<!-- ===== ADMIN UI ===== -->
+<div class="hidden" id="adminUI">
+  <aside class="sidebar" id="adminSidebar">
+    <div class="sidebar-brand">
+      <h1>Alees Lib-Manager</h1>
+      <p>School Library System</p>
+      <span class="role-tag role-admin">Admin</span>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-label">Overview</div>
+      <div class="nav-item active" data-page="a-dash"><i class="fas fa-chart-line"></i> Dashboard</div>
+      <div class="nav-label">Library</div>
+      <div class="nav-item" data-page="a-books"><i class="fas fa-book"></i> Books</div>
+      <div class="nav-item" data-page="a-members"><i class="fas fa-users"></i> Members</div>
+      <div class="nav-item" data-page="a-classes"><i class="fas fa-chalkboard"></i> Classes</div>
+      <div class="nav-label">Circulation</div>
+      <div class="nav-item" data-page="a-tx"><i class="fas fa-exchange-alt"></i> Transactions <span class="nav-badge hidden" id="aOverdueBadge">0</span></div>
+      <div class="nav-item" data-page="a-fines"><i class="fas fa-coins"></i> Fines <span class="nav-badge hidden" id="aFinesBadge">0</span></div>
+      <div class="nav-label">System</div>
+      <div class="nav-item" data-page="a-settings"><i class="fas fa-cog"></i> Settings</div>
+      <div class="nav-item" data-page="a-backup"><i class="fas fa-shield-alt"></i> Export / Import</div>
+    </nav>
+    <div class="sidebar-footer">
+      <span class="sync-dot" id="syncDot"></span><span id="syncStatus">Synced with Google Sheets</span>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:14px">
+        <button class="mobile-menu" id="aMobileBtn"><i class="fas fa-bars"></i></button>
+        <div class="topbar-title" id="aTopTitle">Dashboard</div>
+      </div>
+      <div class="topbar-right">
+        <button class="btn btn-ok btn-sm" id="aRefreshBtn"><i class="fas fa-sync-alt"></i> Sync</button>
+        <button class="btn-logout" id="aLogout"><i class="fas fa-sign-out-alt"></i> Logout</button>
+      </div>
+    </div>
+    <div class="page-content">
+
+      <!-- DASHBOARD -->
+      <div class="page active" id="page-a-dash">
+        <div class="stats-grid" id="aStats"></div>
+        <div class="section-hdr"><h2>Recent Transactions</h2></div>
+        <div class="tbl-wrap" style="padding:16px 20px"><div id="aRecentTx"></div></div>
+      </div>
+
+      <!-- BOOKS -->
+      <div class="page" id="page-a-books">
+        <div class="section-hdr">
+          <h2>Book Collection</h2>
+          <button class="btn btn-p" id="aAddBook"><i class="fas fa-plus"></i> Add Book</button>
+        </div>
+        <div class="filters">
+          <input class="fi fi-search" id="aBookSearch" placeholder="Search title, author, ISBN…">
+          <select class="fi fi-sel" id="aBookCat"><option value="">All Categories</option></select>
+        </div>
+        <div class="tbl-wrap">
+          <table><thead><tr><th>Title</th><th>Author</th><th>ISBN</th><th>Category</th><th>Copies</th><th>Available</th><th>Actions</th></tr></thead>
+          <tbody id="aBookTb"></tbody></table>
+        </div>
+      </div>
+
+      <!-- MEMBERS -->
+      <div class="page" id="page-a-members">
+        <div class="section-hdr">
+          <h2>Library Members</h2>
+          <button class="btn btn-p" id="aAddMem"><i class="fas fa-user-plus"></i> Add Member</button>
+        </div>
+        <div class="filters">
+          <input class="fi fi-search" id="aMemSearch" placeholder="Search name, roll…">
+          <select class="fi fi-sel" id="aMemClass"><option value="">All Classes</option></select>
+        </div>
+        <div class="tbl-wrap">
+          <table><thead><tr><th>Name</th><th>Class</th><th>Roll No</th><th>Phone</th><th>Email</th><th>Actions</th></tr></thead>
+          <tbody id="aMemTb"></tbody></table>
+        </div>
+      </div>
+
+      <!-- CLASSES -->
+      <div class="page" id="page-a-classes">
+        <div class="section-hdr">
+          <h2>Manage Classes</h2>
+          <button class="btn btn-p" id="aAddClass"><i class="fas fa-plus"></i> Add Class</button>
+        </div>
+        <div class="tbl-wrap">
+          <table><thead><tr><th>Class Name</th><th>Members</th><th>Actions</th></tr></thead>
+          <tbody id="aClassTb"></tbody></table>
+        </div>
+      </div>
+
+      <!-- TRANSACTIONS -->
+      <div class="page" id="page-a-tx">
+        <div class="section-hdr">
+          <h2>Transactions</h2>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-p" id="aIssueBtn"><i class="fas fa-arrow-right"></i> Issue Book</button>
+            <button class="btn btn-ok" id="aReturnBtn"><i class="fas fa-undo"></i> Return Book</button>
+          </div>
+        </div>
+        <div class="filters">
+          <input class="fi fi-search" id="aTxSearch" placeholder="Search book, member…">
+          <select class="fi fi-sel" id="aTxStatus"><option value="">All Status</option><option value="issued">Issued</option><option value="returned">Returned</option><option value="overdue">Overdue</option></select>
+        </div>
+        <div class="tbl-wrap">
+          <table><thead><tr><th>Book</th><th>Member</th><th>Issue Date</th><th>Due Date</th><th>Return Date</th><th>Fine</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="aTxTb"></tbody></table>
+        </div>
+      </div>
+
+      <!-- FINES -->
+      <div class="page" id="page-a-fines">
+        <div class="section-hdr"><h2>Fine Records</h2>
+          <select class="fi fi-sel" id="aFineStatus"><option value="">All Status</option><option value="unpaid">Unpaid</option><option value="paid">Paid</option><option value="waived">Waived</option></select>
+        </div>
+        <div class="tbl-wrap">
+          <table><thead><tr><th>Book</th><th>Member</th><th>Days Overdue</th><th>Amount</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+          <tbody id="aFineTb"></tbody></table>
+        </div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="page" id="page-a-settings">
+        <div class="settings-card">
+          <h3><i class="fas fa-coins"></i> Fine Configuration</h3>
+          <div class="fg"><label class="fl">Currency Symbol</label><input class="fi" id="setCurrency" value="₹"></div>
+          <div class="fg"><label class="fl">Fine Per Day (Overdue)</label><input class="fi" type="number" id="setFinePerDay" min="0" value="2"></div>
+          <div class="fg"><label class="fl">Default Issue Period (Days)</label><input class="fi" type="number" id="setIssueDays" min="1" value="14"></div>
+          <button class="btn btn-p" id="saveSettingsBtn"><i class="fas fa-save"></i> Save Settings</button>
+        </div>
+        <div class="settings-card">
+          <h3><i class="fas fa-info-circle"></i> Current Summary</h3>
+          <div id="settingsDisplay" style="font-size:13px;color:var(--muted);line-height:2"></div>
+        </div>
+        <div class="settings-card">
+          <h3><i class="fas fa-server"></i> Backend Connection</h3>
+          <div style="font-size:13px;color:var(--muted);margin-bottom:12px">Connected to: <span id="connectedUrl" style="color:var(--fg);word-break:break-all"></span></div>
+          <button class="btn btn-i btn-sm" id="changeUrlBtn"><i class="fas fa-edit"></i> Change Server URL</button>
+        </div>
+      </div>
+
+      <!-- EXPORT/IMPORT -->
+      <div class="page" id="page-a-backup">
+        <div class="backup-cards">
+          <div class="backup-card"><i class="fas fa-file-csv" style="color:var(--accent)"></i><h3>Export CSV</h3><p>Download all data as CSV files for backup or analysis.</p><button class="btn btn-p" id="aExportBtn"><i class="fas fa-download"></i> Export All</button></div>
+          <div class="backup-card"><i class="fas fa-file-code" style="color:var(--ok)"></i><h3>Export JSON</h3><p>Download a full JSON snapshot of all library data.</p><button class="btn btn-ok" id="aExportJsonBtn"><i class="fas fa-download"></i> Export JSON</button></div>
+          <div class="backup-card"><i class="fas fa-upload" style="color:var(--info)"></i><h3>Import JSON</h3><p>Restore from a previously exported JSON backup.</p><button class="btn btn-i" id="aImportBtn"><i class="fas fa-folder-open"></i> Choose File</button><input type="file" id="restoreFileInput" accept=".json" style="display:none"></div>
+          <div class="backup-card"><i class="fas fa-trash-alt" style="color:var(--err)"></i><h3>Clear All Data</h3><p>Permanently delete everything from Google Sheets.</p><button class="btn btn-d" id="aClearBtn"><i class="fas fa-exclamation-triangle"></i> Clear Data</button></div>
+        </div>
+      </div>
+
+    </div><!-- page-content -->
+  </div><!-- main -->
+</div><!-- adminUI -->
+
+<!-- ===== STUDENT UI ===== -->
+<div class="hidden" id="studentUI">
+  <aside class="sidebar" id="studentSidebar">
+    <div class="sidebar-brand"><h1>Alees Lib-Manager</h1><p>School Library System</p><span class="role-tag role-student" id="sRoleTag">Student</span></div>
+    <nav class="sidebar-nav">
+      <div class="nav-label">My Library</div>
+      <div class="nav-item active" data-page="s-dash"><i class="fas fa-home"></i> My Dashboard</div>
+      <div class="nav-item" data-page="s-books"><i class="fas fa-book"></i> Browse Books</div>
+      <div class="nav-item" data-page="s-fines"><i class="fas fa-coins"></i> My Fines</div>
+    </nav>
+    <div class="sidebar-footer" style="font-size:11px;color:var(--muted)">Alees Lib-Manager</div>
+  </aside>
+  <div class="main">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:14px">
+        <button class="mobile-menu" id="sMobileBtn"><i class="fas fa-bars"></i></button>
+        <div class="topbar-title" id="sTopTitle">My Dashboard</div>
+      </div>
+      <div class="topbar-right">
+        <button class="btn-logout" id="sLogout"><i class="fas fa-sign-out-alt"></i> Logout</button>
+      </div>
+    </div>
+    <div class="page-content">
+      <div class="page active" id="page-s-dash">
+        <div class="stats-grid" id="sStats"></div>
+        <div class="section-hdr"><h2>My Current Books</h2></div>
+        <div class="tbl-wrap"><table><thead><tr><th>Book</th><th>Issue Date</th><th>Due Date</th><th>Status</th></tr></thead><tbody id="sIssuedTb"></tbody></table></div>
+      </div>
+      <div class="page" id="page-s-books">
+        <div class="section-hdr"><h2>Browse Books</h2></div>
+        <div class="filters"><input class="fi fi-search" id="sBookSearch" placeholder="Search title, author, ISBN…"></div>
+        <div class="tbl-wrap"><table><thead><tr><th>Title</th><th>Author</th><th>Category</th><th>Available</th></tr></thead><tbody id="sBookTb"></tbody></table></div>
+      </div>
+      <div class="page" id="page-s-fines">
+        <div class="section-hdr"><h2>My Fines</h2></div>
+        <div class="tbl-wrap"><table><thead><tr><th>Book</th><th>Days Overdue</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead><tbody id="sFineTb"></tbody></table></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODALS ===== -->
+<!-- Book Modal -->
+<div class="modal-overlay hidden" id="bookModal">
+  <div class="modal">
+    <div class="modal-hdr"><h3 id="bookModalT">Add Book</h3><button class="modal-close" onclick="closeM('bookModal')"><i class="fas fa-times"></i></button></div>
+    <div class="modal-body">
+      <input type="hidden" id="bookEditId">
+      <div class="fg"><label class="fl">Title *</label><input class="fi" id="bookTitle" placeholder="Book title"><div class="fe" id="bookTitleE">Required</div></div>
+      <div class="fg"><label class="fl">Author *</label><input class="fi" id="bookAuthor" placeholder="Author name"><div class="fe" id="bookAuthorE">Required</div></div>
+      <div class="fg"><label class="fl">ISBN</label><input class="fi" id="bookISBN" placeholder="ISBN (optional)"></div>
+      <div class="fg"><label class="fl">Category</label><input class="fi" id="bookCat" placeholder="e.g. Science, Fiction…"></div>
+      <div class="fg"><label class="fl">Total Copies *</label><input class="fi" type="number" id="bookCopies" min="1" value="1"><div class="fe" id="bookCopiesE">Required</div></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-d btn-sm" onclick="closeM('bookModal')">Cancel</button><button class="btn btn-p" id="saveBookBtn">Save Book</button></div>
+  </div>
+</div>
+
+<!-- Member Modal -->
+<div class="modal-overlay hidden" id="memModal">
+  <div class="modal">
+    <div class="modal-hdr"><h3 id="memModalT">Add Member</h3><button class="modal-close" onclick="closeM('memModal')"><i class="fas fa-times"></i></button></div>
+    <div class="modal-body">
+      <input type="hidden" id="memEditId">
+      <div class="fg"><label class="fl">Full Name *</label><input class="fi" id="memName" placeholder="Student name"><div class="fe" id="memNameE">Required</div></div>
+      <div class="fg"><label class="fl">Class *</label><select class="fi" id="memClass"><option value="">Choose class</option></select><div class="fe" id="memClassE">Required</div></div>
+      <div class="fg"><label class="fl">Roll Number *</label><input class="fi" id="memRoll" placeholder="Roll number"><div class="fe" id="memRollE">Required</div></div>
+      <div class="fg"><label class="fl">Phone</label><input class="fi" id="memPhone" placeholder="Contact number"></div>
+      <div class="fg"><label class="fl">Email</label><input class="fi" id="memEmail" placeholder="Email address"></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-d btn-sm" onclick="closeM('memModal')">Cancel</button><button class="btn btn-p" id="saveMemBtn">Save Member</button></div>
+  </div>
+</div>
+
+<!-- Class Modal -->
+<div class="modal-overlay hidden" id="classModal">
+  <div class="modal" style="max-width:380px">
+    <div class="modal-hdr"><h3 id="classModalT">Add Class</h3><button class="modal-close" onclick="closeM('classModal')"><i class="fas fa-times"></i></button></div>
+    <div class="modal-body">
+      <input type="hidden" id="classEditId">
+      <div class="fg"><label class="fl">Class Name *</label><input class="fi" id="className" placeholder="e.g. 8A, 9B…"><div class="fe" id="classNameE">Required</div></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-d btn-sm" onclick="closeM('classModal')">Cancel</button><button class="btn btn-p" id="saveClassBtn">Save Class</button></div>
+  </div>
+</div>
+
+<!-- Issue Modal -->
+<div class="modal-overlay hidden" id="issueModal">
+  <div class="modal">
+    <div class="modal-hdr"><h3>Issue Book</h3><button class="modal-close" onclick="closeM('issueModal')"><i class="fas fa-times"></i></button></div>
+    <div class="modal-body">
+      <div class="fg"><label class="fl">Search Book</label><input class="fi" id="issueBookSearch" placeholder="Type to filter books…"></div>
+      <div class="fg"><label class="fl">Book *</label><select class="fi" id="issueBookId"></select><div class="fe" id="issueBookE">Required</div></div>
+      <div class="fg"><label class="fl">Member *</label><select class="fi" id="issueMemId"></select><div class="fe" id="issueMemE">Required</div></div>
+      <div class="fg"><label class="fl">Issue Date *</label><input class="fi" type="date" id="issueDate"></div>
+      <div class="fg"><label class="fl">Due Date *</label><input class="fi" type="date" id="dueDate"></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-d btn-sm" onclick="closeM('issueModal')">Cancel</button><button class="btn btn-p" id="doIssueBtn">Issue Book</button></div>
+  </div>
+</div>
+
+<!-- Return Modal -->
+<div class="modal-overlay hidden" id="returnModal">
+  <div class="modal">
+    <div class="modal-hdr"><h3>Return Book</h3><button class="modal-close" onclick="closeM('returnModal')"><i class="fas fa-times"></i></button></div>
+    <div class="modal-body">
+      <div class="fg"><label class="fl">Transaction *</label><select class="fi" id="returnTxId"></select><div class="fe" id="returnTxE">Required</div></div>
+      <div class="fg"><label class="fl">Return Date *</label><input class="fi" type="date" id="returnDate"></div>
+      <div id="fineInfoBox"></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-d btn-sm" onclick="closeM('returnModal')">Cancel</button><button class="btn btn-p" id="doReturnBtn">Confirm Return</button></div>
+  </div>
+</div>
+
+<!-- Confirm -->
+<div class="confirm-overlay hidden" id="confirmOverlay">
+  <div class="confirm-box">
+    <h3 id="confirmTitle"></h3>
+    <p id="confirmMsg"></p>
+    <div class="confirm-btns">
+      <button class="btn btn-d btn-sm" id="confirmNo">Cancel</button>
+      <button class="btn btn-p" id="confirmYes">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toasts -->
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+// ============================================================
+// CONFIGURATION
+// ============================================================
+var API_URL_KEY = 'alees_api_url';
+var TOKEN_KEY   = 'alees_token';
+var ROLE_KEY    = 'alees_role';
+
+function getApiUrl() { return localStorage.getItem(API_URL_KEY) || ''; }
+function setApiUrl(u) { localStorage.setItem(API_URL_KEY, u); }
+function getToken() { return localStorage.getItem(TOKEN_KEY) || ''; }
+function setToken(t) { localStorage.setItem(TOKEN_KEY, t); }
+function clearAuth() { localStorage.removeItem(TOKEN_KEY); localStorage.removeItem(ROLE_KEY); }
+
+// ============================================================
+// IN-MEMORY DATA CACHE
+// ============================================================
+var DB = { books:[], members:[], tx:[], classes:[], fines:[], settings:{} };
+var currentUser = null;
+
+// ============================================================
+// API HELPERS
+// ============================================================
+function apiCall(action, payload, silent) {
+  payload = payload || {};
+  payload.token = getToken();
+  setSyncing(true);
+  return fetch(getApiUrl(), {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: action, payload: payload })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(d) {
+    setSyncing(false);
+    if (!d.ok) throw new Error(d.error || 'API error');
+    return d;
+  })
+  .catch(function(err) {
+    setSyncing(false, true);
+    if (!silent) toast('Sync error: ' + err.message, 'err');
+    throw err;
+  });
+}
+
+function loadAll() {
+  return apiCall('getAll').then(function(d) {
+    DB.books   = d.data.books   || [];
+    DB.members = d.data.members || [];
+    DB.tx      = d.data.tx      || [];
+    DB.classes = d.data.classes || [];
+    DB.fines   = d.data.fines   || [];
+    var s = (d.data.settings || [])[0];
+    DB.settings = s || { currency:'₹', finePerDay:2, issueDays:14 };
+    updateTxStatus();
+  });
+}
+
+// ============================================================
+// SYNC STATUS
+// ============================================================
+function setSyncing(on, err) {
+  var dot = document.getElementById('syncDot');
+  var txt = document.getElementById('syncStatus');
+  if (!dot) return;
+  dot.className = 'sync-dot' + (on ? ' syncing' : (err ? ' error' : ''));
+  txt.textContent = on ? 'Syncing…' : (err ? 'Sync error' : 'Synced with Google Sheets');
+}
+
+// ============================================================
+// HELPERS
+// ============================================================
+function gid() { return 'id_' + Math.random().toString(36).substr(2,9) + '_' + Date.now(); }
+function td()  { return new Date().toISOString().split('T')[0]; }
+function fd(d) { if(!d) return '—'; var p=d.split('-'); return p[2]+'/'+p[1]+'/'+p[1+1]; }
+function esc(s){ if(!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function ad(d, n) { var dt=new Date(d+'T00:00:00'); dt.setDate(dt.getDate()+n); return dt.toISOString().split('T')[0]; }
+
+function openM(id) { document.getElementById(id).classList.remove('hidden'); }
+function closeM(id) { document.getElementById(id).classList.add('hidden'); }
+
+function toast(msg, type) {
+  type = type || 'ok';
+  var w = document.getElementById('toastWrap');
+  var t = document.createElement('div');
+  t.className = 'toast ' + type;
+  var ic = {ok:'fa-check-circle',err:'fa-times-circle',i:'fa-info-circle'}[type]||'fa-check-circle';
+  t.innerHTML = '<i class="fas '+ic+'"></i> '+esc(msg);
+  w.appendChild(t);
+  setTimeout(function(){ t.remove(); }, 3500);
+}
+
+var _confirmCb = null;
+function showConfirm(title, msg, cb) {
+  document.getElementById('confirmTitle').textContent = title;
+  document.getElementById('confirmMsg').innerHTML = msg;
+  _confirmCb = cb;
+  openM('confirmOverlay');
+}
+document.getElementById('confirmYes').addEventListener('click', function(){ closeM('confirmOverlay'); if(_confirmCb) _confirmCb(); });
+document.getElementById('confirmNo').addEventListener('click', function(){ closeM('confirmOverlay'); });
+
+function getSettings() {
+  return DB.settings || { currency:'₹', finePerDay:2, issueDays:14 };
+}
+
+function updateTxStatus() {
+  var today = td();
+  DB.tx.forEach(function(t) {
+    if (t.status !== 'returned' && t.dueDate < today) t.status = 'overdue';
+  });
+}
+
+// ============================================================
+// DATE FORMAT — fix
+// ============================================================
+function fd(d) {
+  if(!d) return '—';
+  var p = String(d).split('-');
+  if(p.length !== 3) return d;
+  return p[2]+'/'+p[1]+'/'+p[0];
+}
+
+// ============================================================
+// SETUP & LOGIN FLOW
+// ============================================================
+function showSetup() {
+  document.getElementById('loadingOverlay').classList.add('hidden');
+  document.getElementById('setupPage').classList.remove('hidden');
+}
+function showLogin() {
+  document.getElementById('loadingOverlay').classList.add('hidden');
+  document.getElementById('setupPage').classList.add('hidden');
+  document.getElementById('loginPage').classList.remove('hidden');
+}
+function hideLogin() {
+  document.getElementById('loginPage').classList.add('hidden');
+}
+
+document.getElementById('setupSaveBtn').addEventListener('click', function() {
+  var url = document.getElementById('setupUrl').value.trim();
+  if (!url || !url.startsWith('https://')) {
+    document.getElementById('setupErr').style.display = 'block'; return;
+  }
+  setApiUrl(url);
+  document.getElementById('setupPage').classList.add('hidden');
+  document.getElementById('loadingOverlay').classList.remove('hidden');
+  document.getElementById('loadingMsg').textContent = 'Testing connection…';
+  fetch(url).then(function(r){ return r.json(); }).then(function(d) {
+    if (d.ok) showLogin();
+    else showSetup();
+  }).catch(function() { showSetup(); toast('Could not connect to that URL','err'); });
+});
+
+document.getElementById('changeUrlLink').addEventListener('click', function(e) {
+  e.preventDefault(); hideLogin(); showSetup();
+});
+document.getElementById('changeUrlBtn').addEventListener('click', function() { hideLogin(); showSetup(); });
+
+// Login tabs
+var loginRole = 'admin';
+document.querySelectorAll('.login-tab').forEach(function(tab) {
+  tab.addEventListener('click', function() {
+    document.querySelectorAll('.login-tab').forEach(function(t){ t.classList.remove('active'); });
+    this.classList.add('active');
+    loginRole = this.dataset.role;
+    if (loginRole === 'admin') {
+      document.getElementById('adminForm').classList.remove('hidden');
+      document.getElementById('studentForm').classList.add('hidden');
+    } else {
+      document.getElementById('studentForm').classList.remove('hidden');
+      document.getElementById('adminForm').classList.add('hidden');
+    }
+    document.getElementById('loginErr').style.display = 'none';
+  });
+});
+
+document.getElementById('loginBtn').addEventListener('click', doLogin);
+document.getElementById('loginPass').addEventListener('keydown', function(e){ if(e.key==='Enter') doLogin(); });
+document.getElementById('loginRoll').addEventListener('keydown', function(e){ if(e.key==='Enter') doLogin(); });
+
+function doLogin() {
+  var errEl = document.getElementById('loginErr');
+  errEl.style.display = 'none';
+  var payload = { role: loginRole };
+  if (loginRole === 'admin') {
+    payload.username = document.getElementById('loginUser').value.trim();
+    payload.password = document.getElementById('loginPass').value.trim();
+  } else {
+    payload.rollNo = document.getElementById('loginRoll').value.trim();
+  }
+  document.getElementById('loginBtn').disabled = true;
+  document.getElementById('loginBtn').textContent = 'Signing in…';
+  apiCall('login', payload, true)
+    .then(function(d) {
+      document.getElementById('loginBtn').disabled = false;
+      document.getElementById('loginBtn').innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
+      setToken(d.token);
+      if (d.role === 'admin') {
+        currentUser = { role:'admin' };
+        enterAdmin();
+      } else {
+        currentUser = { role:'student', memberId: d.member.id, name: d.member.name, rollNo: d.member.rollNo, cls: d.member.classId };
+        enterStudent();
+      }
+    })
+    .catch(function(err) {
+      document.getElementById('loginBtn').disabled = false;
+      document.getElementById('loginBtn').innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
+      errEl.textContent = err.message || 'Login failed';
+      errEl.style.display = 'block';
+    });
+}
+
+function enterAdmin() {
+  hideLogin();
+  document.getElementById('adminUI').classList.remove('hidden');
+  document.getElementById('studentUI').classList.add('hidden');
+  document.getElementById('connectedUrl').textContent = getApiUrl();
+  loadAll().then(function() {
+    adminNav('a-dash');
+    refreshAllAdmin();
+  });
+}
+
+function enterStudent() {
+  hideLogin();
+  document.getElementById('studentUI').classList.remove('hidden');
+  document.getElementById('adminUI').classList.add('hidden');
+  document.getElementById('sRoleTag').textContent = currentUser.name;
+  loadAll().then(function() {
+    studentNav('s-dash');
+    refreshStudentDash();
+  });
+}
+
+function doLogout() {
+  clearAuth();
+  currentUser = null;
+  document.getElementById('loginPage').classList.remove('hidden');
+  document.getElementById('adminUI').classList.add('hidden');
+  document.getElementById('studentUI').classList.add('hidden');
+  document.getElementById('loginUser').value='';
+  document.getElementById('loginPass').value='';
+  document.getElementById('loginRoll').value='';
+  document.getElementById('loginErr').style.display='none';
+}
+document.getElementById('aLogout').addEventListener('click', doLogout);
+document.getElementById('sLogout').addEventListener('click', doLogout);
+
+// ============================================================
+// NAV
+// ============================================================
+function adminNav(pg) {
+  var titles = {'a-dash':'Dashboard','a-books':'Book Collection','a-members':'Library Members','a-tx':'Transactions','a-classes':'Manage Classes','a-fines':'Fine Records','a-settings':'Settings','a-backup':'Export / Import'};
+  document.getElementById('aTopTitle').textContent = titles[pg] || pg;
+  document.querySelectorAll('#adminSidebar .nav-item').forEach(function(n){ n.classList.remove('active'); if(n.dataset.page===pg) n.classList.add('active'); });
+  document.querySelectorAll('#adminUI .page').forEach(function(p){ p.classList.remove('active'); });
+  var el = document.getElementById('page-'+pg);
+  if(el) el.classList.add('active');
+  if(pg==='a-dash')    refreshAdminDash();
+  if(pg==='a-books')   refreshAdminBooks();
+  if(pg==='a-members') refreshAdminMembers();
+  if(pg==='a-tx')      refreshAdminTx();
+  if(pg==='a-classes') refreshAdminClasses();
+  if(pg==='a-fines')   refreshAdminFines();
+  if(pg==='a-settings')refreshSettings();
+  document.getElementById('adminSidebar').classList.remove('open');
+}
+document.querySelectorAll('#adminSidebar .nav-item').forEach(function(n){
+  n.addEventListener('click', function(){ adminNav(this.dataset.page); });
+});
+document.getElementById('aMobileBtn').addEventListener('click', function(){ document.getElementById('adminSidebar').classList.toggle('open'); });
+document.getElementById('aRefreshBtn').addEventListener('click', function() {
+  loadAll().then(function(){ refreshAllAdmin(); toast('Synced from Google Sheets','i'); });
+});
+
+function studentNav(pg) {
+  var titles = {'s-dash':'My Dashboard','s-books':'Browse Books','s-fines':'My Fines'};
+  document.getElementById('sTopTitle').textContent = titles[pg] || pg;
+  document.querySelectorAll('#studentSidebar .nav-item').forEach(function(n){ n.classList.remove('active'); if(n.dataset.page===pg) n.classList.add('active'); });
+  document.querySelectorAll('#studentUI .page').forEach(function(p){ p.classList.remove('active'); });
+  var el = document.getElementById('page-'+pg);
+  if(el) el.classList.add('active');
+  if(pg==='s-dash')  refreshStudentDash();
+  if(pg==='s-books') refreshStudentBooks();
+  if(pg==='s-fines') refreshStudentFines();
+  document.getElementById('studentSidebar').classList.remove('open');
+}
+document.querySelectorAll('#studentSidebar .nav-item').forEach(function(n){
+  n.addEventListener('click', function(){ studentNav(this.dataset.page); });
+});
+document.getElementById('sMobileBtn').addEventListener('click', function(){ document.getElementById('studentSidebar').classList.toggle('open'); });
+
+// ============================================================
+// CLASSES
+// ============================================================
+function buildClassOptions(selected) {
+  var html = '<option value="">Choose class</option>';
+  DB.classes.forEach(function(c){ html += '<option value="'+c.id+'"'+(c.id===selected?' selected':'')+'>'+esc(c.name)+'</option>'; });
+  return html;
+}
+
+function refreshAdminClasses() {
+  var tb = document.getElementById('aClassTb');
+  var html = '';
+  if (!DB.classes.length) { tb.innerHTML='<tr><td colspan="3"><div class="tbl-empty"><i class="fas fa-chalkboard"></i><p>No classes yet.</p></div></td></tr>'; return; }
+  DB.classes.forEach(function(c) {
+    var cnt = DB.members.filter(function(m){ return m.classId===c.id; }).length;
+    html += '<tr><td style="font-weight:600">'+esc(c.name)+'</td><td>'+cnt+'</td><td><div class="act-btns"><button class="btn btn-i btn-icon btn-sm" onclick="window._ec(\''+c.id+'\')"><i class="fas fa-edit"></i></button><button class="btn btn-d btn-icon btn-sm" onclick="window._dc(\''+c.id+'\')"><i class="fas fa-trash"></i></button></div></td></tr>';
+  });
+  tb.innerHTML = html;
+}
+
+window._ec = function(id) {
+  var c = DB.classes.find(function(x){ return x.id===id; });
+  if (!c) return;
+  document.getElementById('classEditId').value = id;
+  document.getElementById('classModalT').textContent = 'Edit Class';
+  document.getElementById('className').value = c.name;
+  openM('classModal');
+};
+window._dc = function(id) {
+  var c = DB.classes.find(function(x){ return x.id===id; });
+  if (!c) return;
+  var inUse = DB.members.some(function(m){ return m.classId===id; });
+  if (inUse) { toast('Cannot delete: class has members','err'); return; }
+  showConfirm('Delete Class','Delete <strong>"'+esc(c.name)+'"</strong>?', function() {
+    apiCall('deleteClass', { id: id }).then(function() {
+      DB.classes = DB.classes.filter(function(x){ return x.id!==id; });
+      toast('Class deleted','i'); refreshAdminClasses(); refreshAdminMembers();
+    });
+  });
+};
+document.getElementById('aAddClass').addEventListener('click', function() {
+  document.getElementById('classEditId').value='';
+  document.getElementById('classModalT').textContent='Add Class';
+  document.getElementById('className').value='';
+  document.getElementById('classNameE').style.display='none';
+  openM('classModal');
+});
+document.getElementById('saveClassBtn').addEventListener('click', function() {
+  var name = document.getElementById('className').value.trim();
+  if (!name) { document.getElementById('classNameE').style.display='block'; return; }
+  document.getElementById('classNameE').style.display='none';
+  var eid = document.getElementById('classEditId').value;
+  var row = { id: eid||gid(), name: name };
+  var action = eid ? 'updateClass' : 'addClass';
+  apiCall(action, { row: row }).then(function() {
+    if (eid) { var i = DB.classes.findIndex(function(x){ return x.id===eid; }); if(i!==-1) DB.classes[i]=row; }
+    else DB.classes.push(row);
+    closeM('classModal'); toast('Class saved'); refreshAdminClasses(); refreshAdminMembers();
+  });
+});
+
+// ============================================================
+// BOOKS
+// ============================================================
+function refreshAdminBooks() {
+  var search = document.getElementById('aBookSearch').value.toLowerCase();
+  var catF = document.getElementById('aBookCat').value;
+  // Rebuild category filter
+  var cats = [...new Set(DB.books.map(function(b){ return b.category||''; }).filter(Boolean))];
+  var catSel = document.getElementById('aBookCat');
+  var curCat = catSel.value;
+  catSel.innerHTML = '<option value="">All Categories</option>' + cats.map(function(c){ return '<option value="'+esc(c)+'"'+(c===curCat?' selected':'')+'>'+esc(c)+'</option>'; }).join('');
+  var filtered = DB.books.filter(function(b) {
+    var ms = !search || (b.title||'').toLowerCase().indexOf(search)!==-1 || (b.author||'').toLowerCase().indexOf(search)!==-1 || (b.isbn||'').toLowerCase().indexOf(search)!==-1;
+    var mc = !catF || b.category===catF;
+    return ms && mc;
+  });
+  var tb = document.getElementById('aBookTb');
+  if (!filtered.length) { tb.innerHTML='<tr><td colspan="7"><div class="tbl-empty"><i class="fas fa-book"></i><p>No books found.</p></div></td></tr>'; return; }
+  tb.innerHTML = filtered.map(function(b) {
+    var avail = b.availableCopies > 0 ? '<span style="color:var(--ok);font-weight:600">'+b.availableCopies+'</span>' : '<span style="color:var(--err);font-weight:600">0</span>';
+    return '<tr><td style="font-weight:500">'+esc(b.title)+'</td><td>'+esc(b.author)+'</td><td style="color:var(--muted);font-size:12px">'+esc(b.isbn||'—')+'</td><td>'+esc(b.category||'—')+'</td><td>'+b.totalCopies+'</td><td>'+avail+'</td><td><div class="act-btns"><button class="btn btn-i btn-icon btn-sm" onclick="window._eb(\''+b.id+'\')"><i class="fas fa-edit"></i></button><button class="btn btn-d btn-icon btn-sm" onclick="window._db(\''+b.id+'\')"><i class="fas fa-trash"></i></button></div></td></tr>';
+  }).join('');
+}
+
+window._eb = function(id) {
+  var b = DB.books.find(function(x){ return x.id===id; });
+  if (!b) return;
+  document.getElementById('bookEditId').value = id;
+  document.getElementById('bookModalT').textContent = 'Edit Book';
+  document.getElementById('bookTitle').value = b.title;
+  document.getElementById('bookAuthor').value = b.author;
+  document.getElementById('bookISBN').value = b.isbn||'';
+  document.getElementById('bookCat').value = b.category||'';
+  document.getElementById('bookCopies').value = b.totalCopies;
+  openM('bookModal');
+};
+window._db = function(id) {
+  var b = DB.books.find(function(x){ return x.id===id; });
+  if (!b) return;
+  var hasIssued = DB.tx.some(function(t){ return t.bookId===id&&(t.status==='issued'||t.status==='overdue'); });
+  if (hasIssued) { toast('Cannot delete: book is currently issued','err'); return; }
+  showConfirm('Delete Book','Delete <strong>"'+esc(b.title)+'"</strong>?', function() {
+    apiCall('deleteBook',{ id:id }).then(function() {
+      DB.books = DB.books.filter(function(x){ return x.id!==id; });
+      toast('Book deleted','i'); refreshAdminBooks(); refreshAdminDash();
+    });
+  });
+};
+document.getElementById('aAddBook').addEventListener('click', function() {
+  document.getElementById('bookEditId').value='';
+  document.getElementById('bookModalT').textContent='Add Book';
+  ['bookTitle','bookAuthor','bookISBN','bookCat'].forEach(function(id){ document.getElementById(id).value=''; });
+  document.getElementById('bookCopies').value='1';
+  ['bookTitleE','bookAuthorE','bookCopiesE'].forEach(function(id){ document.getElementById(id).style.display='none'; });
+  openM('bookModal');
+});
+document.getElementById('saveBookBtn').addEventListener('click', function() {
+  var v=true;
+  var title=document.getElementById('bookTitle').value.trim();
+  var author=document.getElementById('bookAuthor').value.trim();
+  var copies=parseInt(document.getElementById('bookCopies').value)||0;
+  if(!title){document.getElementById('bookTitleE').style.display='block';v=false;}
+  if(!author){document.getElementById('bookAuthorE').style.display='block';v=false;}
+  if(!copies){document.getElementById('bookCopiesE').style.display='block';v=false;}
+  if(!v) return;
+  var eid = document.getElementById('bookEditId').value;
+  var existing = eid ? DB.books.find(function(b){ return b.id===eid; }) : null;
+  var issued = existing ? (existing.totalCopies - existing.availableCopies) : 0;
+  var avail = Math.max(0, copies - issued);
+  var row = { id:eid||gid(), title:title, author:author, isbn:document.getElementById('bookISBN').value.trim(), category:document.getElementById('bookCat').value.trim(), totalCopies:copies, availableCopies:avail, addedDate:existing?existing.addedDate:td() };
+  var action = eid ? 'updateBook' : 'addBook';
+  apiCall(action,{row:row}).then(function() {
+    if(eid){var i=DB.books.findIndex(function(x){return x.id===eid;});if(i!==-1)DB.books[i]=row;}
+    else DB.books.push(row);
+    closeM('bookModal'); toast('Book saved'); refreshAdminBooks(); refreshAdminDash();
+  });
+});
+document.getElementById('aBookSearch').addEventListener('input', refreshAdminBooks);
+document.getElementById('aBookCat').addEventListener('change', refreshAdminBooks);
+
+// ============================================================
+// MEMBERS
+// ============================================================
+function refreshAdminMembers() {
+  var search=document.getElementById('aMemSearch').value.toLowerCase();
+  var clsF=document.getElementById('aMemClass').value;
+  // Rebuild class filter
+  var clsSel=document.getElementById('aMemClass');
+  var curCls=clsSel.value;
+  clsSel.innerHTML='<option value="">All Classes</option>'+DB.classes.map(function(c){return '<option value="'+c.id+'"'+(c.id===curCls?' selected':'')+'>'+esc(c.name)+'</option>';}).join('');
+  var filtered=DB.members.filter(function(m){
+    var ms=!search||(m.name||'').toLowerCase().indexOf(search)!==-1||(m.rollNo||'').toLowerCase().indexOf(search)!==-1;
+    var mc=!clsF||m.classId===clsF;
+    return ms&&mc;
+  });
+  var tb=document.getElementById('aMemTb');
+  if(!filtered.length){tb.innerHTML='<tr><td colspan="6"><div class="tbl-empty"><i class="fas fa-users"></i><p>No members found.</p></div></td></tr>';return;}
+  tb.innerHTML=filtered.map(function(m){
+    var cls=DB.classes.find(function(c){return c.id===m.classId;});
+    return '<tr><td style="font-weight:500">'+esc(m.name)+'</td><td>'+esc(cls?cls.name:'—')+'</td><td>'+esc(m.rollNo)+'</td><td style="font-size:12px;color:var(--muted)">'+esc(m.phone||'—')+'</td><td style="font-size:12px;color:var(--muted)">'+esc(m.email||'—')+'</td><td><div class="act-btns"><button class="btn btn-i btn-icon btn-sm" onclick="window._em(\''+m.id+'\')"><i class="fas fa-edit"></i></button><button class="btn btn-d btn-icon btn-sm" onclick="window._dm(\''+m.id+'\')"><i class="fas fa-trash"></i></button></div></td></tr>';
+  }).join('');
+}
+window._em=function(id){
+  var m=DB.members.find(function(x){return x.id===id;});if(!m)return;
+  document.getElementById('memEditId').value=id;
+  document.getElementById('memModalT').textContent='Edit Member';
+  document.getElementById('memName').value=m.name;
+  document.getElementById('memClass').innerHTML=buildClassOptions(m.classId);
+  document.getElementById('memRoll').value=m.rollNo;
+  document.getElementById('memPhone').value=m.phone||'';
+  document.getElementById('memEmail').value=m.email||'';
+  openM('memModal');
+};
+window._dm=function(id){
+  var m=DB.members.find(function(x){return x.id===id;});if(!m)return;
+  var hasIssued=DB.tx.some(function(t){return t.memberId===id&&(t.status==='issued'||t.status==='overdue');});
+  if(hasIssued){toast('Cannot delete: member has issued books','err');return;}
+  showConfirm('Delete Member','Delete <strong>"'+esc(m.name)+'"</strong>?',function(){
+    apiCall('deleteMember',{id:id}).then(function(){
+      DB.members=DB.members.filter(function(x){return x.id!==id;});
+      toast('Member deleted','i');refreshAdminMembers();refreshAdminDash();
+    });
+  });
+};
+document.getElementById('aAddMem').addEventListener('click',function(){
+  document.getElementById('memEditId').value='';
+  document.getElementById('memModalT').textContent='Add Member';
+  document.getElementById('memName').value='';
+  document.getElementById('memClass').innerHTML=buildClassOptions('');
+  document.getElementById('memRoll').value='';
+  document.getElementById('memPhone').value='';
+  document.getElementById('memEmail').value='';
+  ['memNameE','memClassE','memRollE'].forEach(function(id){document.getElementById(id).style.display='none';});
+  openM('memModal');
+});
+document.getElementById('saveMemBtn').addEventListener('click',function(){
+  var v=true;
+  var name=document.getElementById('memName').value.trim();
+  var cls=document.getElementById('memClass').value;
+  var roll=document.getElementById('memRoll').value.trim();
+  if(!name){document.getElementById('memNameE').style.display='block';v=false;}
+  if(!cls){document.getElementById('memClassE').style.display='block';v=false;}
+  if(!roll){document.getElementById('memRollE').style.display='block';v=false;}
+  if(!v)return;
+  var eid=document.getElementById('memEditId').value;
+  var row={id:eid||gid(),name:name,classId:cls,rollNo:roll,phone:document.getElementById('memPhone').value.trim(),email:document.getElementById('memEmail').value.trim(),addedDate:eid?(DB.members.find(function(x){return x.id===eid;})||{}).addedDate||td():td()};
+  apiCall(eid?'updateMember':'addMember',{row:row}).then(function(){
+    if(eid){var i=DB.members.findIndex(function(x){return x.id===eid;});if(i!==-1)DB.members[i]=row;}
+    else DB.members.push(row);
+    closeM('memModal');toast('Member saved');refreshAdminMembers();refreshAdminDash();
+  });
+});
+document.getElementById('aMemSearch').addEventListener('input',refreshAdminMembers);
+document.getElementById('aMemClass').addEventListener('change',refreshAdminMembers);
+
+// ============================================================
+// TRANSACTIONS
+// ============================================================
+function populateIssueBooks(books) {
+  document.getElementById('issueBookId').innerHTML='<option value="">Choose a book ('+books.length+' available)</option>'+
+    books.map(function(b){return '<option value="'+b.id+'">'+esc(b.title)+' by '+esc(b.author)+' ['+b.availableCopies+']</option>';}).join('');
+}
+function openIssueModal() {
+  var books=DB.books.filter(function(b){return b.availableCopies>0;});
+  if(!books.length){toast('No books available','err');return;}
+  if(!DB.members.length){toast('No members registered','err');return;}
+  var settings=getSettings();
+  document.getElementById('issueBookSearch').value='';
+  populateIssueBooks(books);
+  document.getElementById('issueMemId').innerHTML='<option value="">Choose a member</option>'+DB.members.map(function(m){
+    var cls=DB.classes.find(function(c){return c.id===m.classId;});
+    return '<option value="'+m.id+'">'+esc(m.name)+' — '+esc(cls?cls.name:'Unknown')+' ('+esc(m.rollNo)+')</option>';
+  }).join('');
+  document.getElementById('issueDate').value=td();
+  document.getElementById('dueDate').value=ad(td(),settings.issueDays||14);
+  ['issueBookE','issueMemE'].forEach(function(id){document.getElementById(id).style.display='none';});
+  openM('issueModal');
+}
+document.getElementById('issueBookSearch').addEventListener('input',function(){
+  var s=this.value.toLowerCase();
+  var all=DB.books.filter(function(b){return b.availableCopies>0;});
+  populateIssueBooks(all.filter(function(b){return (b.title||'').toLowerCase().indexOf(s)!==-1||(b.author||'').toLowerCase().indexOf(s)!==-1||(b.isbn||'').toLowerCase().indexOf(s)!==-1;}));
+});
+document.getElementById('aIssueBtn').addEventListener('click',openIssueModal);
+document.getElementById('doIssueBtn').addEventListener('click',function(){
+  var bookId=document.getElementById('issueBookId').value;
+  var memId=document.getElementById('issueMemId').value;
+  var issueDate=document.getElementById('issueDate').value;
+  var dueDate=document.getElementById('dueDate').value;
+  var v=true;
+  if(!bookId){document.getElementById('issueBookE').style.display='block';v=false;}
+  if(!memId){document.getElementById('issueMemE').style.display='block';v=false;}
+  if(!v)return;
+  if(!issueDate||!dueDate){toast('Fill in dates','err');return;}
+  if(dueDate<=issueDate){toast('Due date must be after issue date','err');return;}
+  var bi=DB.books.findIndex(function(b){return b.id===bookId;});
+  if(bi===-1||DB.books[bi].availableCopies<1){toast('Book not available','err');return;}
+  var txRow={id:gid(),bookId:bookId,memberId:memId,issueDate:issueDate,dueDate:dueDate,returnDate:'',status:'issued',fineAmount:0,fineStatus:''};
+  var bookRow=Object.assign({},DB.books[bi],{availableCopies:DB.books[bi].availableCopies-1});
+  Promise.all([
+    apiCall('addTx',{row:txRow}),
+    apiCall('updateBook',{row:bookRow})
+  ]).then(function(){
+    DB.tx.push(txRow);
+    DB.books[bi]=bookRow;
+    closeM('issueModal');toast('Book issued successfully');refreshAdminTx();refreshAdminDash();
+  });
+});
+
+function openReturnModal() {
+  updateTxStatus();
+  var active=DB.tx.filter(function(t){return t.status==='issued'||t.status==='overdue';});
+  if(!active.length){toast('No books currently issued','i');return;}
+  document.getElementById('returnTxId').innerHTML='<option value="">Choose a transaction</option>'+active.map(function(t){
+    var b=DB.books.find(function(x){return x.id===t.bookId;});
+    var m=DB.members.find(function(x){return x.id===t.memberId;});
+    var tag=t.status==='overdue'?' [OVERDUE]':'';
+    return '<option value="'+t.id+'">'+esc(b?b.title:'Unknown')+' — '+esc(m?m.name:'Unknown')+' (Due: '+fd(t.dueDate)+')'+tag+'</option>';
+  }).join('');
+  document.getElementById('returnDate').value=td();
+  document.getElementById('fineInfoBox').classList.add('hidden');
+  document.getElementById('fineInfoBox').innerHTML='';
+  document.getElementById('returnTxE').style.display='none';
+  openM('returnModal');
+}
+document.getElementById('aReturnBtn').addEventListener('click',openReturnModal);
+document.getElementById('returnTxId').addEventListener('change',function(){
+  var txId=this.value;var box=document.getElementById('fineInfoBox');
+  if(!txId){box.classList.add('hidden');return;}
+  var tx=DB.tx.find(function(t){return t.id===txId;});
+  if(!tx||tx.status==='returned'){box.classList.add('hidden');return;}
+  var settings=getSettings();var perDay=settings.finePerDay||0;var cur=settings.currency||'₹';
+  if(tx.dueDate<td()&&perDay>0){
+    var days=Math.ceil((new Date()-new Date(tx.dueDate+'T00:00:00'))/86400000);
+    var amount=days*perDay;
+    box.classList.remove('hidden');
+    box.innerHTML='<div class="fine-info-box"><div class="fi-title"><i class="fas fa-exclamation-triangle"></i> Overdue Fine</div><div class="fi-detail">'+days+' days overdue × '+cur+perDay+'/day = <span class="fi-amount">'+cur+amount+'</span></div><div class="fg" style="margin-bottom:0;margin-top:10px"><label class="fl">Fine Action</label><select class="fi" id="fineActionSelect"><option value="unpaid">Mark as Unpaid</option><option value="paid">Mark as Paid (Collected)</option><option value="waived">Waive Fine</option></select></div></div>';
+  }else{box.classList.add('hidden');box.innerHTML='';}
+});
+document.getElementById('doReturnBtn').addEventListener('click',function(){
+  var txId=document.getElementById('returnTxId').value;
+  var retDate=document.getElementById('returnDate').value;
+  if(!txId){document.getElementById('returnTxE').style.display='block';return;}
+  if(!retDate){toast('Fill return date','err');return;}
+  var ti=DB.tx.findIndex(function(t){return t.id===txId;});
+  if(ti===-1){toast('Transaction not found','err');return;}
+  var t=Object.assign({},DB.tx[ti]);
+  t.status='returned';t.returnDate=retDate;
+  var bi=DB.books.findIndex(function(b){return b.id===t.bookId;});
+  var bookRow=bi!==-1?Object.assign({},DB.books[bi],{availableCopies:Math.min(DB.books[bi].totalCopies,DB.books[bi].availableCopies+1)}):null;
+  var settings=getSettings();var perDay=settings.finePerDay||0;var cur=settings.currency||'₹';
+  var fineRow=null;
+  if(t.dueDate<retDate&&perDay>0){
+    var days=Math.ceil((new Date(retDate+'T00:00:00')-new Date(t.dueDate+'T00:00:00'))/86400000);
+    var amount=days*perDay;
+    var actionEl=document.getElementById('fineActionSelect');
+    var fineStatus=actionEl?actionEl.value:'unpaid';
+    t.fineAmount=amount;t.fineStatus=fineStatus;
+    fineRow={id:gid(),txId:t.id,bookId:t.bookId,memberId:t.memberId,daysOverdue:days,amount:amount,currency:cur,status:fineStatus,createdAt:td()};
+  }
+  var calls=[apiCall('updateTx',{row:t})];
+  if(bookRow) calls.push(apiCall('updateBook',{row:bookRow}));
+  if(fineRow) calls.push(apiCall('addFine',{row:fineRow}));
+  Promise.all(calls).then(function(){
+    DB.tx[ti]=t;
+    if(bi!==-1&&bookRow)DB.books[bi]=bookRow;
+    if(fineRow)DB.fines.push(fineRow);
+    closeM('returnModal');
+    toast(fineRow?'Book returned (overdue fine processed)':'Book returned successfully',fineRow?'i':'ok');
+    refreshAdminTx();refreshAdminDash();refreshAdminFines();
+  });
+});
+
+function quickReturn(txId) {
+  updateTxStatus();
+  var ti=DB.tx.findIndex(function(x){return x.id===txId;});if(ti===-1)return;
+  var t=Object.assign({},DB.tx[ti]);
+  t.status='returned';t.returnDate=td();
+  var bi=DB.books.findIndex(function(b){return b.id===t.bookId;});
+  var bookRow=bi!==-1?Object.assign({},DB.books[bi],{availableCopies:Math.min(DB.books[bi].totalCopies,DB.books[bi].availableCopies+1)}):null;
+  var settings=getSettings();var perDay=settings.finePerDay||0;var cur=settings.currency||'₹';
+  var fineRow=null;
+  if(t.dueDate<td()&&perDay>0){
+    var days=Math.ceil((new Date()-new Date(t.dueDate+'T00:00:00'))/86400000);
+    var amount=days*perDay;
+    t.fineAmount=amount;t.fineStatus='unpaid';
+    fineRow={id:gid(),txId:t.id,bookId:t.bookId,memberId:t.memberId,daysOverdue:days,amount:amount,currency:cur,status:'unpaid',createdAt:td()};
+  }
+  var calls=[apiCall('updateTx',{row:t})];
+  if(bookRow)calls.push(apiCall('updateBook',{row:bookRow}));
+  if(fineRow)calls.push(apiCall('addFine',{row:fineRow}));
+  Promise.all(calls).then(function(){
+    DB.tx[ti]=t;if(bi!==-1&&bookRow)DB.books[bi]=bookRow;if(fineRow)DB.fines.push(fineRow);
+    toast(fineRow?'Book returned (fine recorded)':'Book returned successfully',fineRow?'i':'ok');
+    refreshAdminTx();refreshAdminDash();refreshAdminFines();
+  });
+}
+window._qr=quickReturn;
+window._dtx=function(id){
+  var ti=DB.tx.findIndex(function(x){return x.id===id;});if(ti===-1)return;
+  var t=DB.tx[ti];
+  if(t.status==='issued'||t.status==='overdue'){
+    var bi=DB.books.findIndex(function(b){return b.id===t.bookId;});
+    if(bi!==-1){var br=Object.assign({},DB.books[bi],{availableCopies:Math.min(DB.books[bi].totalCopies,DB.books[bi].availableCopies+1)});apiCall('updateBook',{row:br}).then(function(){DB.books[bi]=br;});}
+  }
+  showConfirm('Delete Transaction','Delete this record?',function(){
+    apiCall('deleteTx',{id:id}).then(function(){
+      DB.tx=DB.tx.filter(function(x){return x.id!==id;});
+      toast('Transaction deleted','i');refreshAdminTx();refreshAdminDash();
+    });
+  });
+};
+
+function refreshAdminTx() {
+  updateTxStatus();
+  var search=document.getElementById('aTxSearch').value.toLowerCase();
+  var stF=document.getElementById('aTxStatus').value;
+  var filtered=DB.tx.filter(function(t){
+    var b=DB.books.find(function(x){return x.id===t.bookId;});
+    var m=DB.members.find(function(x){return x.id===t.memberId;});
+    var ms=!search||(b?b.title:'').toLowerCase().indexOf(search)!==-1||(m?m.name:'').toLowerCase().indexOf(search)!==-1;
+    var mst=!stF||t.status===stF;
+    return ms&&mst;
+  });
+  filtered.sort(function(a,b){return(b.issueDate||'').localeCompare(a.issueDate||'');});
+  var sm={issued:'b-i',returned:'b-ok',overdue:'b-err'};
+  var settings=getSettings();var cur=settings.currency||'₹';
+  var tb=document.getElementById('aTxTb');
+  if(!filtered.length){tb.innerHTML='<tr><td colspan="8"><div class="tbl-empty"><i class="fas fa-exchange-alt"></i><p>No transactions.</p></div></td></tr>';return;}
+  tb.innerHTML=filtered.map(function(t){
+    var b=DB.books.find(function(x){return x.id===t.bookId;});
+    var m=DB.members.find(function(x){return x.id===t.memberId;});
+    var fine=t.fineAmount>0?'<span style="color:var(--err);font-weight:600">'+cur+t.fineAmount+'</span>':'—';
+    var rbtn=t.status!=='returned'?'<button class="btn btn-ok btn-sm" onclick="window._qr(\''+t.id+'\')"><i class="fas fa-undo"></i> Return</button>':'';
+    return '<tr><td style="font-weight:500">'+esc(b?b.title:'Deleted')+'</td><td>'+esc(m?m.name:'Deleted')+'</td><td style="font-size:12px;color:var(--muted)">'+fd(t.issueDate)+'</td><td style="font-size:12px;color:var(--muted)">'+fd(t.dueDate)+'</td><td style="font-size:12px;color:var(--muted)">'+fd(t.returnDate)+'</td><td>'+fine+'</td><td><span class="badge '+sm[t.status]+'">'+t.status.charAt(0).toUpperCase()+t.status.slice(1)+'</span></td><td><div class="act-btns">'+rbtn+'<button class="btn btn-d btn-icon btn-sm" onclick="window._dtx(\''+t.id+'\')"><i class="fas fa-trash"></i></button></div></td></tr>';
+  }).join('');
+  // Badges
+  var oc=DB.tx.filter(function(t){return t.status==='overdue';}).length;
+  var ob=document.getElementById('aOverdueBadge');
+  ob.style.display=oc>0?'inline':'none';ob.textContent=oc;
+  var uc=DB.fines.filter(function(f){return f.status==='unpaid';}).length;
+  var fb=document.getElementById('aFinesBadge');
+  fb.style.display=uc>0?'inline':'none';fb.textContent=uc;
+}
+document.getElementById('aTxSearch').addEventListener('input',refreshAdminTx);
+document.getElementById('aTxStatus').addEventListener('change',refreshAdminTx);
+
+// ============================================================
+// FINES
+// ============================================================
+function refreshAdminFines() {
+  var stF=document.getElementById('aFineStatus').value;
+  var settings=getSettings();var cur=settings.currency||'₹';
+  var filtered=DB.fines.filter(function(f){return !stF||f.status===stF;});
+  filtered.sort(function(a,b){return(b.createdAt||'').localeCompare(a.createdAt||'');});
+  var tb=document.getElementById('aFineTb');
+  if(!filtered.length){tb.innerHTML='<tr><td colspan="7"><div class="tbl-empty"><i class="fas fa-coins"></i><p>No fine records.</p></div></td></tr>';return;}
+  var stm={unpaid:'b-err',paid:'b-ok',waived:'b-w'};
+  tb.innerHTML=filtered.map(function(f){
+    var b=DB.books.find(function(x){return x.id===f.bookId;});
+    var m=DB.members.find(function(x){return x.id===f.memberId;});
+    var acts='';
+    if(f.status==='unpaid')acts='<button class="btn btn-ok btn-sm" onclick="window._payFine(\''+f.id+'\')"><i class="fas fa-check"></i> Paid</button><button class="btn btn-w btn-sm" onclick="window._waiveFine(\''+f.id+'\')">Waive</button>';
+    return '<tr><td>'+esc(b?b.title:'Deleted')+'</td><td>'+esc(m?m.name:'Deleted')+'</td><td>'+f.daysOverdue+' days</td><td style="font-weight:700;color:var(--err)">'+cur+f.amount+'</td><td><span class="badge '+stm[f.status]+'">'+f.status.charAt(0).toUpperCase()+f.status.slice(1)+'</span></td><td style="font-size:12px;color:var(--muted)">'+fd(f.createdAt)+'</td><td><div class="act-btns">'+acts+'</div></td></tr>';
+  }).join('');
+}
+window._payFine=function(id){
+  var i=DB.fines.findIndex(function(f){return f.id===id;});if(i===-1)return;
+  var row=Object.assign({},DB.fines[i],{status:'paid'});
+  apiCall('updateFine',{row:row}).then(function(){DB.fines[i]=row;toast('Fine marked as paid');refreshAdminFines();refreshAdminTx();});
+};
+window._waiveFine=function(id){
+  var i=DB.fines.findIndex(function(f){return f.id===id;});if(i===-1)return;
+  var row=Object.assign({},DB.fines[i],{status:'waived'});
+  apiCall('updateFine',{row:row}).then(function(){DB.fines[i]=row;toast('Fine waived','i');refreshAdminFines();refreshAdminTx();});
+};
+document.getElementById('aFineStatus').addEventListener('change',refreshAdminFines);
+
+// ============================================================
+// SETTINGS
+// ============================================================
+function refreshSettings() {
+  var s=getSettings();var cur=s.currency||'₹';
+  document.getElementById('setCurrency').value=cur;
+  document.getElementById('setFinePerDay').value=s.finePerDay||0;
+  document.getElementById('setIssueDays').value=s.issueDays||14;
+  var totalFines=DB.fines;
+  var unpaid=totalFines.filter(function(f){return f.status==='unpaid';});
+  var collected=totalFines.filter(function(f){return f.status==='paid';});
+  var totalUnpaid=0;unpaid.forEach(function(f){totalUnpaid+=Number(f.amount)||0;});
+  var totalCollected=0;collected.forEach(function(f){totalCollected+=Number(f.amount)||0;});
+  document.getElementById('settingsDisplay').innerHTML='Currency: <strong style="color:var(--fg)">'+esc(cur)+'</strong><br>Fine per day: <strong style="color:var(--fg)">'+cur+(s.finePerDay||0)+'</strong><br>Issue period: <strong style="color:var(--fg)">'+(s.issueDays||14)+' days</strong><br><br>Total fines collected: <strong style="color:var(--ok)">'+cur+totalCollected+'</strong><br>Outstanding fines: <strong style="color:var(--err)">'+cur+totalUnpaid+'</strong> ('+unpaid.length+' records)';
+}
+document.getElementById('saveSettingsBtn').addEventListener('click',function(){
+  var s={currency:document.getElementById('setCurrency').value.trim()||'₹',finePerDay:parseInt(document.getElementById('setFinePerDay').value)||0,issueDays:parseInt(document.getElementById('setIssueDays').value)||14};
+  apiCall('saveSettings',{settings:s}).then(function(){DB.settings=s;toast('Settings saved');refreshSettings();});
+});
+
+// ============================================================
+// ADMIN DASHBOARD
+// ============================================================
+function refreshAdminDash() {
+  updateTxStatus();
+  var settings=getSettings();var cur=settings.currency||'₹';
+  var totalCopies=0;DB.books.forEach(function(b){totalCopies+=Number(b.totalCopies)||0;});
+  var issued=DB.tx.filter(function(t){return t.status==='issued'||t.status==='overdue';}).length;
+  var overdue=DB.tx.filter(function(t){return t.status==='overdue';}).length;
+  var unpaidFines=0;DB.fines.filter(function(f){return f.status==='unpaid';}).forEach(function(f){unpaidFines+=Number(f.amount)||0;});
+  document.getElementById('aStats').innerHTML=[
+    ['fas fa-book','Total Books',totalCopies],
+    ['fas fa-users','Members',DB.members.length],
+    ['fas fa-hand-holding','Currently Issued',issued],
+    ['fas fa-exclamation-triangle','Overdue',overdue],
+    ['fas fa-coins','Unpaid Fines',cur+unpaidFines]
+  ].map(function(s){return '<div class="stat-card"><div class="stat-icon"><i class="'+s[0]+'"></i></div><div class="stat-val">'+s[2]+'</div><div class="stat-lbl">'+s[1]+'</div></div>';}).join('');
+  var recent=DB.tx.slice().sort(function(a,b){return(b.issueDate||'').localeCompare(a.issueDate||'');}).slice(0,6);
+  var rd=document.getElementById('aRecentTx');
+  if(!recent.length){rd.innerHTML='<div class="tbl-empty"><i class="fas fa-inbox"></i><p>No transactions yet</p></div>';return;}
+  rd.innerHTML=recent.map(function(t){
+    var b=DB.books.find(function(x){return x.id===t.bookId;});
+    var m=DB.members.find(function(x){return x.id===t.memberId;});
+    var ibg,ic,ii;
+    if(t.status==='returned'){ibg='rgba(74,186,122,.12)';ic='var(--ok)';ii='fa-arrow-left';}
+    else if(t.status==='overdue'){ibg='rgba(217,79,79,.12)';ic='var(--err)';ii='fa-exclamation';}
+    else{ibg='rgba(74,154,186,.12)';ic='var(--info)';ii='fa-arrow-right';}
+    var bc={issued:'b-i',returned:'b-ok',overdue:'b-err'}[t.status]||'b-i';
+    return '<div class="recent-item"><div class="ri-icon" style="background:'+ibg+';color:'+ic+'"><i class="fas '+ii+'"></i></div><div class="ri-info"><div class="ri-title">'+esc(b?b.title:'Unknown')+'</div><div class="ri-sub">'+esc(m?m.name:'Unknown')+' · '+fd(t.issueDate)+'</div></div><span class="badge '+bc+'">'+t.status.charAt(0).toUpperCase()+t.status.slice(1)+'</span></div>';
+  }).join('');
+}
+
+function refreshAllAdmin(){
+  refreshAdminDash();refreshAdminBooks();refreshAdminMembers();
+  refreshAdminTx();refreshAdminClasses();refreshAdminFines();refreshSettings();
+}
+
+// ============================================================
+// STUDENT VIEWS
+// ============================================================
+function refreshStudentDash() {
+  if(!currentUser)return;
+  var myTx=DB.tx.filter(function(t){return t.memberId===currentUser.memberId;});
+  var issued=myTx.filter(function(t){return t.status==='issued'||t.status==='overdue';});
+  var overdue=myTx.filter(function(t){return t.status==='overdue';});
+  var myFines=DB.fines.filter(function(f){return f.memberId===currentUser.memberId;});
+  var settings=getSettings();var cur=settings.currency||'₹';
+  var unpaid=0;myFines.filter(function(f){return f.status==='unpaid';}).forEach(function(f){unpaid+=Number(f.amount)||0;});
+  document.getElementById('sStats').innerHTML=[
+    ['fas fa-book','Books Issued',issued.length],
+    ['fas fa-exclamation-triangle','Overdue',overdue.length],
+    ['fas fa-coins','Unpaid Fines',cur+unpaid]
+  ].map(function(s){return '<div class="stat-card"><div class="stat-icon"><i class="'+s[0]+'"></i></div><div class="stat-val">'+s[2]+'</div><div class="stat-lbl">'+s[1]+'</div></div>';}).join('');
+  var sm={issued:'b-i',returned:'b-ok',overdue:'b-err'};
+  var tb=document.getElementById('sIssuedTb');
+  if(!issued.length){tb.innerHTML='<tr><td colspan="4"><div class="tbl-empty"><i class="fas fa-book-open"></i><p>No books currently issued</p></div></td></tr>';return;}
+  tb.innerHTML=issued.map(function(t){
+    var b=DB.books.find(function(x){return x.id===t.bookId;});
+    return '<tr><td style="font-weight:500">'+esc(b?b.title:'Unknown')+'</td><td>'+fd(t.issueDate)+'</td><td>'+fd(t.dueDate)+'</td><td><span class="badge '+sm[t.status]+'">'+t.status.charAt(0).toUpperCase()+t.status.slice(1)+'</span></td></tr>';
+  }).join('');
+}
+function refreshStudentBooks() {
+  var search=document.getElementById('sBookSearch').value.toLowerCase();
+  var filtered=DB.books.filter(function(b){
+    return !search||(b.title||'').toLowerCase().indexOf(search)!==-1||(b.author||'').toLowerCase().indexOf(search)!==-1||(b.isbn||'').toLowerCase().indexOf(search)!==-1;
+  });
+  var tb=document.getElementById('sBookTb');
+  if(!filtered.length){tb.innerHTML='<tr><td colspan="4"><div class="tbl-empty"><i class="fas fa-search"></i><p>No books found</p></div></td></tr>';return;}
+  tb.innerHTML=filtered.map(function(b){
+    var av=Number(b.availableCopies)||0;
+    return '<tr><td style="font-weight:500">'+esc(b.title)+'</td><td>'+esc(b.author)+'</td><td>'+esc(b.category||'—')+'</td><td>'+(av>0?'<span class="badge b-ok">'+av+' available</span>':'<span class="badge b-err">Unavailable</span>')+'</td></tr>';
+  }).join('');
+}
+function refreshStudentFines() {
+  if(!currentUser)return;
+  var myFines=DB.fines.filter(function(f){return f.memberId===currentUser.memberId;});
+  var settings=getSettings();var cur=settings.currency||'₹';
+  var tb=document.getElementById('sFineTb');
+  if(!myFines.length){tb.innerHTML='<tr><td colspan="5"><div class="tbl-empty"><i class="fas fa-smile"></i><p>No fines — great!</p></div></td></tr>';return;}
+  var stm={unpaid:'b-err',paid:'b-ok',waived:'b-w'};
+  tb.innerHTML=myFines.map(function(f){
+    var b=DB.books.find(function(x){return x.id===f.bookId;});
+    return '<tr><td>'+esc(b?b.title:'Unknown')+'</td><td>'+f.daysOverdue+' days</td><td style="font-weight:700;color:var(--err)">'+cur+f.amount+'</td><td><span class="badge '+stm[f.status]+'">'+f.status.charAt(0).toUpperCase()+f.status.slice(1)+'</span></td><td style="font-size:12px;color:var(--muted)">'+fd(f.createdAt)+'</td></tr>';
+  }).join('');
+}
+document.getElementById('sBookSearch').addEventListener('input',refreshStudentBooks);
+
+// ============================================================
+// EXPORT / IMPORT
+// ============================================================
+function dlCSV(fname, cols, rows) {
+  var lines=[cols.join(',')].concat(rows.map(function(r){return cols.map(function(c){var v=r[c]||'';return '"'+String(v).replace(/"/g,'""')+'"';}).join(',');}));
+  var a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(lines.join('\n'));
+  a.download=fname;a.click();
+}
+document.getElementById('aExportBtn').addEventListener('click',function(){
+  var ts=new Date().toISOString().replace(/[:.]/g,'-').slice(0,19);
+  dlCSV('books_'+ts+'.csv',['id','title','author','isbn','category','totalCopies','availableCopies','addedDate'],DB.books);
+  setTimeout(function(){dlCSV('members_'+ts+'.csv',['id','name','classId','rollNo','phone','email','addedDate'],DB.members);},400);
+  setTimeout(function(){dlCSV('transactions_'+ts+'.csv',['id','bookId','memberId','issueDate','dueDate','returnDate','status','fineAmount','fineStatus'],DB.tx);},800);
+  setTimeout(function(){dlCSV('fines_'+ts+'.csv',['id','txId','bookId','memberId','daysOverdue','amount','currency','status','createdAt'],DB.fines);},1200);
+  setTimeout(function(){dlCSV('classes_'+ts+'.csv',['id','name'],DB.classes);},1600);
+  toast('Exporting CSV files…','i');
+});
+document.getElementById('aExportJsonBtn').addEventListener('click',function(){
+  var data={ts:new Date().toISOString(),books:DB.books,members:DB.members,tx:DB.tx,fines:DB.fines,classes:DB.classes,settings:DB.settings};
+  var a=document.createElement('a');
+  a.href='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(data,null,2));
+  a.download='alees_backup_'+new Date().toISOString().replace(/[:.]/g,'-').slice(0,19)+'.json';
+  a.click();toast('JSON backup downloaded','ok');
+});
+document.getElementById('aImportBtn').addEventListener('click',function(){ document.getElementById('restoreFileInput').click(); });
+document.getElementById('restoreFileInput').addEventListener('change',function(e){
+  var f=e.target.files[0];if(!f)return;
+  var r=new FileReader();
+  r.onload=function(ev){
+    try{
+      var data=JSON.parse(ev.target.result);
+      showConfirm('Restore Backup','This will <strong>replace all current data</strong>. Are you sure?',function(){
+        // Push each entity
+        var calls=[];
+        (data.books||[]).forEach(function(row){calls.push(apiCall('addBook',{row:row},true));});
+        (data.members||[]).forEach(function(row){calls.push(apiCall('addMember',{row:row},true));});
+        (data.classes||[]).forEach(function(row){calls.push(apiCall('addClass',{row:row},true));});
+        (data.tx||[]).forEach(function(row){calls.push(apiCall('addTx',{row:row},true));});
+        (data.fines||[]).forEach(function(row){calls.push(apiCall('addFine',{row:row},true));});
+        if(data.settings) calls.push(apiCall('saveSettings',{settings:data.settings},true));
+        Promise.all(calls).then(function(){
+          return loadAll();
+        }).then(function(){
+          refreshAllAdmin();toast('Data restored from JSON backup');
+        });
+      });
+    }catch(err){toast('Invalid JSON file','err');}
+  };
+  r.readAsText(f);
+  e.target.value='';
+});
+document.getElementById('aClearBtn').addEventListener('click',function(){
+  showConfirm('Clear All Data','<strong>Permanently delete</strong> all data from Google Sheets? Export a backup first!',function(){
+    // We can't bulk-delete easily, so we load and delete each row
+    toast('Clearing data…','i');
+    var calls=[];
+    DB.books.forEach(function(r){calls.push(apiCall('deleteBook',{id:r.id},true));});
+    DB.members.forEach(function(r){calls.push(apiCall('deleteMember',{id:r.id},true));});
+    DB.classes.forEach(function(r){calls.push(apiCall('deleteClass',{id:r.id},true));});
+    DB.tx.forEach(function(r){calls.push(apiCall('deleteTx',{id:r.id},true));});
+    DB.fines.forEach(function(r){calls.push(apiCall('deleteFine',{id:r.id},true));});
+    Promise.all(calls).then(function(){
+      DB={books:[],members:[],tx:[],classes:[],fines:[],settings:{}};
+      refreshAllAdmin();toast('All data cleared','i');
+    });
+  });
+});
+
+// ============================================================
+// STARTUP
+// ============================================================
+window.addEventListener('DOMContentLoaded', function() {
+  var url = getApiUrl();
+  if (!url) {
+    showSetup();
+    return;
+  }
+  document.getElementById('loadingMsg').textContent = 'Connecting to Google Sheets…';
+  fetch(url).then(function(r){ return r.json(); }).then(function(d) {
+    if (d.ok) showLogin();
+    else showSetup();
+  }).catch(function() { showSetup(); });
+});
+</script>
+</body>
+</html>
