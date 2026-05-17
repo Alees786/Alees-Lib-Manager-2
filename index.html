@@ -114,7 +114,6 @@
   .fi-detail{font-size:13px;color:var(--muted)}
   .fi-amount{color:var(--err);font-weight:700}
   .hidden{display:none!important}
-  /* Login */
   .login-page{position:fixed;top:0;left:0;width:100%;height:100%;z-index:500;display:flex;align-items:center;justify-content:center;background:var(--bg);padding:20px}
   .login-page::before{content:'';position:absolute;top:50%;left:50%;width:600px;height:600px;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(212,162,78,.06) 0%,transparent 70%);pointer-events:none}
   .login-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:36px;width:100%;max-width:400px;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.4)}
@@ -126,21 +125,15 @@
   .login-tab.active{background:var(--accent);color:#1a1a0e}
   .login-err{color:var(--err);font-size:13px;margin-bottom:12px;text-align:center;display:none}
   .login-hint{text-align:center;font-size:11px;color:var(--muted);margin-top:16px;opacity:.7}
-  /* Config banner */
-  .config-banner{background:rgba(212,162,78,.1);border:1px solid rgba(212,162,78,.3);border-radius:10px;padding:14px 18px;margin-bottom:20px;font-size:13px;color:var(--accent);display:flex;align-items:flex-start;gap:10px}
-  .config-banner i{margin-top:2px;flex-shrink:0}
-  /* Loading overlay */
   .loading-overlay{position:fixed;inset:0;background:var(--bg);z-index:600;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
   .spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
   @keyframes spin{to{transform:rotate(360deg)}}
-  /* Backup cards */
   .backup-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-bottom:28px}
   .backup-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:24px;text-align:center;transition:border-color .2s,transform .2s}
   .backup-card:hover{border-color:var(--accent);transform:translateY(-2px)}
   .backup-card i{font-size:32px;margin-bottom:14px}
   .backup-card h3{font-size:16px;margin-bottom:6px}
   .backup-card p{font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.5}
-  /* Mobile */
   @media(max-width:768px){
     .sidebar{transform:translateX(-100%)}
     .sidebar.open{transform:none}
@@ -158,25 +151,7 @@
 <!-- ===== LOADING ===== -->
 <div class="loading-overlay" id="loadingOverlay">
   <div class="spinner"></div>
-  <div style="color:var(--muted);font-size:14px" id="loadingMsg">Connecting to server...</div>
-</div>
-
-<!-- ===== SETUP SCREEN ===== -->
-<div class="login-page hidden" id="setupPage">
-  <div class="login-card" style="max-width:500px">
-    <div class="login-brand">
-      <h1>⚙️ Setup Required</h1>
-      <p>Configure your Google Sheets backend</p>
-    </div>
-    <div class="config-banner"><i class="fas fa-info-circle"></i><div>Paste the URL of your deployed Google Apps Script Web App. See <code>README.md</code> for setup instructions.</div></div>
-    <div class="fg">
-      <label class="fl">Apps Script Web App URL</label>
-      <input class="fi" id="setupUrl" placeholder="https://script.google.com/macros/s/YOUR_ID/exec">
-      <div class="fe" id="setupErr">Please enter a valid URL</div>
-    </div>
-    <button class="btn btn-p" style="width:100%;justify-content:center;padding:12px" id="setupSaveBtn"><i class="fas fa-save"></i> Save & Connect</button>
-    <p class="login-hint">This URL is stored locally in your browser only</p>
-  </div>
+  <div style="color:var(--muted);font-size:14px" id="loadingMsg">Connecting to Alees Server...</div>
 </div>
 
 <!-- ===== LOGIN ===== -->
@@ -195,12 +170,11 @@
       <div class="fg"><label class="fl">Password</label><input class="fi" type="password" id="loginPass" placeholder="Enter password"></div>
     </div>
     <div id="studentForm" class="hidden">
-      <div class="fg"><label class="fl">Admission Number</label><input class="fi" id="loginRoll" placeholder="Enter your admission Number"></div>
+      <div class="fg"><label class="fl">Admission Number</label><input class="fi" id="loginRoll" placeholder="Enter your Admission Number"></div>
     </div>
     <div class="login-err" id="loginErr"></div>
     <button class="btn btn-p" style="width:100%;justify-content:center;padding:12px" id="loginBtn"><i class="fas fa-sign-in-alt"></i> Sign In</button>
     <p class="login-hint">Created by Alees | Nusrath Secondary School</p>
-    <p style="text-align:center;margin-top:8px;font-size:11px;color:var(--border)"><a href="#" id="changeUrlLink" style="color:var(--border);text-decoration:none">⚙ Change server URL</a></p>
   </div>
 </div>
 
@@ -274,7 +248,7 @@
           <button class="btn btn-p" id="aAddMem"><i class="fas fa-user-plus"></i> Add Member</button>
         </div>
         <div class="filters">
-          <input class="fi fi-search" id="aMemSearch" placeholder="Search name, roll…">
+          <input class="fi fi-search" id="aMemSearch" placeholder="Search name, admission no…">
           <select class="fi fi-sel" id="aMemClass"><option value="">All Classes</option></select>
         </div>
         <div class="tbl-wrap">
@@ -338,11 +312,6 @@
           <h3><i class="fas fa-info-circle"></i> Current Summary</h3>
           <div id="settingsDisplay" style="font-size:13px;color:var(--muted);line-height:2"></div>
         </div>
-        <div class="settings-card">
-          <h3><i class="fas fa-server"></i> Backend Connection</h3>
-          <div style="font-size:13px;color:var(--muted);margin-bottom:12px">Connected to: <span id="connectedUrl" style="color:var(--fg);word-break:break-all"></span></div>
-          <button class="btn btn-i btn-sm" id="changeUrlBtn"><i class="fas fa-edit"></i> Change Server URL</button>
-        </div>
       </div>
 
       <!-- EXPORT/IMPORT -->
@@ -355,9 +324,9 @@
         </div>
       </div>
 
-    </div><!-- page-content -->
-  </div><!-- main -->
-</div><!-- adminUI -->
+    </div>
+  </div>
+</div>
 
 <!-- ===== STUDENT UI ===== -->
 <div class="hidden" id="studentUI">
@@ -401,7 +370,6 @@
 </div>
 
 <!-- ===== MODALS ===== -->
-<!-- Book Modal -->
 <div class="modal-overlay hidden" id="bookModal">
   <div class="modal">
     <div class="modal-hdr"><h3 id="bookModalT">Add Book</h3><button class="modal-close" onclick="closeM('bookModal')"><i class="fas fa-times"></i></button></div>
@@ -417,7 +385,6 @@
   </div>
 </div>
 
-<!-- Member Modal -->
 <div class="modal-overlay hidden" id="memModal">
   <div class="modal">
     <div class="modal-hdr"><h3 id="memModalT">Add Member</h3><button class="modal-close" onclick="closeM('memModal')"><i class="fas fa-times"></i></button></div>
@@ -425,7 +392,7 @@
       <input type="hidden" id="memEditId">
       <div class="fg"><label class="fl">Full Name *</label><input class="fi" id="memName" placeholder="Student name"><div class="fe" id="memNameE">Required</div></div>
       <div class="fg"><label class="fl">Class *</label><select class="fi" id="memClass"><option value="">Choose class</option></select><div class="fe" id="memClassE">Required</div></div>
-      <div class="fg"><label class="fl">Admission Number *</label><input class="fi" id="memRoll" placeholder="Roll number"><div class="fe" id="memRollE">Required</div></div>
+      <div class="fg"><label class="fl">Admission Number *</label><input class="fi" id="memRoll" placeholder="Admission number"><div class="fe" id="memRollE">Required</div></div>
       <div class="fg"><label class="fl">Phone</label><input class="fi" id="memPhone" placeholder="Contact number"></div>
       <div class="fg"><label class="fl">Email</label><input class="fi" id="memEmail" placeholder="Email address"></div>
     </div>
@@ -433,7 +400,6 @@
   </div>
 </div>
 
-<!-- Class Modal -->
 <div class="modal-overlay hidden" id="classModal">
   <div class="modal" style="max-width:380px">
     <div class="modal-hdr"><h3 id="classModalT">Add Class</h3><button class="modal-close" onclick="closeM('classModal')"><i class="fas fa-times"></i></button></div>
@@ -445,7 +411,6 @@
   </div>
 </div>
 
-<!-- Issue Modal -->
 <div class="modal-overlay hidden" id="issueModal">
   <div class="modal">
     <div class="modal-hdr"><h3>Issue Book</h3><button class="modal-close" onclick="closeM('issueModal')"><i class="fas fa-times"></i></button></div>
@@ -460,7 +425,6 @@
   </div>
 </div>
 
-<!-- Return Modal -->
 <div class="modal-overlay hidden" id="returnModal">
   <div class="modal">
     <div class="modal-hdr"><h3>Return Book</h3><button class="modal-close" onclick="closeM('returnModal')"><i class="fas fa-times"></i></button></div>
@@ -473,7 +437,6 @@
   </div>
 </div>
 
-<!-- Confirm -->
 <div class="confirm-overlay hidden" id="confirmOverlay">
   <div class="confirm-box">
     <h3 id="confirmTitle"></h3>
@@ -485,47 +448,39 @@
   </div>
 </div>
 
-<!-- Toasts -->
 <div class="toast-wrap" id="toastWrap"></div>
 
 <script>
 // ============================================================
-// CONFIGURATION
+// CONFIGURATION — API URL hardcoded, no setup screen needed
 // ============================================================
-var API_URL_KEY = 'alees_api_url';
-var TOKEN_KEY   = 'alees_token';
-var ROLE_KEY    = 'alees_role';
+var API_URL   = 'https://script.google.com/macros/s/AKfycbwAhYJ4HU-XetUFp6M9ZxtGnhWBbAQl6Ka6Yap9eu_FcqkP9qfGFMP9AvO78W-NZ2o_9A/exec';
+var TOKEN_KEY = 'alees_token';
 
-function getApiUrl() { return localStorage.getItem(API_URL_KEY) || ''; }
-function setApiUrl(u) { localStorage.setItem(API_URL_KEY, u); }
 function getToken() { return localStorage.getItem(TOKEN_KEY) || ''; }
 function setToken(t) { localStorage.setItem(TOKEN_KEY, t); }
-function clearAuth() { localStorage.removeItem(TOKEN_KEY); localStorage.removeItem(ROLE_KEY); }
+function clearAuth() { localStorage.removeItem(TOKEN_KEY); }
 
 // ============================================================
-// IN-MEMORY DATA CACHE
+// DATA CACHE
 // ============================================================
 var DB = { books:[], members:[], tx:[], classes:[], fines:[], settings:{} };
 var currentUser = null;
 
 // ============================================================
-// API HELPERS
+// API — no Content-Type header (Google Apps Script CORS fix)
 // ============================================================
 function apiCall(action, payload, silent) {
   payload = payload || {};
   payload.token = getToken();
   setSyncing(true);
-  // Google Apps Script CORS fix: must NOT set Content-Type header.
-  // Send JSON as plain text body — Apps Script reads e.postData.contents fine.
-  return fetch(getApiUrl(), {
+  return fetch(API_URL, {
     method: 'POST',
     body: JSON.stringify({ action: action, payload: payload })
   })
   .then(function(r) { return r.text(); })
   .then(function(txt) {
-    // Strip any BOM / JSONP wrapper Apps Script sometimes adds
-    var clean = txt.replace(/^\)\]\}\'/, '').trim();
-    var d = JSON.parse(clean);
+    var d = JSON.parse(txt.replace(/^\)\]\}'/, '').trim());
     setSyncing(false);
     if (!d.ok) throw new Error(d.error || 'API error');
     return d;
@@ -566,9 +521,17 @@ function setSyncing(on, err) {
 // ============================================================
 function gid() { return 'id_' + Math.random().toString(36).substr(2,9) + '_' + Date.now(); }
 function td()  { return new Date().toISOString().split('T')[0]; }
-function fd(d) { /* overridden below */ }
 function esc(s){ if(!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function ad(d, n) { var dt=new Date(d+'T00:00:00'); dt.setDate(dt.getDate()+n); return dt.toISOString().split('T')[0]; }
+
+// Date formatter — handles both "YYYY-MM-DD" and full ISO "2026-05-15T18:30:00.000Z"
+function fd(d) {
+  if (!d) return '—';
+  var dateOnly = String(d).split('T')[0];
+  var p = dateOnly.split('-');
+  if (p.length !== 3 || !p[0]) return String(d);
+  return p[2] + '/' + p[1] + '/' + p[0]; // DD/MM/YYYY
+}
 
 function openM(id) { document.getElementById(id).classList.remove('hidden'); }
 function closeM(id) { document.getElementById(id).classList.add('hidden'); }
@@ -592,11 +555,9 @@ function showConfirm(title, msg, cb) {
   openM('confirmOverlay');
 }
 document.getElementById('confirmYes').addEventListener('click', function(){ closeM('confirmOverlay'); if(_confirmCb) _confirmCb(); });
-document.getElementById('confirmNo').addEventListener('click', function(){ closeM('confirmOverlay'); });
+document.getElementById('confirmNo').addEventListener('click',  function(){ closeM('confirmOverlay'); });
 
-function getSettings() {
-  return DB.settings || { currency:'₹', finePerDay:2, issueDays:14 };
-}
+function getSettings() { return DB.settings || { currency:'₹', finePerDay:2, issueDays:14 }; }
 
 function updateTxStatus() {
   var today = td();
@@ -606,67 +567,22 @@ function updateTxStatus() {
 }
 
 // ============================================================
-// DATE FORMAT — handles both YYYY-MM-DD and full ISO timestamps
+// LOGIN
 // ============================================================
-function fd(d) {
-  if (!d) return '—';
-  // Strip time component: "2026-05-15T18:30:00.000Z" → "2026-05-15"
-  var dateOnly = String(d).split('T')[0];
-  var p = dateOnly.split('-');
-  if (p.length !== 3 || !p[0]) return String(d);
-  return p[2] + '/' + p[1] + '/' + p[0]; // DD/MM/YYYY
-}
-
-// ============================================================
-// SETUP & LOGIN FLOW
-// ============================================================
-function showSetup() {
-  document.getElementById('loadingOverlay').classList.add('hidden');
-  document.getElementById('setupPage').classList.remove('hidden');
-}
 function showLogin() {
   document.getElementById('loadingOverlay').classList.add('hidden');
-  document.getElementById('setupPage').classList.add('hidden');
   document.getElementById('loginPage').classList.remove('hidden');
 }
-function hideLogin() {
-  document.getElementById('loginPage').classList.add('hidden');
-}
+function hideLogin() { document.getElementById('loginPage').classList.add('hidden'); }
 
-document.getElementById('setupSaveBtn').addEventListener('click', function() {
-  var url = document.getElementById('setupUrl').value.trim();
-  if (!url || !url.startsWith('https://')) {
-    document.getElementById('setupErr').style.display = 'block'; return;
-  }
-  setApiUrl(url);
-  document.getElementById('setupPage').classList.add('hidden');
-  document.getElementById('loadingOverlay').classList.remove('hidden');
-  document.getElementById('loadingMsg').textContent = 'Testing connection…';
-  fetch(url).then(function(r){ return r.json(); }).then(function(d) {
-    if (d.ok) showLogin();
-    else showSetup();
-  }).catch(function() { showSetup(); toast('Could not connect to that URL','err'); });
-});
-
-document.getElementById('changeUrlLink').addEventListener('click', function(e) {
-  e.preventDefault(); hideLogin(); showSetup();
-});
-document.getElementById('changeUrlBtn').addEventListener('click', function() { hideLogin(); showSetup(); });
-
-// Login tabs
 var loginRole = 'admin';
 document.querySelectorAll('.login-tab').forEach(function(tab) {
   tab.addEventListener('click', function() {
     document.querySelectorAll('.login-tab').forEach(function(t){ t.classList.remove('active'); });
     this.classList.add('active');
     loginRole = this.dataset.role;
-    if (loginRole === 'admin') {
-      document.getElementById('adminForm').classList.remove('hidden');
-      document.getElementById('studentForm').classList.add('hidden');
-    } else {
-      document.getElementById('studentForm').classList.remove('hidden');
-      document.getElementById('adminForm').classList.add('hidden');
-    }
+    document.getElementById('adminForm').classList.toggle('hidden', loginRole !== 'admin');
+    document.getElementById('studentForm').classList.toggle('hidden', loginRole !== 'student');
     document.getElementById('loginErr').style.display = 'none';
   });
 });
@@ -685,24 +601,22 @@ function doLogin() {
   } else {
     payload.rollNo = document.getElementById('loginRoll').value.trim();
   }
-  document.getElementById('loginBtn').disabled = true;
-  document.getElementById('loginBtn').textContent = 'Signing in…';
+  var btn = document.getElementById('loginBtn');
+  btn.disabled = true; btn.textContent = 'Signing in…';
   apiCall('login', payload, true)
     .then(function(d) {
-      document.getElementById('loginBtn').disabled = false;
-      document.getElementById('loginBtn').innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
+      btn.disabled = false; btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
       setToken(d.token);
       if (d.role === 'admin') {
         currentUser = { role:'admin' };
         enterAdmin();
       } else {
-        currentUser = { role:'student', memberId: d.member.id, name: d.member.name, rollNo: d.member.rollNo, cls: d.member.classId };
+        currentUser = { role:'student', memberId:d.member.id, name:d.member.name, rollNo:d.member.rollNo, cls:d.member.classId };
         enterStudent();
       }
     })
     .catch(function(err) {
-      document.getElementById('loginBtn').disabled = false;
-      document.getElementById('loginBtn').innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
+      btn.disabled = false; btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
       errEl.textContent = err.message || 'Login failed';
       errEl.style.display = 'block';
     });
@@ -712,11 +626,7 @@ function enterAdmin() {
   hideLogin();
   document.getElementById('adminUI').classList.remove('hidden');
   document.getElementById('studentUI').classList.add('hidden');
-  document.getElementById('connectedUrl').textContent = getApiUrl();
-  loadAll().then(function() {
-    adminNav('a-dash');
-    refreshAllAdmin();
-  });
+  loadAll().then(function() { adminNav('a-dash'); refreshAllAdmin(); });
 }
 
 function enterStudent() {
@@ -724,15 +634,11 @@ function enterStudent() {
   document.getElementById('studentUI').classList.remove('hidden');
   document.getElementById('adminUI').classList.add('hidden');
   document.getElementById('sRoleTag').textContent = currentUser.name;
-  loadAll().then(function() {
-    studentNav('s-dash');
-    refreshStudentDash();
-  });
+  loadAll().then(function() { studentNav('s-dash'); refreshStudentDash(); });
 }
 
 function doLogout() {
-  clearAuth();
-  currentUser = null;
+  clearAuth(); currentUser = null;
   document.getElementById('loginPage').classList.remove('hidden');
   document.getElementById('adminUI').classList.add('hidden');
   document.getElementById('studentUI').classList.add('hidden');
@@ -745,15 +651,14 @@ document.getElementById('aLogout').addEventListener('click', doLogout);
 document.getElementById('sLogout').addEventListener('click', doLogout);
 
 // ============================================================
-// NAV
+// NAVIGATION
 // ============================================================
 function adminNav(pg) {
   var titles = {'a-dash':'Dashboard','a-books':'Book Collection','a-members':'Library Members','a-tx':'Transactions','a-classes':'Manage Classes','a-fines':'Fine Records','a-settings':'Settings','a-backup':'Export / Import'};
   document.getElementById('aTopTitle').textContent = titles[pg] || pg;
   document.querySelectorAll('#adminSidebar .nav-item').forEach(function(n){ n.classList.remove('active'); if(n.dataset.page===pg) n.classList.add('active'); });
   document.querySelectorAll('#adminUI .page').forEach(function(p){ p.classList.remove('active'); });
-  var el = document.getElementById('page-'+pg);
-  if(el) el.classList.add('active');
+  var el = document.getElementById('page-'+pg); if(el) el.classList.add('active');
   if(pg==='a-dash')    refreshAdminDash();
   if(pg==='a-books')   refreshAdminBooks();
   if(pg==='a-members') refreshAdminMembers();
@@ -776,8 +681,7 @@ function studentNav(pg) {
   document.getElementById('sTopTitle').textContent = titles[pg] || pg;
   document.querySelectorAll('#studentSidebar .nav-item').forEach(function(n){ n.classList.remove('active'); if(n.dataset.page===pg) n.classList.add('active'); });
   document.querySelectorAll('#studentUI .page').forEach(function(p){ p.classList.remove('active'); });
-  var el = document.getElementById('page-'+pg);
-  if(el) el.classList.add('active');
+  var el = document.getElementById('page-'+pg); if(el) el.classList.add('active');
   if(pg==='s-dash')  refreshStudentDash();
   if(pg==='s-books') refreshStudentBooks();
   if(pg==='s-fines') refreshStudentFines();
@@ -796,55 +700,36 @@ function buildClassOptions(selected) {
   DB.classes.forEach(function(c){ html += '<option value="'+c.id+'"'+(c.id===selected?' selected':'')+'>'+esc(c.name)+'</option>'; });
   return html;
 }
-
 function refreshAdminClasses() {
   var tb = document.getElementById('aClassTb');
-  var html = '';
   if (!DB.classes.length) { tb.innerHTML='<tr><td colspan="3"><div class="tbl-empty"><i class="fas fa-chalkboard"></i><p>No classes yet.</p></div></td></tr>'; return; }
-  DB.classes.forEach(function(c) {
+  tb.innerHTML = DB.classes.map(function(c) {
     var cnt = DB.members.filter(function(m){ return m.classId===c.id; }).length;
-    html += '<tr><td style="font-weight:600">'+esc(c.name)+'</td><td>'+cnt+'</td><td><div class="act-btns"><button class="btn btn-i btn-icon btn-sm" onclick="window._ec(\''+c.id+'\')"><i class="fas fa-edit"></i></button><button class="btn btn-d btn-icon btn-sm" onclick="window._dc(\''+c.id+'\')"><i class="fas fa-trash"></i></button></div></td></tr>';
-  });
-  tb.innerHTML = html;
+    return '<tr><td style="font-weight:600">'+esc(c.name)+'</td><td>'+cnt+'</td><td><div class="act-btns"><button class="btn btn-i btn-icon btn-sm" onclick="window._ec(\''+c.id+'\')"><i class="fas fa-edit"></i></button><button class="btn btn-d btn-icon btn-sm" onclick="window._dc(\''+c.id+'\')"><i class="fas fa-trash"></i></button></div></td></tr>';
+  }).join('');
 }
-
 window._ec = function(id) {
-  var c = DB.classes.find(function(x){ return x.id===id; });
-  if (!c) return;
-  document.getElementById('classEditId').value = id;
-  document.getElementById('classModalT').textContent = 'Edit Class';
-  document.getElementById('className').value = c.name;
-  openM('classModal');
+  var c = DB.classes.find(function(x){ return x.id===id; }); if (!c) return;
+  document.getElementById('classEditId').value=id; document.getElementById('classModalT').textContent='Edit Class'; document.getElementById('className').value=c.name; openM('classModal');
 };
 window._dc = function(id) {
-  var c = DB.classes.find(function(x){ return x.id===id; });
-  if (!c) return;
-  var inUse = DB.members.some(function(m){ return m.classId===id; });
-  if (inUse) { toast('Cannot delete: class has members','err'); return; }
+  var c = DB.classes.find(function(x){ return x.id===id; }); if (!c) return;
+  if (DB.members.some(function(m){ return m.classId===id; })) { toast('Cannot delete: class has members','err'); return; }
   showConfirm('Delete Class','Delete <strong>"'+esc(c.name)+'"</strong>?', function() {
-    apiCall('deleteClass', { id: id }).then(function() {
-      DB.classes = DB.classes.filter(function(x){ return x.id!==id; });
-      toast('Class deleted','i'); refreshAdminClasses(); refreshAdminMembers();
-    });
+    apiCall('deleteClass',{id:id}).then(function(){ DB.classes=DB.classes.filter(function(x){return x.id!==id;}); toast('Class deleted','i'); refreshAdminClasses(); refreshAdminMembers(); });
   });
 };
 document.getElementById('aAddClass').addEventListener('click', function() {
-  document.getElementById('classEditId').value='';
-  document.getElementById('classModalT').textContent='Add Class';
-  document.getElementById('className').value='';
-  document.getElementById('classNameE').style.display='none';
-  openM('classModal');
+  document.getElementById('classEditId').value=''; document.getElementById('classModalT').textContent='Add Class'; document.getElementById('className').value=''; document.getElementById('classNameE').style.display='none'; openM('classModal');
 });
 document.getElementById('saveClassBtn').addEventListener('click', function() {
-  var name = document.getElementById('className').value.trim();
+  var name=document.getElementById('className').value.trim();
   if (!name) { document.getElementById('classNameE').style.display='block'; return; }
   document.getElementById('classNameE').style.display='none';
-  var eid = document.getElementById('classEditId').value;
-  var row = { id: eid||gid(), name: name };
-  var action = eid ? 'updateClass' : 'addClass';
-  apiCall(action, { row: row }).then(function() {
-    if (eid) { var i = DB.classes.findIndex(function(x){ return x.id===eid; }); if(i!==-1) DB.classes[i]=row; }
-    else DB.classes.push(row);
+  var eid=document.getElementById('classEditId').value;
+  var row={id:eid||gid(),name:name};
+  apiCall(eid?'updateClass':'addClass',{row:row}).then(function(){
+    if(eid){var i=DB.classes.findIndex(function(x){return x.id===eid;});if(i!==-1)DB.classes[i]=row;}else DB.classes.push(row);
     closeM('classModal'); toast('Class saved'); refreshAdminClasses(); refreshAdminMembers();
   });
 });
@@ -853,96 +738,70 @@ document.getElementById('saveClassBtn').addEventListener('click', function() {
 // BOOKS
 // ============================================================
 function refreshAdminBooks() {
-  var search = document.getElementById('aBookSearch').value.toLowerCase();
-  var catF = document.getElementById('aBookCat').value;
-  // Rebuild category filter
-  var cats = [...new Set(DB.books.map(function(b){ return b.category||''; }).filter(Boolean))];
-  var catSel = document.getElementById('aBookCat');
-  var curCat = catSel.value;
-  catSel.innerHTML = '<option value="">All Categories</option>' + cats.map(function(c){ return '<option value="'+esc(c)+'"'+(c===curCat?' selected':'')+'>'+esc(c)+'</option>'; }).join('');
-  var filtered = DB.books.filter(function(b) {
-    var ms = !search || (b.title||'').toLowerCase().indexOf(search)!==-1 || (b.author||'').toLowerCase().indexOf(search)!==-1 || (b.isbn||'').toLowerCase().indexOf(search)!==-1;
-    var mc = !catF || b.category===catF;
-    return ms && mc;
+  var search=document.getElementById('aBookSearch').value.toLowerCase();
+  var catSel=document.getElementById('aBookCat'); var curCat=catSel.value;
+  var cats=[...new Set(DB.books.map(function(b){return b.category||'';}).filter(Boolean))];
+  catSel.innerHTML='<option value="">All Categories</option>'+cats.map(function(c){return '<option value="'+esc(c)+'"'+(c===curCat?' selected':'')+'>'+esc(c)+'</option>';}).join('');
+  var filtered=DB.books.filter(function(b){
+    var ms=!search||(b.title||'').toLowerCase().indexOf(search)!==-1||(b.author||'').toLowerCase().indexOf(search)!==-1||(b.isbn||'').toLowerCase().indexOf(search)!==-1;
+    return ms&&(!curCat||b.category===curCat);
   });
-  var tb = document.getElementById('aBookTb');
-  if (!filtered.length) { tb.innerHTML='<tr><td colspan="7"><div class="tbl-empty"><i class="fas fa-book"></i><p>No books found.</p></div></td></tr>'; return; }
-  tb.innerHTML = filtered.map(function(b) {
-    var avail = b.availableCopies > 0 ? '<span style="color:var(--ok);font-weight:600">'+b.availableCopies+'</span>' : '<span style="color:var(--err);font-weight:600">0</span>';
-    return '<tr><td style="font-weight:500">'+esc(b.title)+'</td><td>'+esc(b.author)+'</td><td style="color:var(--muted);font-size:12px">'+esc(b.isbn||'—')+'</td><td>'+esc(b.category||'—')+'</td><td>'+b.totalCopies+'</td><td>'+avail+'</td><td><div class="act-btns"><button class="btn btn-i btn-icon btn-sm" onclick="window._eb(\''+b.id+'\')"><i class="fas fa-edit"></i></button><button class="btn btn-d btn-icon btn-sm" onclick="window._db(\''+b.id+'\')"><i class="fas fa-trash"></i></button></div></td></tr>';
+  var tb=document.getElementById('aBookTb');
+  if(!filtered.length){tb.innerHTML='<tr><td colspan="7"><div class="tbl-empty"><i class="fas fa-book"></i><p>No books found.</p></div></td></tr>';return;}
+  tb.innerHTML=filtered.map(function(b){
+    var av=b.availableCopies>0?'<span style="color:var(--ok);font-weight:600">'+b.availableCopies+'</span>':'<span style="color:var(--err);font-weight:600">0</span>';
+    return '<tr><td style="font-weight:500">'+esc(b.title)+'</td><td>'+esc(b.author)+'</td><td style="color:var(--muted);font-size:12px">'+esc(b.isbn||'—')+'</td><td>'+esc(b.category||'—')+'</td><td>'+b.totalCopies+'</td><td>'+av+'</td><td><div class="act-btns"><button class="btn btn-i btn-icon btn-sm" onclick="window._eb(\''+b.id+'\')"><i class="fas fa-edit"></i></button><button class="btn btn-d btn-icon btn-sm" onclick="window._db(\''+b.id+'\')"><i class="fas fa-trash"></i></button></div></td></tr>';
   }).join('');
 }
-
-window._eb = function(id) {
-  var b = DB.books.find(function(x){ return x.id===id; });
-  if (!b) return;
-  document.getElementById('bookEditId').value = id;
-  document.getElementById('bookModalT').textContent = 'Edit Book';
-  document.getElementById('bookTitle').value = b.title;
-  document.getElementById('bookAuthor').value = b.author;
-  document.getElementById('bookISBN').value = b.isbn||'';
-  document.getElementById('bookCat').value = b.category||'';
-  document.getElementById('bookCopies').value = b.totalCopies;
-  openM('bookModal');
+window._eb=function(id){
+  var b=DB.books.find(function(x){return x.id===id;});if(!b)return;
+  document.getElementById('bookEditId').value=id; document.getElementById('bookModalT').textContent='Edit Book';
+  document.getElementById('bookTitle').value=b.title; document.getElementById('bookAuthor').value=b.author;
+  document.getElementById('bookISBN').value=b.isbn||''; document.getElementById('bookCat').value=b.category||'';
+  document.getElementById('bookCopies').value=b.totalCopies; openM('bookModal');
 };
-window._db = function(id) {
-  var b = DB.books.find(function(x){ return x.id===id; });
-  if (!b) return;
-  var hasIssued = DB.tx.some(function(t){ return t.bookId===id&&(t.status==='issued'||t.status==='overdue'); });
-  if (hasIssued) { toast('Cannot delete: book is currently issued','err'); return; }
-  showConfirm('Delete Book','Delete <strong>"'+esc(b.title)+'"</strong>?', function() {
-    apiCall('deleteBook',{ id:id }).then(function() {
-      DB.books = DB.books.filter(function(x){ return x.id!==id; });
-      toast('Book deleted','i'); refreshAdminBooks(); refreshAdminDash();
-    });
+window._db=function(id){
+  var b=DB.books.find(function(x){return x.id===id;});if(!b)return;
+  if(DB.tx.some(function(t){return t.bookId===id&&(t.status==='issued'||t.status==='overdue');})){toast('Cannot delete: book is currently issued','err');return;}
+  showConfirm('Delete Book','Delete <strong>"'+esc(b.title)+'"</strong>?',function(){
+    apiCall('deleteBook',{id:id}).then(function(){DB.books=DB.books.filter(function(x){return x.id!==id;});toast('Book deleted','i');refreshAdminBooks();refreshAdminDash();});
   });
 };
-document.getElementById('aAddBook').addEventListener('click', function() {
-  document.getElementById('bookEditId').value='';
-  document.getElementById('bookModalT').textContent='Add Book';
-  ['bookTitle','bookAuthor','bookISBN','bookCat'].forEach(function(id){ document.getElementById(id).value=''; });
+document.getElementById('aAddBook').addEventListener('click',function(){
+  document.getElementById('bookEditId').value=''; document.getElementById('bookModalT').textContent='Add Book';
+  ['bookTitle','bookAuthor','bookISBN','bookCat'].forEach(function(id){document.getElementById(id).value='';});
   document.getElementById('bookCopies').value='1';
-  ['bookTitleE','bookAuthorE','bookCopiesE'].forEach(function(id){ document.getElementById(id).style.display='none'; });
+  ['bookTitleE','bookAuthorE','bookCopiesE'].forEach(function(id){document.getElementById(id).style.display='none';});
   openM('bookModal');
 });
-document.getElementById('saveBookBtn').addEventListener('click', function() {
-  var v=true;
-  var title=document.getElementById('bookTitle').value.trim();
-  var author=document.getElementById('bookAuthor').value.trim();
-  var copies=parseInt(document.getElementById('bookCopies').value)||0;
+document.getElementById('saveBookBtn').addEventListener('click',function(){
+  var v=true,title=document.getElementById('bookTitle').value.trim(),author=document.getElementById('bookAuthor').value.trim(),copies=parseInt(document.getElementById('bookCopies').value)||0;
   if(!title){document.getElementById('bookTitleE').style.display='block';v=false;}
   if(!author){document.getElementById('bookAuthorE').style.display='block';v=false;}
   if(!copies){document.getElementById('bookCopiesE').style.display='block';v=false;}
-  if(!v) return;
-  var eid = document.getElementById('bookEditId').value;
-  var existing = eid ? DB.books.find(function(b){ return b.id===eid; }) : null;
-  var issued = existing ? (existing.totalCopies - existing.availableCopies) : 0;
-  var avail = Math.max(0, copies - issued);
-  var row = { id:eid||gid(), title:title, author:author, isbn:document.getElementById('bookISBN').value.trim(), category:document.getElementById('bookCat').value.trim(), totalCopies:copies, availableCopies:avail, addedDate:existing?existing.addedDate:td() };
-  var action = eid ? 'updateBook' : 'addBook';
-  apiCall(action,{row:row}).then(function() {
-    if(eid){var i=DB.books.findIndex(function(x){return x.id===eid;});if(i!==-1)DB.books[i]=row;}
-    else DB.books.push(row);
-    closeM('bookModal'); toast('Book saved'); refreshAdminBooks(); refreshAdminDash();
+  if(!v)return;
+  var eid=document.getElementById('bookEditId').value;
+  var existing=eid?DB.books.find(function(b){return b.id===eid;}):null;
+  var issued=existing?(existing.totalCopies-existing.availableCopies):0;
+  var row={id:eid||gid(),title:title,author:author,isbn:document.getElementById('bookISBN').value.trim(),category:document.getElementById('bookCat').value.trim(),totalCopies:copies,availableCopies:Math.max(0,copies-issued),addedDate:existing?existing.addedDate:td()};
+  apiCall(eid?'updateBook':'addBook',{row:row}).then(function(){
+    if(eid){var i=DB.books.findIndex(function(x){return x.id===eid;});if(i!==-1)DB.books[i]=row;}else DB.books.push(row);
+    closeM('bookModal');toast('Book saved');refreshAdminBooks();refreshAdminDash();
   });
 });
-document.getElementById('aBookSearch').addEventListener('input', refreshAdminBooks);
-document.getElementById('aBookCat').addEventListener('change', refreshAdminBooks);
+document.getElementById('aBookSearch').addEventListener('input',refreshAdminBooks);
+document.getElementById('aBookCat').addEventListener('change',refreshAdminBooks);
 
 // ============================================================
 // MEMBERS
 // ============================================================
 function refreshAdminMembers() {
   var search=document.getElementById('aMemSearch').value.toLowerCase();
-  var clsF=document.getElementById('aMemClass').value;
-  // Rebuild class filter
-  var clsSel=document.getElementById('aMemClass');
-  var curCls=clsSel.value;
+  var clsSel=document.getElementById('aMemClass'); var curCls=clsSel.value;
   clsSel.innerHTML='<option value="">All Classes</option>'+DB.classes.map(function(c){return '<option value="'+c.id+'"'+(c.id===curCls?' selected':'')+'>'+esc(c.name)+'</option>';}).join('');
   var filtered=DB.members.filter(function(m){
     var ms=!search||(m.name||'').toLowerCase().indexOf(search)!==-1||(m.rollNo||'').toLowerCase().indexOf(search)!==-1;
-    var mc=!clsF||m.classId===clsF;
-    return ms&&mc;
+    return ms&&(!curCls||m.classId===curCls);
   });
   var tb=document.getElementById('aMemTb');
   if(!filtered.length){tb.innerHTML='<tr><td colspan="6"><div class="tbl-empty"><i class="fas fa-users"></i><p>No members found.</p></div></td></tr>';return;}
@@ -953,42 +812,27 @@ function refreshAdminMembers() {
 }
 window._em=function(id){
   var m=DB.members.find(function(x){return x.id===id;});if(!m)return;
-  document.getElementById('memEditId').value=id;
-  document.getElementById('memModalT').textContent='Edit Member';
-  document.getElementById('memName').value=m.name;
-  document.getElementById('memClass').innerHTML=buildClassOptions(m.classId);
-  document.getElementById('memRoll').value=m.rollNo;
-  document.getElementById('memPhone').value=m.phone||'';
-  document.getElementById('memEmail').value=m.email||'';
+  document.getElementById('memEditId').value=id; document.getElementById('memModalT').textContent='Edit Member';
+  document.getElementById('memName').value=m.name; document.getElementById('memClass').innerHTML=buildClassOptions(m.classId);
+  document.getElementById('memRoll').value=m.rollNo; document.getElementById('memPhone').value=m.phone||''; document.getElementById('memEmail').value=m.email||'';
   openM('memModal');
 };
 window._dm=function(id){
   var m=DB.members.find(function(x){return x.id===id;});if(!m)return;
-  var hasIssued=DB.tx.some(function(t){return t.memberId===id&&(t.status==='issued'||t.status==='overdue');});
-  if(hasIssued){toast('Cannot delete: member has issued books','err');return;}
+  if(DB.tx.some(function(t){return t.memberId===id&&(t.status==='issued'||t.status==='overdue');})){toast('Cannot delete: member has issued books','err');return;}
   showConfirm('Delete Member','Delete <strong>"'+esc(m.name)+'"</strong>?',function(){
-    apiCall('deleteMember',{id:id}).then(function(){
-      DB.members=DB.members.filter(function(x){return x.id!==id;});
-      toast('Member deleted','i');refreshAdminMembers();refreshAdminDash();
-    });
+    apiCall('deleteMember',{id:id}).then(function(){DB.members=DB.members.filter(function(x){return x.id!==id;});toast('Member deleted','i');refreshAdminMembers();refreshAdminDash();});
   });
 };
 document.getElementById('aAddMem').addEventListener('click',function(){
-  document.getElementById('memEditId').value='';
-  document.getElementById('memModalT').textContent='Add Member';
-  document.getElementById('memName').value='';
-  document.getElementById('memClass').innerHTML=buildClassOptions('');
-  document.getElementById('memRoll').value='';
-  document.getElementById('memPhone').value='';
-  document.getElementById('memEmail').value='';
+  document.getElementById('memEditId').value=''; document.getElementById('memModalT').textContent='Add Member';
+  document.getElementById('memName').value=''; document.getElementById('memClass').innerHTML=buildClassOptions('');
+  document.getElementById('memRoll').value=''; document.getElementById('memPhone').value=''; document.getElementById('memEmail').value='';
   ['memNameE','memClassE','memRollE'].forEach(function(id){document.getElementById(id).style.display='none';});
   openM('memModal');
 });
 document.getElementById('saveMemBtn').addEventListener('click',function(){
-  var v=true;
-  var name=document.getElementById('memName').value.trim();
-  var cls=document.getElementById('memClass').value;
-  var roll=document.getElementById('memRoll').value.trim();
+  var v=true,name=document.getElementById('memName').value.trim(),cls=document.getElementById('memClass').value,roll=document.getElementById('memRoll').value.trim();
   if(!name){document.getElementById('memNameE').style.display='block';v=false;}
   if(!cls){document.getElementById('memClassE').style.display='block';v=false;}
   if(!roll){document.getElementById('memRollE').style.display='block';v=false;}
@@ -996,8 +840,7 @@ document.getElementById('saveMemBtn').addEventListener('click',function(){
   var eid=document.getElementById('memEditId').value;
   var row={id:eid||gid(),name:name,classId:cls,rollNo:roll,phone:document.getElementById('memPhone').value.trim(),email:document.getElementById('memEmail').value.trim(),addedDate:eid?(DB.members.find(function(x){return x.id===eid;})||{}).addedDate||td():td()};
   apiCall(eid?'updateMember':'addMember',{row:row}).then(function(){
-    if(eid){var i=DB.members.findIndex(function(x){return x.id===eid;});if(i!==-1)DB.members[i]=row;}
-    else DB.members.push(row);
+    if(eid){var i=DB.members.findIndex(function(x){return x.id===eid;});if(i!==-1)DB.members[i]=row;}else DB.members.push(row);
     closeM('memModal');toast('Member saved');refreshAdminMembers();refreshAdminDash();
   });
 });
@@ -1007,37 +850,28 @@ document.getElementById('aMemClass').addEventListener('change',refreshAdminMembe
 // ============================================================
 // TRANSACTIONS
 // ============================================================
-function populateIssueBooks(books) {
-  document.getElementById('issueBookId').innerHTML='<option value="">Choose a book ('+books.length+' available)</option>'+
-    books.map(function(b){return '<option value="'+b.id+'">'+esc(b.title)+' by '+esc(b.author)+' ['+b.availableCopies+']</option>';}).join('');
+function populateIssueBooks(books){
+  document.getElementById('issueBookId').innerHTML='<option value="">Choose a book ('+books.length+' available)</option>'+books.map(function(b){return '<option value="'+b.id+'">'+esc(b.title)+' by '+esc(b.author)+' ['+b.availableCopies+']</option>';}).join('');
 }
-function openIssueModal() {
+function openIssueModal(){
   var books=DB.books.filter(function(b){return b.availableCopies>0;});
   if(!books.length){toast('No books available','err');return;}
   if(!DB.members.length){toast('No members registered','err');return;}
-  var settings=getSettings();
-  document.getElementById('issueBookSearch').value='';
-  populateIssueBooks(books);
-  document.getElementById('issueMemId').innerHTML='<option value="">Choose a member</option>'+DB.members.map(function(m){
-    var cls=DB.classes.find(function(c){return c.id===m.classId;});
-    return '<option value="'+m.id+'">'+esc(m.name)+' — '+esc(cls?cls.name:'Unknown')+' ('+esc(m.rollNo)+')</option>';
-  }).join('');
+  document.getElementById('issueBookSearch').value=''; populateIssueBooks(books);
+  document.getElementById('issueMemId').innerHTML='<option value="">Choose a member</option>'+DB.members.map(function(m){var cls=DB.classes.find(function(c){return c.id===m.classId;});return '<option value="'+m.id+'">'+esc(m.name)+' — '+esc(cls?cls.name:'Unknown')+' ('+esc(m.rollNo)+')</option>';}).join('');
   document.getElementById('issueDate').value=td();
-  document.getElementById('dueDate').value=ad(td(),settings.issueDays||14);
+  document.getElementById('dueDate').value=ad(td(),getSettings().issueDays||14);
   ['issueBookE','issueMemE'].forEach(function(id){document.getElementById(id).style.display='none';});
   openM('issueModal');
 }
 document.getElementById('issueBookSearch').addEventListener('input',function(){
-  var s=this.value.toLowerCase();
-  var all=DB.books.filter(function(b){return b.availableCopies>0;});
+  var s=this.value.toLowerCase(),all=DB.books.filter(function(b){return b.availableCopies>0;});
   populateIssueBooks(all.filter(function(b){return (b.title||'').toLowerCase().indexOf(s)!==-1||(b.author||'').toLowerCase().indexOf(s)!==-1||(b.isbn||'').toLowerCase().indexOf(s)!==-1;}));
 });
 document.getElementById('aIssueBtn').addEventListener('click',openIssueModal);
 document.getElementById('doIssueBtn').addEventListener('click',function(){
-  var bookId=document.getElementById('issueBookId').value;
-  var memId=document.getElementById('issueMemId').value;
-  var issueDate=document.getElementById('issueDate').value;
-  var dueDate=document.getElementById('dueDate').value;
+  var bookId=document.getElementById('issueBookId').value,memId=document.getElementById('issueMemId').value;
+  var issueDate=document.getElementById('issueDate').value,dueDate=document.getElementById('dueDate').value;
   var v=true;
   if(!bookId){document.getElementById('issueBookE').style.display='block';v=false;}
   if(!memId){document.getElementById('issueMemE').style.display='block';v=false;}
@@ -1048,25 +882,17 @@ document.getElementById('doIssueBtn').addEventListener('click',function(){
   if(bi===-1||DB.books[bi].availableCopies<1){toast('Book not available','err');return;}
   var txRow={id:gid(),bookId:bookId,memberId:memId,issueDate:issueDate,dueDate:dueDate,returnDate:'',status:'issued',fineAmount:0,fineStatus:''};
   var bookRow=Object.assign({},DB.books[bi],{availableCopies:DB.books[bi].availableCopies-1});
-  Promise.all([
-    apiCall('addTx',{row:txRow}),
-    apiCall('updateBook',{row:bookRow})
-  ]).then(function(){
-    DB.tx.push(txRow);
-    DB.books[bi]=bookRow;
-    closeM('issueModal');toast('Book issued successfully');refreshAdminTx();refreshAdminDash();
+  Promise.all([apiCall('addTx',{row:txRow}),apiCall('updateBook',{row:bookRow})]).then(function(){
+    DB.tx.push(txRow);DB.books[bi]=bookRow;closeM('issueModal');toast('Book issued successfully');refreshAdminTx();refreshAdminDash();
   });
 });
-
-function openReturnModal() {
+function openReturnModal(){
   updateTxStatus();
   var active=DB.tx.filter(function(t){return t.status==='issued'||t.status==='overdue';});
   if(!active.length){toast('No books currently issued','i');return;}
   document.getElementById('returnTxId').innerHTML='<option value="">Choose a transaction</option>'+active.map(function(t){
-    var b=DB.books.find(function(x){return x.id===t.bookId;});
-    var m=DB.members.find(function(x){return x.id===t.memberId;});
-    var tag=t.status==='overdue'?' [OVERDUE]':'';
-    return '<option value="'+t.id+'">'+esc(b?b.title:'Unknown')+' — '+esc(m?m.name:'Unknown')+' (Due: '+fd(t.dueDate)+')'+tag+'</option>';
+    var b=DB.books.find(function(x){return x.id===t.bookId;}),m=DB.members.find(function(x){return x.id===t.memberId;});
+    return '<option value="'+t.id+'">'+esc(b?b.title:'Unknown')+' — '+esc(m?m.name:'Unknown')+' (Due: '+fd(t.dueDate)+')'+(t.status==='overdue'?' [OVERDUE]':'')+'</option>';
   }).join('');
   document.getElementById('returnDate').value=td();
   document.getElementById('fineInfoBox').classList.add('hidden');
@@ -1076,31 +902,26 @@ function openReturnModal() {
 }
 document.getElementById('aReturnBtn').addEventListener('click',openReturnModal);
 document.getElementById('returnTxId').addEventListener('change',function(){
-  var txId=this.value;var box=document.getElementById('fineInfoBox');
+  var txId=this.value,box=document.getElementById('fineInfoBox');
   if(!txId){box.classList.add('hidden');return;}
   var tx=DB.tx.find(function(t){return t.id===txId;});
   if(!tx||tx.status==='returned'){box.classList.add('hidden');return;}
-  var settings=getSettings();var perDay=settings.finePerDay||0;var cur=settings.currency||'₹';
+  var s=getSettings(),perDay=s.finePerDay||0,cur=s.currency||'₹';
   if(tx.dueDate<td()&&perDay>0){
     var days=Math.ceil((new Date()-new Date(tx.dueDate+'T00:00:00'))/86400000);
-    var amount=days*perDay;
     box.classList.remove('hidden');
-    box.innerHTML='<div class="fine-info-box"><div class="fi-title"><i class="fas fa-exclamation-triangle"></i> Overdue Fine</div><div class="fi-detail">'+days+' days overdue × '+cur+perDay+'/day = <span class="fi-amount">'+cur+amount+'</span></div><div class="fg" style="margin-bottom:0;margin-top:10px"><label class="fl">Fine Action</label><select class="fi" id="fineActionSelect"><option value="unpaid">Mark as Unpaid</option><option value="paid">Mark as Paid (Collected)</option><option value="waived">Waive Fine</option></select></div></div>';
+    box.innerHTML='<div class="fine-info-box"><div class="fi-title"><i class="fas fa-exclamation-triangle"></i> Overdue Fine</div><div class="fi-detail">'+days+' days overdue × '+cur+perDay+'/day = <span class="fi-amount">'+cur+(days*perDay)+'</span></div><div class="fg" style="margin-bottom:0;margin-top:10px"><label class="fl">Fine Action</label><select class="fi" id="fineActionSelect"><option value="unpaid">Mark as Unpaid</option><option value="paid">Mark as Paid (Collected)</option><option value="waived">Waive Fine</option></select></div></div>';
   }else{box.classList.add('hidden');box.innerHTML='';}
 });
 document.getElementById('doReturnBtn').addEventListener('click',function(){
-  var txId=document.getElementById('returnTxId').value;
-  var retDate=document.getElementById('returnDate').value;
+  var txId=document.getElementById('returnTxId').value,retDate=document.getElementById('returnDate').value;
   if(!txId){document.getElementById('returnTxE').style.display='block';return;}
   if(!retDate){toast('Fill return date','err');return;}
-  var ti=DB.tx.findIndex(function(t){return t.id===txId;});
-  if(ti===-1){toast('Transaction not found','err');return;}
-  var t=Object.assign({},DB.tx[ti]);
-  t.status='returned';t.returnDate=retDate;
+  var ti=DB.tx.findIndex(function(t){return t.id===txId;});if(ti===-1){toast('Transaction not found','err');return;}
+  var t=Object.assign({},DB.tx[ti]);t.status='returned';t.returnDate=retDate;
   var bi=DB.books.findIndex(function(b){return b.id===t.bookId;});
   var bookRow=bi!==-1?Object.assign({},DB.books[bi],{availableCopies:Math.min(DB.books[bi].totalCopies,DB.books[bi].availableCopies+1)}):null;
-  var settings=getSettings();var perDay=settings.finePerDay||0;var cur=settings.currency||'₹';
-  var fineRow=null;
+  var s=getSettings(),perDay=s.finePerDay||0,cur=s.currency||'₹',fineRow=null;
   if(t.dueDate<retDate&&perDay>0){
     var days=Math.ceil((new Date(retDate+'T00:00:00')-new Date(t.dueDate+'T00:00:00'))/86400000);
     var amount=days*perDay;
@@ -1110,30 +931,23 @@ document.getElementById('doReturnBtn').addEventListener('click',function(){
     fineRow={id:gid(),txId:t.id,bookId:t.bookId,memberId:t.memberId,daysOverdue:days,amount:amount,currency:cur,status:fineStatus,createdAt:td()};
   }
   var calls=[apiCall('updateTx',{row:t})];
-  if(bookRow) calls.push(apiCall('updateBook',{row:bookRow}));
-  if(fineRow) calls.push(apiCall('addFine',{row:fineRow}));
+  if(bookRow)calls.push(apiCall('updateBook',{row:bookRow}));
+  if(fineRow)calls.push(apiCall('addFine',{row:fineRow}));
   Promise.all(calls).then(function(){
-    DB.tx[ti]=t;
-    if(bi!==-1&&bookRow)DB.books[bi]=bookRow;
-    if(fineRow)DB.fines.push(fineRow);
-    closeM('returnModal');
-    toast(fineRow?'Book returned (overdue fine processed)':'Book returned successfully',fineRow?'i':'ok');
+    DB.tx[ti]=t;if(bi!==-1&&bookRow)DB.books[bi]=bookRow;if(fineRow)DB.fines.push(fineRow);
+    closeM('returnModal');toast(fineRow?'Book returned (overdue fine processed)':'Book returned successfully',fineRow?'i':'ok');
     refreshAdminTx();refreshAdminDash();refreshAdminFines();
   });
 });
-
-function quickReturn(txId) {
+function quickReturn(txId){
   updateTxStatus();
   var ti=DB.tx.findIndex(function(x){return x.id===txId;});if(ti===-1)return;
-  var t=Object.assign({},DB.tx[ti]);
-  t.status='returned';t.returnDate=td();
+  var t=Object.assign({},DB.tx[ti]);t.status='returned';t.returnDate=td();
   var bi=DB.books.findIndex(function(b){return b.id===t.bookId;});
   var bookRow=bi!==-1?Object.assign({},DB.books[bi],{availableCopies:Math.min(DB.books[bi].totalCopies,DB.books[bi].availableCopies+1)}):null;
-  var settings=getSettings();var perDay=settings.finePerDay||0;var cur=settings.currency||'₹';
-  var fineRow=null;
+  var s=getSettings(),perDay=s.finePerDay||0,cur=s.currency||'₹',fineRow=null;
   if(t.dueDate<td()&&perDay>0){
-    var days=Math.ceil((new Date()-new Date(t.dueDate+'T00:00:00'))/86400000);
-    var amount=days*perDay;
+    var days=Math.ceil((new Date()-new Date(t.dueDate+'T00:00:00'))/86400000),amount=days*perDay;
     t.fineAmount=amount;t.fineStatus='unpaid';
     fineRow={id:gid(),txId:t.id,bookId:t.bookId,memberId:t.memberId,daysOverdue:days,amount:amount,currency:cur,status:'unpaid',createdAt:td()};
   }
@@ -1155,43 +969,30 @@ window._dtx=function(id){
     if(bi!==-1){var br=Object.assign({},DB.books[bi],{availableCopies:Math.min(DB.books[bi].totalCopies,DB.books[bi].availableCopies+1)});apiCall('updateBook',{row:br}).then(function(){DB.books[bi]=br;});}
   }
   showConfirm('Delete Transaction','Delete this record?',function(){
-    apiCall('deleteTx',{id:id}).then(function(){
-      DB.tx=DB.tx.filter(function(x){return x.id!==id;});
-      toast('Transaction deleted','i');refreshAdminTx();refreshAdminDash();
-    });
+    apiCall('deleteTx',{id:id}).then(function(){DB.tx=DB.tx.filter(function(x){return x.id!==id;});toast('Transaction deleted','i');refreshAdminTx();refreshAdminDash();});
   });
 };
-
-function refreshAdminTx() {
+function refreshAdminTx(){
   updateTxStatus();
-  var search=document.getElementById('aTxSearch').value.toLowerCase();
-  var stF=document.getElementById('aTxStatus').value;
+  var search=document.getElementById('aTxSearch').value.toLowerCase(),stF=document.getElementById('aTxStatus').value;
   var filtered=DB.tx.filter(function(t){
-    var b=DB.books.find(function(x){return x.id===t.bookId;});
-    var m=DB.members.find(function(x){return x.id===t.memberId;});
-    var ms=!search||(b?b.title:'').toLowerCase().indexOf(search)!==-1||(m?m.name:'').toLowerCase().indexOf(search)!==-1;
-    var mst=!stF||t.status===stF;
-    return ms&&mst;
+    var b=DB.books.find(function(x){return x.id===t.bookId;}),m=DB.members.find(function(x){return x.id===t.memberId;});
+    return (!search||(b?b.title:'').toLowerCase().indexOf(search)!==-1||(m?m.name:'').toLowerCase().indexOf(search)!==-1)&&(!stF||t.status===stF);
   });
   filtered.sort(function(a,b){return(b.issueDate||'').localeCompare(a.issueDate||'');});
-  var sm={issued:'b-i',returned:'b-ok',overdue:'b-err'};
-  var settings=getSettings();var cur=settings.currency||'₹';
+  var s=getSettings(),cur=s.currency||'₹',sm={issued:'b-i',returned:'b-ok',overdue:'b-err'};
   var tb=document.getElementById('aTxTb');
   if(!filtered.length){tb.innerHTML='<tr><td colspan="8"><div class="tbl-empty"><i class="fas fa-exchange-alt"></i><p>No transactions.</p></div></td></tr>';return;}
   tb.innerHTML=filtered.map(function(t){
-    var b=DB.books.find(function(x){return x.id===t.bookId;});
-    var m=DB.members.find(function(x){return x.id===t.memberId;});
+    var b=DB.books.find(function(x){return x.id===t.bookId;}),m=DB.members.find(function(x){return x.id===t.memberId;});
     var fine=t.fineAmount>0?'<span style="color:var(--err);font-weight:600">'+cur+t.fineAmount+'</span>':'—';
     var rbtn=t.status!=='returned'?'<button class="btn btn-ok btn-sm" onclick="window._qr(\''+t.id+'\')"><i class="fas fa-undo"></i> Return</button>':'';
     return '<tr><td style="font-weight:500">'+esc(b?b.title:'Deleted')+'</td><td>'+esc(m?m.name:'Deleted')+'</td><td style="font-size:12px;color:var(--muted)">'+fd(t.issueDate)+'</td><td style="font-size:12px;color:var(--muted)">'+fd(t.dueDate)+'</td><td style="font-size:12px;color:var(--muted)">'+fd(t.returnDate)+'</td><td>'+fine+'</td><td><span class="badge '+sm[t.status]+'">'+t.status.charAt(0).toUpperCase()+t.status.slice(1)+'</span></td><td><div class="act-btns">'+rbtn+'<button class="btn btn-d btn-icon btn-sm" onclick="window._dtx(\''+t.id+'\')"><i class="fas fa-trash"></i></button></div></td></tr>';
   }).join('');
-  // Badges
   var oc=DB.tx.filter(function(t){return t.status==='overdue';}).length;
-  var ob=document.getElementById('aOverdueBadge');
-  ob.style.display=oc>0?'inline':'none';ob.textContent=oc;
+  var ob=document.getElementById('aOverdueBadge');ob.style.display=oc>0?'inline':'none';ob.textContent=oc;
   var uc=DB.fines.filter(function(f){return f.status==='unpaid';}).length;
-  var fb=document.getElementById('aFinesBadge');
-  fb.style.display=uc>0?'inline':'none';fb.textContent=uc;
+  var fb=document.getElementById('aFinesBadge');fb.style.display=uc>0?'inline':'none';fb.textContent=uc;
 }
 document.getElementById('aTxSearch').addEventListener('input',refreshAdminTx);
 document.getElementById('aTxStatus').addEventListener('change',refreshAdminTx);
@@ -1199,48 +1000,34 @@ document.getElementById('aTxStatus').addEventListener('change',refreshAdminTx);
 // ============================================================
 // FINES
 // ============================================================
-function refreshAdminFines() {
-  var stF=document.getElementById('aFineStatus').value;
-  var settings=getSettings();var cur=settings.currency||'₹';
+function refreshAdminFines(){
+  var stF=document.getElementById('aFineStatus').value,s=getSettings(),cur=s.currency||'₹';
   var filtered=DB.fines.filter(function(f){return !stF||f.status===stF;});
   filtered.sort(function(a,b){return(b.createdAt||'').localeCompare(a.createdAt||'');});
-  var tb=document.getElementById('aFineTb');
+  var tb=document.getElementById('aFineTb'),stm={unpaid:'b-err',paid:'b-ok',waived:'b-w'};
   if(!filtered.length){tb.innerHTML='<tr><td colspan="7"><div class="tbl-empty"><i class="fas fa-coins"></i><p>No fine records.</p></div></td></tr>';return;}
-  var stm={unpaid:'b-err',paid:'b-ok',waived:'b-w'};
   tb.innerHTML=filtered.map(function(f){
-    var b=DB.books.find(function(x){return x.id===f.bookId;});
-    var m=DB.members.find(function(x){return x.id===f.memberId;});
-    var acts='';
-    if(f.status==='unpaid')acts='<button class="btn btn-ok btn-sm" onclick="window._payFine(\''+f.id+'\')"><i class="fas fa-check"></i> Paid</button><button class="btn btn-w btn-sm" onclick="window._waiveFine(\''+f.id+'\')">Waive</button>';
+    var b=DB.books.find(function(x){return x.id===f.bookId;}),m=DB.members.find(function(x){return x.id===f.memberId;});
+    var acts=f.status==='unpaid'?'<button class="btn btn-ok btn-sm" onclick="window._payFine(\''+f.id+'\')"><i class="fas fa-check"></i> Paid</button><button class="btn btn-w btn-sm" onclick="window._waiveFine(\''+f.id+'\')">Waive</button>':'';
     return '<tr><td>'+esc(b?b.title:'Deleted')+'</td><td>'+esc(m?m.name:'Deleted')+'</td><td>'+f.daysOverdue+' days</td><td style="font-weight:700;color:var(--err)">'+cur+f.amount+'</td><td><span class="badge '+stm[f.status]+'">'+f.status.charAt(0).toUpperCase()+f.status.slice(1)+'</span></td><td style="font-size:12px;color:var(--muted)">'+fd(f.createdAt)+'</td><td><div class="act-btns">'+acts+'</div></td></tr>';
   }).join('');
 }
-window._payFine=function(id){
-  var i=DB.fines.findIndex(function(f){return f.id===id;});if(i===-1)return;
-  var row=Object.assign({},DB.fines[i],{status:'paid'});
-  apiCall('updateFine',{row:row}).then(function(){DB.fines[i]=row;toast('Fine marked as paid');refreshAdminFines();refreshAdminTx();});
-};
-window._waiveFine=function(id){
-  var i=DB.fines.findIndex(function(f){return f.id===id;});if(i===-1)return;
-  var row=Object.assign({},DB.fines[i],{status:'waived'});
-  apiCall('updateFine',{row:row}).then(function(){DB.fines[i]=row;toast('Fine waived','i');refreshAdminFines();refreshAdminTx();});
-};
+window._payFine=function(id){var i=DB.fines.findIndex(function(f){return f.id===id;});if(i===-1)return;var row=Object.assign({},DB.fines[i],{status:'paid'});apiCall('updateFine',{row:row}).then(function(){DB.fines[i]=row;toast('Fine marked as paid');refreshAdminFines();refreshAdminTx();});};
+window._waiveFine=function(id){var i=DB.fines.findIndex(function(f){return f.id===id;});if(i===-1)return;var row=Object.assign({},DB.fines[i],{status:'waived'});apiCall('updateFine',{row:row}).then(function(){DB.fines[i]=row;toast('Fine waived','i');refreshAdminFines();refreshAdminTx();});};
 document.getElementById('aFineStatus').addEventListener('change',refreshAdminFines);
 
 // ============================================================
 // SETTINGS
 // ============================================================
-function refreshSettings() {
-  var s=getSettings();var cur=s.currency||'₹';
+function refreshSettings(){
+  var s=getSettings(),cur=s.currency||'₹';
   document.getElementById('setCurrency').value=cur;
   document.getElementById('setFinePerDay').value=s.finePerDay||0;
   document.getElementById('setIssueDays').value=s.issueDays||14;
-  var totalFines=DB.fines;
-  var unpaid=totalFines.filter(function(f){return f.status==='unpaid';});
-  var collected=totalFines.filter(function(f){return f.status==='paid';});
+  var unpaid=DB.fines.filter(function(f){return f.status==='unpaid';}),paid=DB.fines.filter(function(f){return f.status==='paid';});
   var totalUnpaid=0;unpaid.forEach(function(f){totalUnpaid+=Number(f.amount)||0;});
-  var totalCollected=0;collected.forEach(function(f){totalCollected+=Number(f.amount)||0;});
-  document.getElementById('settingsDisplay').innerHTML='Currency: <strong style="color:var(--fg)">'+esc(cur)+'</strong><br>Fine per day: <strong style="color:var(--fg)">'+cur+(s.finePerDay||0)+'</strong><br>Issue period: <strong style="color:var(--fg)">'+(s.issueDays||14)+' days</strong><br><br>Total fines collected: <strong style="color:var(--ok)">'+cur+totalCollected+'</strong><br>Outstanding fines: <strong style="color:var(--err)">'+cur+totalUnpaid+'</strong> ('+unpaid.length+' records)';
+  var totalPaid=0;paid.forEach(function(f){totalPaid+=Number(f.amount)||0;});
+  document.getElementById('settingsDisplay').innerHTML='Currency: <strong style="color:var(--fg)">'+esc(cur)+'</strong><br>Fine per day: <strong style="color:var(--fg)">'+cur+(s.finePerDay||0)+'</strong><br>Issue period: <strong style="color:var(--fg)">'+(s.issueDays||14)+' days</strong><br><br>Total fines collected: <strong style="color:var(--ok)">'+cur+totalPaid+'</strong><br>Outstanding fines: <strong style="color:var(--err)">'+cur+totalUnpaid+'</strong> ('+unpaid.length+' records)';
 }
 document.getElementById('saveSettingsBtn').addEventListener('click',function(){
   var s={currency:document.getElementById('setCurrency').value.trim()||'₹',finePerDay:parseInt(document.getElementById('setFinePerDay').value)||0,issueDays:parseInt(document.getElementById('setIssueDays').value)||14};
@@ -1250,9 +1037,9 @@ document.getElementById('saveSettingsBtn').addEventListener('click',function(){
 // ============================================================
 // ADMIN DASHBOARD
 // ============================================================
-function refreshAdminDash() {
+function refreshAdminDash(){
   updateTxStatus();
-  var settings=getSettings();var cur=settings.currency||'₹';
+  var s=getSettings(),cur=s.currency||'₹';
   var totalCopies=0;DB.books.forEach(function(b){totalCopies+=Number(b.totalCopies)||0;});
   var issued=DB.tx.filter(function(t){return t.status==='issued'||t.status==='overdue';}).length;
   var overdue=DB.tx.filter(function(t){return t.status==='overdue';}).length;
@@ -1268,81 +1055,56 @@ function refreshAdminDash() {
   var rd=document.getElementById('aRecentTx');
   if(!recent.length){rd.innerHTML='<div class="tbl-empty"><i class="fas fa-inbox"></i><p>No transactions yet</p></div>';return;}
   rd.innerHTML=recent.map(function(t){
-    var b=DB.books.find(function(x){return x.id===t.bookId;});
-    var m=DB.members.find(function(x){return x.id===t.memberId;});
+    var b=DB.books.find(function(x){return x.id===t.bookId;}),m=DB.members.find(function(x){return x.id===t.memberId;});
     var ibg,ic,ii;
     if(t.status==='returned'){ibg='rgba(74,186,122,.12)';ic='var(--ok)';ii='fa-arrow-left';}
     else if(t.status==='overdue'){ibg='rgba(217,79,79,.12)';ic='var(--err)';ii='fa-exclamation';}
     else{ibg='rgba(74,154,186,.12)';ic='var(--info)';ii='fa-arrow-right';}
-    var bc={issued:'b-i',returned:'b-ok',overdue:'b-err'}[t.status]||'b-i';
-    return '<div class="recent-item"><div class="ri-icon" style="background:'+ibg+';color:'+ic+'"><i class="fas '+ii+'"></i></div><div class="ri-info"><div class="ri-title">'+esc(b?b.title:'Unknown')+'</div><div class="ri-sub">'+esc(m?m.name:'Unknown')+' · '+fd(t.issueDate)+'</div></div><span class="badge '+bc+'">'+t.status.charAt(0).toUpperCase()+t.status.slice(1)+'</span></div>';
+    return '<div class="recent-item"><div class="ri-icon" style="background:'+ibg+';color:'+ic+'"><i class="fas '+ii+'"></i></div><div class="ri-info"><div class="ri-title">'+esc(b?b.title:'Unknown')+'</div><div class="ri-sub">'+esc(m?m.name:'Unknown')+' · '+fd(t.issueDate)+'</div></div><span class="badge '+({issued:'b-i',returned:'b-ok',overdue:'b-err'}[t.status]||'b-i')+'">'+t.status.charAt(0).toUpperCase()+t.status.slice(1)+'</span></div>';
   }).join('');
 }
-
-function refreshAllAdmin(){
-  refreshAdminDash();refreshAdminBooks();refreshAdminMembers();
-  refreshAdminTx();refreshAdminClasses();refreshAdminFines();refreshSettings();
-}
+function refreshAllAdmin(){refreshAdminDash();refreshAdminBooks();refreshAdminMembers();refreshAdminTx();refreshAdminClasses();refreshAdminFines();refreshSettings();}
 
 // ============================================================
 // STUDENT VIEWS
 // ============================================================
-function refreshStudentDash() {
+function refreshStudentDash(){
   if(!currentUser)return;
   var myTx=DB.tx.filter(function(t){return t.memberId===currentUser.memberId;});
-  var issued=myTx.filter(function(t){return t.status==='issued'||t.status==='overdue';});
+  var issued=myTx.filter(function(t){return t.status==='issued'||t.status==='overdue;'});
   var overdue=myTx.filter(function(t){return t.status==='overdue';});
   var myFines=DB.fines.filter(function(f){return f.memberId===currentUser.memberId;});
-  var settings=getSettings();var cur=settings.currency||'₹';
-  var unpaid=0;myFines.filter(function(f){return f.status==='unpaid';}).forEach(function(f){unpaid+=Number(f.amount)||0;});
+  var s=getSettings(),cur=s.currency||'₹',unpaid=0;
+  myFines.filter(function(f){return f.status==='unpaid';}).forEach(function(f){unpaid+=Number(f.amount)||0;});
   document.getElementById('sStats').innerHTML=[
     ['fas fa-book','Books Issued',issued.length],
     ['fas fa-exclamation-triangle','Overdue',overdue.length],
     ['fas fa-coins','Unpaid Fines',cur+unpaid]
   ].map(function(s){return '<div class="stat-card"><div class="stat-icon"><i class="'+s[0]+'"></i></div><div class="stat-val">'+s[2]+'</div><div class="stat-lbl">'+s[1]+'</div></div>';}).join('');
-  var sm={issued:'b-i',returned:'b-ok',overdue:'b-err'};
-  var tb=document.getElementById('sIssuedTb');
+  var sm={issued:'b-i',returned:'b-ok',overdue:'b-err'},tb=document.getElementById('sIssuedTb');
   if(!issued.length){tb.innerHTML='<tr><td colspan="4"><div class="tbl-empty"><i class="fas fa-book-open"></i><p>No books currently issued</p></div></td></tr>';return;}
-  tb.innerHTML=issued.map(function(t){
-    var b=DB.books.find(function(x){return x.id===t.bookId;});
-    return '<tr><td style="font-weight:500">'+esc(b?b.title:'Unknown')+'</td><td>'+fd(t.issueDate)+'</td><td>'+fd(t.dueDate)+'</td><td><span class="badge '+sm[t.status]+'">'+t.status.charAt(0).toUpperCase()+t.status.slice(1)+'</span></td></tr>';
-  }).join('');
+  tb.innerHTML=issued.map(function(t){var b=DB.books.find(function(x){return x.id===t.bookId;});return '<tr><td style="font-weight:500">'+esc(b?b.title:'Unknown')+'</td><td>'+fd(t.issueDate)+'</td><td>'+fd(t.dueDate)+'</td><td><span class="badge '+sm[t.status]+'">'+t.status.charAt(0).toUpperCase()+t.status.slice(1)+'</span></td></tr>';}).join('');
 }
-function refreshStudentBooks() {
+function refreshStudentBooks(){
   var search=document.getElementById('sBookSearch').value.toLowerCase();
-  var filtered=DB.books.filter(function(b){
-    return !search||(b.title||'').toLowerCase().indexOf(search)!==-1||(b.author||'').toLowerCase().indexOf(search)!==-1||(b.isbn||'').toLowerCase().indexOf(search)!==-1;
-  });
+  var filtered=DB.books.filter(function(b){return !search||(b.title||'').toLowerCase().indexOf(search)!==-1||(b.author||'').toLowerCase().indexOf(search)!==-1||(b.isbn||'').toLowerCase().indexOf(search)!==-1;});
   var tb=document.getElementById('sBookTb');
   if(!filtered.length){tb.innerHTML='<tr><td colspan="4"><div class="tbl-empty"><i class="fas fa-search"></i><p>No books found</p></div></td></tr>';return;}
-  tb.innerHTML=filtered.map(function(b){
-    var av=Number(b.availableCopies)||0;
-    return '<tr><td style="font-weight:500">'+esc(b.title)+'</td><td>'+esc(b.author)+'</td><td>'+esc(b.category||'—')+'</td><td>'+(av>0?'<span class="badge b-ok">'+av+' available</span>':'<span class="badge b-err">Unavailable</span>')+'</td></tr>';
-  }).join('');
+  tb.innerHTML=filtered.map(function(b){var av=Number(b.availableCopies)||0;return '<tr><td style="font-weight:500">'+esc(b.title)+'</td><td>'+esc(b.author)+'</td><td>'+esc(b.category||'—')+'</td><td>'+(av>0?'<span class="badge b-ok">'+av+' available</span>':'<span class="badge b-err">Unavailable</span>')+'</td></tr>';}).join('');
 }
-function refreshStudentFines() {
+function refreshStudentFines(){
   if(!currentUser)return;
-  var myFines=DB.fines.filter(function(f){return f.memberId===currentUser.memberId;});
-  var settings=getSettings();var cur=settings.currency||'₹';
-  var tb=document.getElementById('sFineTb');
+  var myFines=DB.fines.filter(function(f){return f.memberId===currentUser.memberId;}),s=getSettings(),cur=s.currency||'₹';
+  var tb=document.getElementById('sFineTb'),stm={unpaid:'b-err',paid:'b-ok',waived:'b-w'};
   if(!myFines.length){tb.innerHTML='<tr><td colspan="5"><div class="tbl-empty"><i class="fas fa-smile"></i><p>No fines — great!</p></div></td></tr>';return;}
-  var stm={unpaid:'b-err',paid:'b-ok',waived:'b-w'};
-  tb.innerHTML=myFines.map(function(f){
-    var b=DB.books.find(function(x){return x.id===f.bookId;});
-    return '<tr><td>'+esc(b?b.title:'Unknown')+'</td><td>'+f.daysOverdue+' days</td><td style="font-weight:700;color:var(--err)">'+cur+f.amount+'</td><td><span class="badge '+stm[f.status]+'">'+f.status.charAt(0).toUpperCase()+f.status.slice(1)+'</span></td><td style="font-size:12px;color:var(--muted)">'+fd(f.createdAt)+'</td></tr>';
-  }).join('');
+  tb.innerHTML=myFines.map(function(f){var b=DB.books.find(function(x){return x.id===f.bookId;});return '<tr><td>'+esc(b?b.title:'Unknown')+'</td><td>'+f.daysOverdue+' days</td><td style="font-weight:700;color:var(--err)">'+cur+f.amount+'</td><td><span class="badge '+stm[f.status]+'">'+f.status.charAt(0).toUpperCase()+f.status.slice(1)+'</span></td><td style="font-size:12px;color:var(--muted)">'+fd(f.createdAt)+'</td></tr>';}).join('');
 }
 document.getElementById('sBookSearch').addEventListener('input',refreshStudentBooks);
 
 // ============================================================
 // EXPORT / IMPORT
 // ============================================================
-function dlCSV(fname, cols, rows) {
-  var lines=[cols.join(',')].concat(rows.map(function(r){return cols.map(function(c){var v=r[c]||'';return '"'+String(v).replace(/"/g,'""')+'"';}).join(',');}));
-  var a=document.createElement('a');
-  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(lines.join('\n'));
-  a.download=fname;a.click();
-}
+function dlCSV(fname,cols,rows){var lines=[cols.join(',')].concat(rows.map(function(r){return cols.map(function(c){var v=r[c]||'';return '"'+String(v).replace(/"/g,'""')+'"';}).join(',');}));var a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(lines.join('\n'));a.download=fname;a.click();}
 document.getElementById('aExportBtn').addEventListener('click',function(){
   var ts=new Date().toISOString().replace(/[:.]/g,'-').slice(0,19);
   dlCSV('books_'+ts+'.csv',['id','title','author','isbn','category','totalCopies','availableCopies','addedDate'],DB.books);
@@ -1354,12 +1116,9 @@ document.getElementById('aExportBtn').addEventListener('click',function(){
 });
 document.getElementById('aExportJsonBtn').addEventListener('click',function(){
   var data={ts:new Date().toISOString(),books:DB.books,members:DB.members,tx:DB.tx,fines:DB.fines,classes:DB.classes,settings:DB.settings};
-  var a=document.createElement('a');
-  a.href='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(data,null,2));
-  a.download='alees_backup_'+new Date().toISOString().replace(/[:.]/g,'-').slice(0,19)+'.json';
-  a.click();toast('JSON backup downloaded','ok');
+  var a=document.createElement('a');a.href='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(data,null,2));a.download='alees_backup_'+new Date().toISOString().replace(/[:.]/g,'-').slice(0,19)+'.json';a.click();toast('JSON backup downloaded','ok');
 });
-document.getElementById('aImportBtn').addEventListener('click',function(){ document.getElementById('restoreFileInput').click(); });
+document.getElementById('aImportBtn').addEventListener('click',function(){document.getElementById('restoreFileInput').click();});
 document.getElementById('restoreFileInput').addEventListener('change',function(e){
   var f=e.target.files[0];if(!f)return;
   var r=new FileReader();
@@ -1367,28 +1126,21 @@ document.getElementById('restoreFileInput').addEventListener('change',function(e
     try{
       var data=JSON.parse(ev.target.result);
       showConfirm('Restore Backup','This will <strong>replace all current data</strong>. Are you sure?',function(){
-        // Push each entity
         var calls=[];
         (data.books||[]).forEach(function(row){calls.push(apiCall('addBook',{row:row},true));});
         (data.members||[]).forEach(function(row){calls.push(apiCall('addMember',{row:row},true));});
         (data.classes||[]).forEach(function(row){calls.push(apiCall('addClass',{row:row},true));});
         (data.tx||[]).forEach(function(row){calls.push(apiCall('addTx',{row:row},true));});
         (data.fines||[]).forEach(function(row){calls.push(apiCall('addFine',{row:row},true));});
-        if(data.settings) calls.push(apiCall('saveSettings',{settings:data.settings},true));
-        Promise.all(calls).then(function(){
-          return loadAll();
-        }).then(function(){
-          refreshAllAdmin();toast('Data restored from JSON backup');
-        });
+        if(data.settings)calls.push(apiCall('saveSettings',{settings:data.settings},true));
+        Promise.all(calls).then(function(){return loadAll();}).then(function(){refreshAllAdmin();toast('Data restored from JSON backup');});
       });
     }catch(err){toast('Invalid JSON file','err');}
   };
-  r.readAsText(f);
-  e.target.value='';
+  r.readAsText(f);e.target.value='';
 });
 document.getElementById('aClearBtn').addEventListener('click',function(){
   showConfirm('Clear All Data','<strong>Permanently delete</strong> all data from Google Sheets? Export a backup first!',function(){
-    // We can't bulk-delete easily, so we load and delete each row
     toast('Clearing data…','i');
     var calls=[];
     DB.books.forEach(function(r){calls.push(apiCall('deleteBook',{id:r.id},true));});
@@ -1396,27 +1148,18 @@ document.getElementById('aClearBtn').addEventListener('click',function(){
     DB.classes.forEach(function(r){calls.push(apiCall('deleteClass',{id:r.id},true));});
     DB.tx.forEach(function(r){calls.push(apiCall('deleteTx',{id:r.id},true));});
     DB.fines.forEach(function(r){calls.push(apiCall('deleteFine',{id:r.id},true));});
-    Promise.all(calls).then(function(){
-      DB={books:[],members:[],tx:[],classes:[],fines:[],settings:{}};
-      refreshAllAdmin();toast('All data cleared','i');
-    });
+    Promise.all(calls).then(function(){DB={books:[],members:[],tx:[],classes:[],fines:[],settings:{}};refreshAllAdmin();toast('All data cleared','i');});
   });
 });
 
 // ============================================================
-// STARTUP
+// STARTUP — go straight to login, no setup screen
 // ============================================================
 window.addEventListener('DOMContentLoaded', function() {
-  var url = getApiUrl();
-  if (!url) {
-    showSetup();
-    return;
-  }
-  document.getElementById('loadingMsg').textContent = 'Connecting to Google Sheets…';
-  fetch(url).then(function(r){ return r.json(); }).then(function(d) {
-    if (d.ok) showLogin();
-    else showSetup();
-  }).catch(function() { showSetup(); });
+  fetch(API_URL)
+    .then(function(r){ return r.json(); })
+    .then(function(){ showLogin(); })
+    .catch(function(){ showLogin(); }); // show login even if ping fails
 });
 </script>
 </body>
