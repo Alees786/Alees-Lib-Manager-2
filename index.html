@@ -14,7 +14,11 @@ body::before{content:'';position:fixed;top:-30%;left:-20%;width:60vw;height:60vw
 body::after{content:'';position:fixed;bottom:-20%;right:-10%;width:50vw;height:50vw;background:radial-gradient(circle,rgba(74,186,122,0.03) 0%,transparent 70%);pointer-events:none;z-index:0}
 ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
 .sidebar{position:fixed;top:0;left:0;width:260px;height:100vh;background:var(--bg2);border-right:1px solid var(--border);z-index:100;display:flex;flex-direction:column;transition:transform .3s}
-.sidebar-brand{padding:24px;border-bottom:1px solid var(--border)}
+.sidebar-brand{padding:24px;border-bottom:1px solid var(--border);position:relative;overflow:hidden;cursor:default;user-select:none}
+.sidebar-brand::before{content:'';position:absolute;top:50%;left:12px;width:80px;height:80px;transform:translateY(-50%);background:radial-gradient(circle,rgba(212,162,78,0.18) 0%,transparent 70%);pointer-events:none;animation:brandGlowBg 4s ease-in-out infinite}
+@keyframes brandGlowBg{0%,100%{opacity:.6;transform:translateY(-50%) scale(1)}50%{opacity:1;transform:translateY(-50%) scale(1.3)}}
+.glow-title{position:relative;color:var(--accent);animation:glowPulse 3.5s ease-in-out infinite}
+@keyframes glowPulse{0%,100%{text-shadow:0 0 8px rgba(212,162,78,0.4),0 0 20px rgba(212,162,78,0.2),0 0 40px rgba(212,162,78,0.1),0 0 60px rgba(212,162,78,0.05)}50%{text-shadow:0 0 12px rgba(212,162,78,0.8),0 0 30px rgba(212,162,78,0.5),0 0 60px rgba(212,162,78,0.3),0 0 100px rgba(212,162,78,0.15),0 0 140px rgba(212,162,78,0.08)}}
 .sidebar-brand h1{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:var(--accent)}
 .sidebar-brand p{font-size:11px;color:var(--muted);margin-top:2px}
 .sidebar-brand .role-tag{display:inline-block;margin-top:6px;padding:2px 10px;border-radius:20px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px}
@@ -28,6 +32,9 @@ body::after{content:'';position:fixed;bottom:-20%;right:-10%;width:50vw;height:5
 .nav-item.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:20px;background:var(--accent);border-radius:0 3px 3px 0}
 .nav-item i{width:20px;text-align:center;font-size:15px}
 .nav-badge{margin-left:auto;background:var(--err);color:#fff;font-size:10px;padding:2px 7px;border-radius:10px;font-weight:700}
+.system-section{display:none;animation:sysReveal .5s ease}
+.system-section.revealed{display:block}
+@keyframes sysReveal{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
 .sidebar-footer{padding:14px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);text-align:center}
 .sync-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--ok);margin-right:4px;vertical-align:middle}
 .sync-dot.syncing{background:var(--warn);animation:pulse 1s infinite}
@@ -73,7 +80,6 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .b-i{background:rgba(74,154,186,.12);color:var(--info)}
 .b-w{background:rgba(224,160,48,.12);color:var(--warn)}
 .act-btns{display:flex;gap:6px;align-items:center}
-/* ===== IMPROVED SEARCH BAR ===== */
 .search-bar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px 16px}
 .search-input-wrap{position:relative;flex:1;min-width:200px}
 .search-input-wrap i.si{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:13px;pointer-events:none}
@@ -88,16 +94,6 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .fi{background:var(--bg2);border:1px solid var(--border);color:var(--fg);padding:9px 12px;border-radius:8px;font-size:13px;font-family:inherit;outline:none;transition:border-color .2s;width:100%}
 .fi:focus{border-color:var(--accent)}
 select.fi option{background:var(--bg2)}
-/* ===== BOOK SEARCH PANEL ===== */
-.book-search-panel{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:6px;margin-top:4px;max-height:220px;overflow-y:auto;display:none}
-.book-search-panel.show{display:block}
-.bri{padding:9px 12px;border-radius:6px;cursor:pointer;transition:background .15s;display:flex;align-items:center;justify-content:space-between;gap:10px}
-.bri:hover{background:var(--card)}
-.bri-left .bri-title{font-weight:600;font-size:13px}
-.bri-left .bri-meta{font-size:11px;color:var(--muted);margin-top:1px}
-.bri-avail{font-size:11px;font-weight:700;color:var(--ok);white-space:nowrap}
-.book-sel-box{background:var(--accent-glow);border:1px solid var(--accent);border-radius:8px;padding:10px 14px;margin-top:4px;display:none;align-items:center;justify-content:space-between;gap:10px}
-.book-sel-box.show{display:flex}
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px}
 .modal{background:var(--card);border:1px solid var(--border);border-radius:14px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto}
 .modal-hdr{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
@@ -133,18 +129,22 @@ select.fi option{background:var(--bg2)}
 .fi-detail{font-size:13px;color:var(--muted)}
 .fi-amount{color:var(--err);font-weight:700}
 .hidden{display:none!important}
-/* LOGIN */
 .login-page{position:fixed;top:0;left:0;width:100%;height:100%;z-index:500;display:flex;align-items:center;justify-content:center;background:var(--bg);padding:20px}
-.login-page::before{content:'';position:absolute;top:50%;left:50%;width:600px;height:600px;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(212,162,78,.06) 0%,transparent 70%);pointer-events:none}
+.login-page::before{content:'';position:absolute;top:40%;left:50%;width:700px;height:700px;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(212,162,78,.07) 0%,transparent 70%);pointer-events:none;animation:loginGlow 5s ease-in-out infinite}
+@keyframes loginGlow{0%,100%{opacity:.5;transform:translate(-50%,-50%) scale(1)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}}
 .login-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:36px;width:100%;max-width:400px;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.4)}
-.login-brand{text-align:center;margin-bottom:28px}
-.login-brand h1{font-family:'Playfair Display',serif;font-size:28px;font-weight:900;color:var(--accent);margin-bottom:4px}
+.login-brand{text-align:center;margin-bottom:28px;position:relative}
+.login-brand h1{font-family:'Playfair Display',serif;font-size:36px;font-weight:900;color:var(--accent);position:relative}
+.login-brand h1::after{content:'';position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);width:120px;height:30px;background:radial-gradient(ellipse,rgba(212,162,78,0.25) 0%,transparent 70%);pointer-events:none;animation:loginTitleGlow 3.5s ease-in-out infinite}
+@keyframes loginTitleGlow{0%,100%{opacity:.4;transform:translateX(-50%) scaleX(1)}50%{opacity:1;transform:translateX(-50%) scaleX(1.4)}}
 .login-brand p{font-size:12px;color:var(--muted)}
 .login-tabs{display:flex;border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:22px}
 .login-tab{flex:1;padding:10px;text-align:center;font-size:13px;font-weight:600;cursor:pointer;border:none;background:var(--bg);color:var(--muted);font-family:inherit;transition:all .2s}
 .login-tab.active{background:var(--accent);color:#1a1a0e}
 .login-err{color:var(--err);font-size:13px;margin-bottom:12px;text-align:center;display:none}
-.login-hint{text-align:center;font-size:11px;color:var(--muted);margin-top:16px;opacity:.7}
+.login-hint{text-align:center;font-size:11px;color:var(--muted);margin-top:16px;opacity:.7;min-height:18px}
+.login-hint .lh-char{display:inline-block;opacity:0;animation:charReveal .6s ease forwards}
+@keyframes charReveal{0%{opacity:0;transform:translateY(4px);filter:blur(4px)}100%{opacity:1;transform:translateY(0);filter:blur(0)}}
 .loading-overlay{position:fixed;inset:0;background:var(--bg);z-index:600;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
 .spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -154,7 +154,11 @@ select.fi option{background:var(--bg2)}
 .backup-card i{font-size:32px;margin-bottom:14px}
 .backup-card h3{font-size:16px;margin-bottom:6px}
 .backup-card p{font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.5}
-/* REPORTS */
+.pwd-modal-icon{width:56px;height:56px;border-radius:50%;background:var(--accent-glow);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:22px;color:var(--accent);border:2px solid rgba(212,162,78,.3)}
+.pwd-modal-icon i{animation:shieldPulse 2s ease-in-out infinite}
+@keyframes shieldPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.pwd-err{color:var(--err);font-size:12px;text-align:center;margin-top:8px;display:none;animation:shake .4s}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
 .report-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:20px}
 .rpt-card{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:18px;cursor:pointer;transition:all .2s;text-align:center}
 .rpt-card:hover{border-color:var(--accent);transform:translateY(-2px)}
@@ -170,335 +174,34 @@ select.fi option{background:var(--bg2)}
 .toggle.on{background:var(--accent)}
 .toggle::after{content:'';position:absolute;width:15px;height:15px;background:#fff;border-radius:50%;top:3px;left:3px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
 .toggle.on::after{left:20px}
-/* PRINT STYLES */
-#printArea{display:none}
-@media print{
-  body>*:not(#printArea){display:none!important}
-  #printArea{display:block!important;position:fixed;top:0;left:0;width:100%;background:#fff}
-  @page{margin:14mm 12mm;size:A4}
-}
-.pdoc{font-family:'DM Sans',Arial,sans-serif;color:#111;background:#fff;font-size:12px}
-.ph{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2.5px solid #1a2b21;padding-bottom:14px;margin-bottom:20px}
-.ph-l h1{font-family:'Playfair Display',Georgia,serif;font-size:22px;font-weight:900;color:#0f1a14;margin-bottom:3px}
-.ph-l p{font-size:11px;color:#555}
-.ph-r{text-align:right;font-size:11px;color:#666}
-.ph-r strong{display:block;font-size:13px;color:#111;margin-bottom:2px}
-.pt{font-family:'Playfair Display',Georgia,serif;font-size:17px;font-weight:700;color:#0f1a14;margin-bottom:3px}
-.ps{font-size:11px;color:#777;margin-bottom:18px}
-.pstats{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px}
-.pst{background:#f4f7f4;border:1px solid #ccd8cc;border-radius:6px;padding:10px 16px;text-align:center}
-.pst .v{font-size:22px;font-weight:700;font-family:'Playfair Display',Georgia,serif;color:#0f1a14}
-.pst .l{font-size:10px;color:#666;text-transform:uppercase;letter-spacing:.5px}
-.ptbl{width:100%;border-collapse:collapse;margin-bottom:16px}
-.ptbl th{background:#0f1a14;color:#fff;padding:8px 10px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.6px;font-weight:600}
-.ptbl td{padding:7px 10px;border-bottom:1px solid #e0e8e0;vertical-align:middle}
-.ptbl tr:nth-child(even) td{background:#f8fbf8}
-.pb{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700}
-.pb-ok{background:#e6f7ed;color:#1a7a42}.pb-err{background:#fdecea;color:#b71c1c}
-.pb-i{background:#e3f2fd;color:#1565c0}.pb-w{background:#fff8e1;color:#e65100}
-.pfoot{border-top:1px solid #ccd8cc;padding-top:10px;margin-top:10px;font-size:10px;color:#888;display:flex;justify-content:space-between}
-.pdiv{border:none;border-top:1px solid #e0e8e0;margin:16px 0}
 .preview-wrap{margin-top:22px;background:#fff;border-radius:var(--r);padding:28px 32px;color:#111;box-shadow:0 4px 24px rgba(0,0,0,.25);overflow-x:auto}
-@media(max-width:768px){
-  .sidebar{transform:translateX(-100%)}.sidebar.open{transform:none}
-  .main{margin-left:0}.mobile-menu{display:block}
-  .topbar{padding:12px 16px}.page-content{padding:16px 14px 60px}
-  .report-grid{grid-template-columns:1fr 1fr}
-}
+@media(max-width:768px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:none}.main{margin-left:0}.mobile-menu{display:block}.topbar{padding:12px 16px}.page-content{padding:16px 14px 60px}.report-grid{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
+
+<script>(function(){setTimeout(function(){var lo=document.getElementById('loadingOverlay');var lp=document.getElementById('loginPage');if(lo){lo.style.display='none';}if(lp){lp.style.display='flex';}},4000);})();</script>
+
 <div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div><div style="color:var(--muted);font-size:14px" id="loadingMsg">Connecting to Alees Server...</div></div>
-<div id="printArea"></div>
-<!-- LOGIN -->
-<div class="login-page hidden" id="loginPage">
-  <div class="login-card">
-    <div class="login-brand"><h1>NOOR</h1><p>Nusrath Organization of Open Resources</p></div>
-    <div class="login-tabs">
-      <button class="login-tab active" data-role="admin">Admin / Librarian</button>
-      <button class="login-tab" data-role="student">Student</button>
-    </div>
-    <div id="adminForm">
-      <div class="fg"><label class="fl">Username</label><input class="fi" id="loginUser" placeholder="Enter username"></div>
-      <div class="fg"><label class="fl">Password</label><input class="fi" type="password" id="loginPass" placeholder="Enter password"></div>
-    </div>
-    <div id="studentForm" class="hidden">
-      <div class="fg"><label class="fl">Admission Number</label><input class="fi" id="loginRoll" placeholder="Enter your Admission Number"></div>
-    </div>
-    <div class="login-err" id="loginErr"></div>
-    <button class="btn btn-p" style="width:100%;justify-content:center;padding:12px" id="loginBtn"><i class="fas fa-sign-in-alt"></i> Sign In</button>
-    <p class="login-hint">Created by Alees | Nusrath Secondary School</p>
-  </div>
-</div>
-<!-- ADMIN UI -->
-<div class="hidden" id="adminUI">
-  <aside class="sidebar" id="adminSidebar">
-    <div class="sidebar-brand"><h1>NOOR</h1><p>School Library System</p><span class="role-tag role-admin">Admin</span></div>
-    <nav class="sidebar-nav">
-      <div class="nav-label">Overview</div>
-      <div class="nav-item active" data-page="a-dash"><i class="fas fa-chart-line"></i> Dashboard</div>
-      <div class="nav-label">Library</div>
-      <div class="nav-item" data-page="a-books"><i class="fas fa-book"></i> Books</div>
-      <div class="nav-item" data-page="a-members"><i class="fas fa-users"></i> Members</div>
-      <div class="nav-item" data-page="a-classes"><i class="fas fa-chalkboard"></i> Classes</div>
-      <div class="nav-label">Circulation</div>
-      <div class="nav-item" data-page="a-tx"><i class="fas fa-exchange-alt"></i> Transactions <span class="nav-badge hidden" id="aOverdueBadge">0</span></div>
-      <div class="nav-item" data-page="a-fines"><i class="fas fa-coins"></i> Fines <span class="nav-badge hidden" id="aFinesBadge">0</span></div>
-      <div class="nav-label">System</div>
-      <div class="nav-item" data-page="a-reports"><i class="fas fa-print"></i> Print Reports</div>
-      <div class="nav-item" data-page="a-settings"><i class="fas fa-cog"></i> Settings</div>
-      <div class="nav-item" data-page="a-backup"><i class="fas fa-shield-alt"></i> Export / Import</div>
-    </nav>
-    <div class="sidebar-footer"><span class="sync-dot" id="syncDot"></span><span id="syncStatus">Synced with Alees Server</span></div>
-  </aside>
-  <div class="main">
-    <div class="topbar">
-      <div style="display:flex;align-items:center;gap:14px">
-        <button class="mobile-menu" id="aMobileBtn"><i class="fas fa-bars"></i></button>
-        <div class="topbar-title" id="aTopTitle">Dashboard</div>
-      </div>
-      <div class="topbar-right">
-        <button class="btn btn-ok btn-sm" id="aRefreshBtn"><i class="fas fa-sync-alt"></i> Sync</button>
-        <button class="btn-logout" id="aLogout"><i class="fas fa-sign-out-alt"></i> Logout</button>
-      </div>
-    </div>
-    <div class="page-content">
-      <!-- DASHBOARD -->
-      <div class="page active" id="page-a-dash">
-        <div class="stats-grid" id="aStats"></div>
-        <div class="section-hdr"><h2>Recent Transactions</h2></div>
-        <div class="tbl-wrap" style="padding:16px 20px"><div id="aRecentTx"></div></div>
-      </div>
-      <!-- BOOKS -->
-      <div class="page" id="page-a-books">
-        <div class="section-hdr"><h2>Book Collection</h2><button class="btn btn-p" id="aAddBook"><i class="fas fa-plus"></i> Add Book</button></div>
-        <div class="search-bar">
-          <div class="search-input-wrap"><i class="fas fa-search si"></i><input id="aBookSearch" placeholder="Search title, author, ISBN or category…" autocomplete="off"></div>
-          <div class="filter-chips" id="aBookCatChips"></div>
-          <span class="search-count" id="aBookCount"></span>
-        </div>
-        <div class="tbl-wrap"><table><thead><tr><th>Title</th><th>Author</th><th>ISBN</th><th>Category</th><th>Copies</th><th>Available</th><th>Actions</th></tr></thead><tbody id="aBookTb"></tbody></table></div>
-      </div>
-      <!-- MEMBERS -->
-      <div class="page" id="page-a-members">
-        <div class="section-hdr"><h2>Library Members</h2><button class="btn btn-p" id="aAddMem"><i class="fas fa-user-plus"></i> Add Member</button></div>
-        <div class="search-bar">
-          <div class="search-input-wrap"><i class="fas fa-search si"></i><input id="aMemSearch" placeholder="Search name, admission number or phone…" autocomplete="off"></div>
-          <div class="filter-chips" id="aMemClassChips"></div>
-          <span class="search-count" id="aMemCount"></span>
-        </div>
-        <div class="tbl-wrap"><table><thead><tr><th>Name</th><th>Class</th><th>Admission No</th><th>Phone</th><th>Email</th><th>Actions</th></tr></thead><tbody id="aMemTb"></tbody></table></div>
-      </div>
-      <!-- CLASSES -->
-      <div class="page" id="page-a-classes">
-        <div class="section-hdr"><h2>Manage Classes</h2><button class="btn btn-p" id="aAddClass"><i class="fas fa-plus"></i> Add Class</button></div>
-        <div class="tbl-wrap"><table><thead><tr><th>Class Name</th><th>Members</th><th>Actions</th></tr></thead><tbody id="aClassTb"></tbody></table></div>
-      </div>
-      <!-- TRANSACTIONS -->
-      <div class="page" id="page-a-tx">
-        <div class="section-hdr"><h2>Transactions</h2><div style="display:flex;gap:8px"><button class="btn btn-p" id="aIssueBtn"><i class="fas fa-arrow-right"></i> Issue Book</button><button class="btn btn-ok" id="aReturnBtn"><i class="fas fa-undo"></i> Return Book</button></div></div>
-        <div class="search-bar">
-          <div class="search-input-wrap"><i class="fas fa-search si"></i><input id="aTxSearch" placeholder="Search by book title or member name…" autocomplete="off"></div>
-          <div class="filter-chips">
-            <span class="chip active" data-txf="">All</span>
-            <span class="chip" data-txf="issued"><i class="fas fa-circle" style="color:var(--info);font-size:8px"></i> Issued</span>
-            <span class="chip" data-txf="overdue"><i class="fas fa-circle" style="color:var(--err);font-size:8px"></i> Overdue</span>
-            <span class="chip" data-txf="returned"><i class="fas fa-circle" style="color:var(--ok);font-size:8px"></i> Returned</span>
-          </div>
-          <span class="search-count" id="aTxCount"></span>
-        </div>
-        <div class="tbl-wrap"><table><thead><tr><th>Book</th><th>Member</th><th>Issue Date</th><th>Due Date</th><th>Return Date</th><th>Fine</th><th>Status</th><th>Actions</th></tr></thead><tbody id="aTxTb"></tbody></table></div>
-      </div>
-      <!-- FINES -->
-      <div class="page" id="page-a-fines">
-        <div class="section-hdr"><h2>Fine Records</h2></div>
-        <div class="search-bar">
-          <div class="search-input-wrap"><i class="fas fa-search si"></i><input id="aFineSearch" placeholder="Search by book or member name…" autocomplete="off"></div>
-          <div class="filter-chips">
-            <span class="chip active" data-ff="">All</span>
-            <span class="chip" data-ff="unpaid"><i class="fas fa-circle" style="color:var(--err);font-size:8px"></i> Unpaid</span>
-            <span class="chip" data-ff="paid"><i class="fas fa-circle" style="color:var(--ok);font-size:8px"></i> Paid</span>
-            <span class="chip" data-ff="waived"><i class="fas fa-circle" style="color:var(--warn);font-size:8px"></i> Waived</span>
-          </div>
-          <span class="search-count" id="aFineCount"></span>
-        </div>
-        <div class="tbl-wrap"><table><thead><tr><th>Book</th><th>Member</th><th>Days Overdue</th><th>Amount</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead><tbody id="aFineTb"></tbody></table></div>
-      </div>
-      <!-- PRINT REPORTS -->
-      <div class="page" id="page-a-reports">
-        <div class="section-hdr"><h2>Print Reports</h2></div>
-        <div class="report-grid">
-          <div class="rpt-card selected" data-rpt="summary"><i class="fas fa-chart-pie"></i><h4>Library Summary</h4><p>Overview stats, books by category, members by class</p></div>
-          <div class="rpt-card" data-rpt="books"><i class="fas fa-book"></i><h4>Book Catalogue</h4><p>Full list with availability status</p></div>
-          <div class="rpt-card" data-rpt="members"><i class="fas fa-users"></i><h4>Member List</h4><p>All members sorted by class</p></div>
-          <div class="rpt-card" data-rpt="issued"><i class="fas fa-hand-holding"></i><h4>Currently Issued</h4><p>All books not yet returned</p></div>
-          <div class="rpt-card" data-rpt="overdue"><i class="fas fa-exclamation-triangle"></i><h4>Overdue Books</h4><p>Past due date with fine amounts</p></div>
-          <div class="rpt-card" data-rpt="fines"><i class="fas fa-coins"></i><h4>Fine Statement</h4><p>Paid, unpaid and waived fines</p></div>
-          <div class="rpt-card" data-rpt="tx"><i class="fas fa-exchange-alt"></i><h4>Transaction History</h4><p>Complete issue &amp; return log</p></div>
-          <div class="rpt-card" data-rpt="classwise"><i class="fas fa-chalkboard-teacher"></i><h4>Class-wise Summary</h4><p>Books issued per class</p></div>
-        </div>
-        <div class="print-opts">
-          <h4>Report Options</h4>
-          <div class="opt-row"><span>Include school header</span><div class="toggle on" id="optHeader"></div></div>
-          <div class="opt-row"><span>Show generated date &amp; time</span><div class="toggle on" id="optDate"></div></div>
-          <div class="opt-row"><span>Include summary statistics</span><div class="toggle on" id="optStats"></div></div>
-          <div class="opt-row" id="optRangeRow" style="display:none">
-            <span>Date range (Issue date)</span>
-            <div style="display:flex;gap:8px"><input type="date" class="fi" style="width:140px;padding:6px 10px" id="rptFrom"><input type="date" class="fi" style="width:140px;padding:6px 10px" id="rptTo"></div>
-          </div>
-        </div>
-        <div style="display:flex;gap:10px;flex-wrap:wrap">
-          <button class="btn btn-p" id="doPrint"><i class="fas fa-print"></i> Print Report</button>
-          <button class="btn btn-i" id="doPreview"><i class="fas fa-eye"></i> Preview</button>
-        </div>
-        <div class="preview-wrap hidden" id="previewWrap"><div id="previewContent"></div></div>
-      </div>
-      <!-- SETTINGS -->
-      <div class="page" id="page-a-settings">
-        <div class="settings-card">
-          <h3><i class="fas fa-coins"></i> Fine Configuration</h3>
-          <div class="fg"><label class="fl">Currency Symbol</label><input class="fi" id="setCurrency" value="₹"></div>
-          <div class="fg"><label class="fl">Fine Per Day (Overdue)</label><input class="fi" type="number" id="setFinePerDay" min="0" value="2"></div>
-          <div class="fg"><label class="fl">Default Issue Period (Days)</label><input class="fi" type="number" id="setIssueDays" min="1" value="14"></div>
-          <button class="btn btn-p" id="saveSettingsBtn"><i class="fas fa-save"></i> Save Settings</button>
-        </div>
-        <div class="settings-card"><h3><i class="fas fa-info-circle"></i> Current Summary</h3><div id="settingsDisplay" style="font-size:13px;color:var(--muted);line-height:2"></div></div>
-      </div>
-      <!-- EXPORT/IMPORT -->
-      <div class="page" id="page-a-backup">
-        <div class="backup-cards">
-          <div class="backup-card"><i class="fas fa-file-csv" style="color:var(--accent)"></i><h3>Export CSV</h3><p>Download all data as CSV files.</p><button class="btn btn-p" id="aExportBtn"><i class="fas fa-download"></i> Export All</button></div>
-          <div class="backup-card"><i class="fas fa-file-code" style="color:var(--ok)"></i><h3>Export JSON</h3><p>Download full JSON snapshot.</p><button class="btn btn-ok" id="aExportJsonBtn"><i class="fas fa-download"></i> Export JSON</button></div>
-          <div class="backup-card"><i class="fas fa-upload" style="color:var(--info)"></i><h3>Import JSON</h3><p>Restore from JSON backup.</p><button class="btn btn-i" id="aImportBtn"><i class="fas fa-folder-open"></i> Choose File</button><input type="file" id="restoreFileInput" accept=".json" style="display:none"></div>
-          <div class="backup-card"><i class="fas fa-trash-alt" style="color:var(--err)"></i><h3>Clear All Data</h3><p>Permanently delete everything.</p><button class="btn btn-d" id="aClearBtn"><i class="fas fa-exclamation-triangle"></i> Clear Data</button></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- STUDENT UI -->
-<div class="hidden" id="studentUI">
-  <aside class="sidebar" id="studentSidebar">
-    <div class="sidebar-brand"><h1>NOOR</h1><p>School Library System</p><span class="role-tag role-student" id="sRoleTag">Student</span></div>
-    <nav class="sidebar-nav">
-      <div class="nav-label">My Library</div>
-      <div class="nav-item active" data-page="s-dash"><i class="fas fa-home"></i> My Dashboard</div>
-      <div class="nav-item" data-page="s-books"><i class="fas fa-book"></i> Browse Books</div>
-      <div class="nav-item" data-page="s-fines"><i class="fas fa-coins"></i> My Fines</div>
-    </nav>
-    <div class="sidebar-footer" style="font-size:11px;color:var(--muted)">NOOR</div>
-  </aside>
-  <div class="main">
-    <div class="topbar">
-      <div style="display:flex;align-items:center;gap:14px"><button class="mobile-menu" id="sMobileBtn"><i class="fas fa-bars"></i></button><div class="topbar-title" id="sTopTitle">My Dashboard</div></div>
-      <div class="topbar-right"><button class="btn-logout" id="sLogout"><i class="fas fa-sign-out-alt"></i> Logout</button></div>
-    </div>
-    <div class="page-content">
-      <div class="page active" id="page-s-dash">
-        <div class="stats-grid" id="sStats"></div>
-        <div class="section-hdr"><h2>My Current Books</h2></div>
-        <div class="tbl-wrap"><table><thead><tr><th>Book</th><th>Issue Date</th><th>Due Date</th><th>Status</th></tr></thead><tbody id="sIssuedTb"></tbody></table></div>
-      </div>
-      <div class="page" id="page-s-books">
-        <div class="section-hdr"><h2>Browse Books</h2></div>
-        <div class="search-bar">
-          <div class="search-input-wrap"><i class="fas fa-search si"></i><input id="sBookSearch" placeholder="Search title, author or ISBN…" autocomplete="off"></div>
-          <div class="filter-chips">
-            <span class="chip active" data-av="">All</span>
-            <span class="chip" data-av="yes"><i class="fas fa-circle" style="color:var(--ok);font-size:8px"></i> Available</span>
-            <span class="chip" data-av="no"><i class="fas fa-circle" style="color:var(--err);font-size:8px"></i> Unavailable</span>
-          </div>
-          <span class="search-count" id="sBookCount"></span>
-        </div>
-        <div class="tbl-wrap"><table><thead><tr><th>Title</th><th>Author</th><th>Category</th><th>Available</th></tr></thead><tbody id="sBookTb"></tbody></table></div>
-      </div>
-      <div class="page" id="page-s-fines">
-        <div class="section-hdr"><h2>My Fines</h2></div>
-        <div class="tbl-wrap"><table><thead><tr><th>Book</th><th>Days Overdue</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead><tbody id="sFineTb"></tbody></table></div>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- MODALS -->
-<div class="modal-overlay hidden" id="bookModal">
-  <div class="modal"><div class="modal-hdr"><h3 id="bookModalT">Add Book</h3><button class="modal-close" onclick="closeM('bookModal')"><i class="fas fa-times"></i></button></div>
-  <div class="modal-body"><input type="hidden" id="bookEditId">
-    <div class="fg"><label class="fl">Title *</label><input class="fi" id="bookTitle" placeholder="Book title"><div class="fe" id="bookTitleE">Required</div></div>
-    <div class="fg"><label class="fl">Author *</label><input class="fi" id="bookAuthor" placeholder="Author name"><div class="fe" id="bookAuthorE">Required</div></div>
-    <div class="fg"><label class="fl">ISBN</label><input class="fi" id="bookISBN" placeholder="ISBN (optional)"></div>
-    <div class="fg"><label class="fl">Category</label><input class="fi" id="bookCat" placeholder="e.g. Science, Fiction…"></div>
-    <div class="fg"><label class="fl">Total Copies *</label><input class="fi" type="number" id="bookCopies" min="1" value="1"><div class="fe" id="bookCopiesE">Required</div></div>
-  </div><div class="modal-foot"><button class="btn btn-d btn-sm" onclick="closeM('bookModal')">Cancel</button><button class="btn btn-p" id="saveBookBtn">Save Book</button></div></div>
-</div>
-<div class="modal-overlay hidden" id="memModal">
-  <div class="modal"><div class="modal-hdr"><h3 id="memModalT">Add Member</h3><button class="modal-close" onclick="closeM('memModal')"><i class="fas fa-times"></i></button></div>
-  <div class="modal-body"><input type="hidden" id="memEditId">
-    <div class="fg"><label class="fl">Full Name *</label><input class="fi" id="memName" placeholder="Student name"><div class="fe" id="memNameE">Required</div></div>
-    <div class="fg"><label class="fl">Class *</label><select class="fi" id="memClass"><option value="">Choose class</option></select><div class="fe" id="memClassE">Required</div></div>
-    <div class="fg"><label class="fl">Admission Number *</label><input class="fi" id="memRoll" placeholder="Admission number"><div class="fe" id="memRollE">Required</div></div>
-    <div class="fg"><label class="fl">Phone</label><input class="fi" id="memPhone" placeholder="Contact number"></div>
-    <div class="fg"><label class="fl">Email</label><input class="fi" id="memEmail" placeholder="Email address"></div>
-  </div><div class="modal-foot"><button class="btn btn-d btn-sm" onclick="closeM('memModal')">Cancel</button><button class="btn btn-p" id="saveMemBtn">Save Member</button></div></div>
-</div>
-<div class="modal-overlay hidden" id="classModal">
-  <div class="modal" style="max-width:380px"><div class="modal-hdr"><h3 id="classModalT">Add Class</h3><button class="modal-close" onclick="closeM('classModal')"><i class="fas fa-times"></i></button></div>
-  <div class="modal-body"><input type="hidden" id="classEditId">
-    <div class="fg"><label class="fl">Class Name *</label><input class="fi" id="className" placeholder="e.g. 8A, 9B…"><div class="fe" id="classNameE">Required</div></div>
-  </div><div class="modal-foot"><button class="btn btn-d btn-sm" onclick="closeM('classModal')">Cancel</button><button class="btn btn-p" id="saveClassBtn">Save Class</button></div></div>
-</div>
-<!-- ISSUE MODAL — class-based member selector -->
-<div class="modal-overlay hidden" id="issueModal">
-  <div class="modal" style="max-width:560px"><div class="modal-hdr"><h3>Issue Book</h3><button class="modal-close" onclick="closeM('issueModal')"><i class="fas fa-times"></i></button></div>
-  <div class="modal-body">
-    <!-- STEP 1: Book -->
-    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:14px">
-      <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px"><i class="fas fa-book" style="margin-right:6px;color:var(--accent)"></i>Step 1 — Select Book</div>
-      <div class="fg" style="margin-bottom:0">
-        <select class="fi" id="issueBookId">
-          <option value="">— Choose a book —</option>
-        </select>
-        <div class="fe" id="issueBookE">Please select a book</div>
-      </div>
-    </div>
-    <!-- STEP 2: Member -->
-    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:14px">
-      <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px"><i class="fas fa-users" style="margin-right:6px;color:var(--info)"></i>Step 2 — Select Member</div>
-      <div class="fg" style="margin-bottom:8px">
-        <label class="fl">Class</label>
-        <select class="fi" id="issueClassFilter">
-          <option value="">— All Classes —</option>
-        </select>
-      </div>
-      <div class="fg" style="margin-bottom:0">
-        <label class="fl">Student</label>
-        <select class="fi" id="issueMemId" size="5" style="height:auto;min-height:100px">
-          <option value="">— Select class first —</option>
-        </select>
-        <div class="fe" id="issueMemE">Please select a member</div>
-      </div>
-    </div>
-    <!-- Dates -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-      <div class="fg"><label class="fl">Issue Date *</label><input class="fi" type="date" id="issueDate"></div>
-      <div class="fg"><label class="fl">Due Date *</label><input class="fi" type="date" id="dueDate"></div>
-    </div>
-  </div>
-  <div class="modal-foot"><button class="btn btn-d btn-sm" onclick="closeM('issueModal')">Cancel</button><button class="btn btn-p" id="doIssueBtn"><i class="fas fa-arrow-right"></i> Issue Book</button></div></div>
-</div>
-<div class="modal-overlay hidden" id="returnModal">
-  <div class="modal"><div class="modal-hdr"><h3>Return Book</h3><button class="modal-close" onclick="closeM('returnModal')"><i class="fas fa-times"></i></button></div>
-  <div class="modal-body">
-    <div class="fg"><label class="fl">Transaction *</label><select class="fi" id="returnTxId"></select><div class="fe" id="returnTxE">Required</div></div>
-    <div class="fg"><label class="fl">Return Date *</label><input class="fi" type="date" id="returnDate"></div>
-    <div id="fineInfoBox"></div>
-  </div><div class="modal-foot"><button class="btn btn-d btn-sm" onclick="closeM('returnModal')">Cancel</button><button class="btn btn-p" id="doReturnBtn">Confirm Return</button></div></div>
-</div>
-<div class="confirm-overlay hidden" id="confirmOverlay">
-  <div class="confirm-box"><h3 id="confirmTitle"></h3><p id="confirmMsg"></p>
-  <div class="confirm-btns"><button class="btn btn-d btn-sm" id="confirmNo">Cancel</button><button class="btn btn-p" id="confirmYes">Confirm</button></div></div>
-</div>
+
+<div class="login-page hidden" id="loginPage"><div class="login-card"><div class="login-brand"><h1 class="glow-title">NOOR</h1><p>Nusrath Organization of Open Resources</p></div><div class="login-tabs"><button class="login-tab active" data-role="admin">Admin / Librarian</button><button class="login-tab" data-role="student">Student</button></div><div id="adminForm"><div class="fg"><label class="fl">Username</label><input class="fi" id="loginUser" placeholder="Enter username"></div><div class="fg"><label class="fl">Password</label><input class="fi" type="password" id="loginPass" placeholder="Enter password"></div></div><div id="studentForm" class="hidden"><div class="fg"><label class="fl">Admission Number</label><input class="fi" id="loginRoll" placeholder="Enter your Admission Number"></div></div><div class="login-err" id="loginErr"></div><button class="btn btn-p" style="width:100%;justify-content:center;padding:12px" id="loginBtn"><i class="fas fa-sign-in-alt"></i> Sign In</button><p class="login-hint" id="aleesFooter"></p></div></div>
+
+<div class="hidden" id="adminUI"><aside class="sidebar" id="adminSidebar"><div class="sidebar-brand" id="adminBrand"><h1 class="glow-title">NOOR</h1><p>School Library System</p><span class="role-tag role-admin">Admin</span></div><nav class="sidebar-nav"><div class="nav-label">Overview</div><div class="nav-item active" data-page="a-dash"><i class="fas fa-chart-line"></i> Dashboard</div><div class="nav-label">Library</div><div class="nav-item" data-page="a-books"><i class="fas fa-book"></i> Books</div><div class="nav-item" data-page="a-members"><i class="fas fa-users"></i> Members</div><div class="nav-item" data-page="a-classes"><i class="fas fa-chalkboard"></i> Classes</div><div class="nav-label">Circulation</div><div class="nav-item" data-page="a-tx"><i class="fas fa-exchange-alt"></i> Transactions <span class="nav-badge hidden" id="aOverdueBadge">0</span></div><div class="nav-item" data-page="a-fines"><i class="fas fa-coins"></i> Fines <span class="nav-badge hidden" id="aFinesBadge">0</span></div><div class="system-section" id="systemSection"><div class="nav-label">System</div><div class="nav-item" data-page="a-reports"><i class="fas fa-print"></i> Print Reports</div><div class="nav-item" data-page="a-settings"><i class="fas fa-cog"></i> Settings</div><div class="nav-item" data-page="a-backup"><i class="fas fa-shield-alt"></i> Export / Import</div></div></nav><div class="sidebar-footer"><span class="sync-dot" id="syncDot"></span><span id="syncStatus">Synced with Alees Server</span></div></aside><div class="main"><div class="topbar"><div style="display:flex;align-items:center;gap:14px"><button class="mobile-menu" id="aMobileBtn"><i class="fas fa-bars"></i></button><div class="topbar-title" id="aTopTitle">Dashboard</div></div><div class="topbar-right"><button class="btn btn-ok btn-sm" id="aRefreshBtn"><i class="fas fa-sync-alt"></i> Sync</button><button class="btn-logout" id="aLogout"><i class="fas fa-sign-out-alt"></i> Logout</button></div></div><div class="page-content"><div class="page active" id="page-a-dash"><div class="stats-grid" id="aStats"></div><div class="section-hdr"><h2>Recent Transactions</h2></div><div class="tbl-wrap" style="padding:16px 20px"><div id="aRecentTx"></div></div></div><div class="page" id="page-a-books"><div class="section-hdr"><h2>Book Collection</h2><button class="btn btn-p" id="aAddBook"><i class="fas fa-plus"></i> Add Book</button></div><div class="search-bar"><div class="search-input-wrap"><i class="fas fa-search si"></i><input id="aBookSearch" placeholder="Search title, author, ISBN or category…" autocomplete="off"></div><div class="filter-chips" id="aBookCatChips"></div><span class="search-count" id="aBookCount"></span></div><div class="tbl-wrap"><table><thead><tr><th>Title</th><th>Author</th><th>ISBN</th><th>Category</th><th>Copies</th><th>Available</th><th>Actions</th></tr></thead><tbody id="aBookTb"></tbody></table></div></div><div class="page" id="page-a-members"><div class="section-hdr"><h2>Library Members</h2><button class="btn btn-p" id="aAddMem"><i class="fas fa-user-plus"></i> Add Member</button></div><div class="search-bar"><div class="search-input-wrap"><i class="fas fa-search si"></i><input id="aMemSearch" placeholder="Search name, admission number or phone…" autocomplete="off"></div><div class="filter-chips" id="aMemClassChips"></div><span class="search-count" id="aMemCount"></span></div><div class="tbl-wrap"><table><thead><tr><th>Name</th><th>Class</th><th>Admission No</th><th>Phone</th><th>Email</th><th>Actions</th></tr></thead><tbody id="aMemTb"></tbody></table></div></div><div class="page" id="page-a-classes"><div class="section-hdr"><h2>Manage Classes</h2><button class="btn btn-p" id="aAddClass"><i class="fas fa-plus"></i> Add Class</button></div><div class="tbl-wrap"><table><thead><tr><th>Class Name</th><th>Members</th><th>Actions</th></tr></thead><tbody id="aClassTb"></tbody></table></div></div><div class="page" id="page-a-tx"><div class="section-hdr"><h2>Transactions</h2><div style="display:flex;gap:8px"><button class="btn btn-p" id="aIssueBtn"><i class="fas fa-arrow-right"></i> Issue Book</button><button class="btn btn-ok" id="aReturnBtn"><i class="fas fa-undo"></i> Return Book</button></div></div><div class="search-bar"><div class="search-input-wrap"><i class="fas fa-search si"></i><input id="aTxSearch" placeholder="Search by book title or member name…" autocomplete="off"></div><div class="filter-chips"><span class="chip active" data-txf="">All</span><span class="chip" data-txf="issued"><i class="fas fa-circle" style="color:var(--info);font-size:8px"></i> Issued</span><span class="chip" data-txf="overdue"><i class="fas fa-circle" style="color:var(--err);font-size:8px"></i> Overdue</span><span class="chip" data-txf="returned"><i class="fas fa-circle" style="color:var(--ok);font-size:8px"></i> Returned</span></div><span class="search-count" id="aTxCount"></span></div><div class="tbl-wrap"><table><thead><tr><th>Book</th><th>Member</th><th>Issue Date</th><th>Due Date</th><th>Return Date</th><th>Fine</th><th>Status</th><th>Actions</th></tr></thead><tbody id="aTxTb"></tbody></table></div></div><div class="page" id="page-a-fines"><div class="section-hdr"><h2>Fine Records</h2></div><div class="search-bar"><div class="search-input-wrap"><i class="fas fa-search si"></i><input id="aFineSearch" placeholder="Search by book or member name…" autocomplete="off"></div><div class="filter-chips"><span class="chip active" data-ff="">All</span><span class="chip" data-ff="unpaid"><i class="fas fa-circle" style="color:var(--err);font-size:8px"></i> Unpaid</span><span class="chip" data-ff="paid"><i class="fas fa-circle" style="color:var(--ok);font-size:8px"></i> Paid</span><span class="chip" data-ff="waived"><i class="fas fa-circle" style="color:var(--warn);font-size:8px"></i> Waived</span></div><span class="search-count" id="aFineCount"></span></div><div class="tbl-wrap"><table><thead><tr><th>Book</th><th>Member</th><th>Days Overdue</th><th>Amount</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead><tbody id="aFineTb"></tbody></table></div></div><div class="page" id="page-a-reports"><div class="section-hdr"><h2>Print Reports</h2></div><div class="report-grid"><div class="rpt-card selected" data-rpt="summary"><i class="fas fa-chart-pie"></i><h4>Library Summary</h4><p>Overview stats, books by category, members by class</p></div><div class="rpt-card" data-rpt="books"><i class="fas fa-book"></i><h4>Book Catalogue</h4><p>Full list with availability status</p></div><div class="rpt-card" data-rpt="members"><i class="fas fa-users"></i><h4>Member List</h4><p>All members sorted by class</p></div><div class="rpt-card" data-rpt="issued"><i class="fas fa-hand-holding"></i><h4>Currently Issued</h4><p>All books not yet returned</p></div><div class="rpt-card" data-rpt="overdue"><i class="fas fa-exclamation-triangle"></i><h4>Overdue Books</h4><p>Past due date with fine amounts</p></div><div class="rpt-card" data-rpt="fines"><i class="fas fa-coins"></i><h4>Fine Statement</h4><p>Paid, unpaid and waived fines</p></div><div class="rpt-card" data-rpt="tx"><i class="fas fa-exchange-alt"></i><h4>Transaction History</h4><p>Complete issue &amp; return log</p></div><div class="rpt-card" data-rpt="classwise"><i class="fas fa-chalkboard-teacher"></i><h4>Class-wise Summary</h4><p>Books issued per class</p></div></div><div class="print-opts"><h4>Report Options</h4><div class="opt-row"><span>Include school header</span><div class="toggle on" id="optHeader"></div></div><div class="opt-row"><span>Show generated date &amp; time</span><div class="toggle on" id="optDate"></div></div><div class="opt-row"><span>Include summary statistics</span><div class="toggle on" id="optStats"></div></div><div class="opt-row" id="optRangeRow" style="display:none"><span>Date range (Issue date)</span><div style="display:flex;gap:8px"><input type="date" class="fi" style="width:140px;padding:6px 10px" id="rptFrom"><input type="date" class="fi" style="width:140px;padding:6px 10px" id="rptTo"></div></div></div><div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn btn-p" id="doPrint"><i class="fas fa-print"></i> Print Report</button><button class="btn btn-i" id="doPreview"><i class="fas fa-eye"></i> Preview</button></div><div class="preview-wrap hidden" id="previewWrap"><div id="previewContent"></div></div></div><div class="page" id="page-a-settings"><div class="settings-card"><h3><i class="fas fa-coins"></i> Fine Configuration</h3><div class="fg"><label class="fl">Currency Symbol</label><input class="fi" id="setCurrency" value="₹"></div><div class="fg"><label class="fl">Fine Per Day (Overdue)</label><input class="fi" type="number" id="setFinePerDay" min="0" value="2"></div><div class="fg"><label class="fl">Default Issue Period (Days)</label><input class="fi" type="number" id="setIssueDays" min="1" value="14"></div><button class="btn btn-p" id="saveSettingsBtn"><i class="fas fa-save"></i> Save Settings</button></div><div class="settings-card"><h3><i class="fas fa-info-circle"></i> Current Summary</h3><div id="settingsDisplay" style="font-size:13px;color:var(--muted);line-height:2"></div></div></div><div class="page" id="page-a-backup"><div class="backup-cards"><div class="backup-card"><i class="fas fa-file-csv" style="color:var(--accent)"></i><h3>Export CSV</h3><p>Download all data as CSV files.</p><button class="btn btn-p" id="aExportBtn"><i class="fas fa-download"></i> Export All</button></div><div class="backup-card"><i class="fas fa-file-code" style="color:var(--ok)"></i><h3>Export JSON</h3><p>Download full JSON snapshot.</p><button class="btn btn-ok" id="aExportJsonBtn"><i class="fas fa-download"></i> Export JSON</button></div><div class="backup-card"><i class="fas fa-upload" style="color:var(--info)"></i><h3>Import JSON</h3><p>Restore from JSON backup.</p><button class="btn btn-i" id="aImportBtn"><i class="fas fa-folder-open"></i> Choose File</button><input type="file" id="restoreFileInput" accept=".json" style="display:none"></div><div class="backup-card"><i class="fas fa-trash-alt" style="color:var(--err)"></i><h3>Clear All Data</h3><p>Permanently delete everything.</p><button class="btn btn-d" id="aClearBtn"><i class="fas fa-exclamation-triangle"></i> Clear Data</button></div></div></div></div></div></div>
+
+<div class="hidden" id="studentUI"><aside class="sidebar" id="studentSidebar"><div class="sidebar-brand"><h1 class="glow-title">NOOR</h1><p>School Library System</p><span class="role-tag role-student" id="sRoleTag">Student</span></div><nav class="sidebar-nav"><div class="nav-label">My Library</div><div class="nav-item active" data-page="s-dash"><i class="fas fa-home"></i> My Dashboard</div><div class="nav-item" data-page="s-books"><i class="fas fa-book"></i> Browse Books</div><div class="nav-item" data-page="s-fines"><i class="fas fa-coins"></i> My Fines</div></nav><div class="sidebar-footer" style="font-size:11px;color:var(--muted)">NOOR</div></aside><div class="main"><div class="topbar"><div style="display:flex;align-items:center;gap:14px"><button class="mobile-menu" id="sMobileBtn"><i class="fas fa-bars"></i></button><div class="topbar-title" id="sTopTitle">My Dashboard</div></div><div class="topbar-right"><button class="btn-logout" id="sLogout"><i class="fas fa-sign-out-alt"></i> Logout</button></div></div><div class="page-content"><div class="page active" id="page-s-dash"><div class="stats-grid" id="sStats"></div><div class="section-hdr"><h2>My Current Books</h2></div><div class="tbl-wrap"><table><thead><tr><th>Book</th><th>Issue Date</th><th>Due Date</th><th>Status</th></tr></thead><tbody id="sIssuedTb"></tbody></table></div></div><div class="page" id="page-s-books"><div class="section-hdr"><h2>Browse Books</h2></div><div class="search-bar"><div class="search-input-wrap"><i class="fas fa-search si"></i><input id="sBookSearch" placeholder="Search title, author or ISBN…" autocomplete="off"></div><div class="filter-chips" id="sBookCatChips"></div><div class="filter-chips"><span class="chip active" data-av=""><i class="fas fa-layer-group" style="font-size:10px"></i> All</span><span class="chip" data-av="yes"><i class="fas fa-circle" style="color:var(--ok);font-size:8px"></i> Available</span><span class="chip" data-av="no"><i class="fas fa-circle" style="color:var(--err);font-size:8px"></i> Unavailable</span></div><span class="search-count" id="sBookCount"></span></div><div class="tbl-wrap"><table><thead><tr><th>Title</th><th>Author</th><th>Category</th><th>Available</th></tr></thead><tbody id="sBookTb"></tbody></table></div></div><div class="page" id="page-s-fines"><div class="section-hdr"><h2>My Fines</h2></div><div class="tbl-wrap"><table><thead><tr><th>Book</th><th>Days Overdue</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead><tbody id="sFineTb"></tbody></table></div></div></div></div></div>
+
+<div class="modal-overlay hidden" id="bookModal"><div class="modal"><div class="modal-hdr"><h3 id="bookModalT">Add Book</h3><button class="modal-close" onclick="closeM('bookModal')"><i class="fas fa-times"></i></button></div><div class="modal-body"><input type="hidden" id="bookEditId"><div class="fg"><label class="fl">Title *</label><input class="fi" id="bookTitle" placeholder="Book title"><div class="fe" id="bookTitleE">Required</div></div><div class="fg"><label class="fl">Author *</label><input class="fi" id="bookAuthor" placeholder="Author name"><div class="fe" id="bookAuthorE">Required</div></div><div class="fg"><label class="fl">ISBN</label><input class="fi" id="bookISBN" placeholder="ISBN (optional)"></div><div class="fg"><label class="fl">Category</label><input class="fi" id="bookCat" placeholder="e.g. Science, Fiction…"></div><div class="fg"><label class="fl">Total Copies *</label><input class="fi" type="number" id="bookCopies" min="1" value="1"><div class="fe" id="bookCopiesE">Required</div></div></div><div class="modal-foot"><button class="btn btn-d btn-sm" onclick="closeM('bookModal')">Cancel</button><button class="btn btn-p" id="saveBookBtn">Save Book</button></div></div></div>
+<div class="modal-overlay hidden" id="memModal"><div class="modal"><div class="modal-hdr"><h3 id="memModalT">Add Member</h3><button class="modal-close" onclick="closeM('memModal')"><i class="fas fa-times"></i></button></div><div class="modal-body"><input type="hidden" id="memEditId"><div class="fg"><label class="fl">Full Name *</label><input class="fi" id="memName" placeholder="Student name"><div class="fe" id="memNameE">Required</div></div><div class="fg"><label class="fl">Class *</label><select class="fi" id="memClass"><option value="">Choose class</option></select><div class="fe" id="memClassE">Required</div></div><div class="fg"><label class="fl">Admission Number *</label><input class="fi" id="memRoll" placeholder="Admission number"><div class="fe" id="memRollE">Required</div></div><div class="fg"><label class="fl">Phone</label><input class="fi" id="memPhone" placeholder="Contact number"></div><div class="fg"><label class="fl">Email</label><input class="fi" id="memEmail" placeholder="Email address"></div></div><div class="modal-foot"><button class="btn btn-d btn-sm" onclick="closeM('memModal')">Cancel</button><button class="btn btn-p" id="saveMemBtn">Save Member</button></div></div></div>
+<div class="modal-overlay hidden" id="classModal"><div class="modal" style="max-width:380px"><div class="modal-hdr"><h3 id="classModalT">Add Class</h3><button class="modal-close" onclick="closeM('classModal')"><i class="fas fa-times"></i></button></div><div class="modal-body"><input type="hidden" id="classEditId"><div class="fg"><label class="fl">Class Name *</label><input class="fi" id="className" placeholder="e.g. 8A, 9B…"><div class="fe" id="classNameE">Required</div></div></div><div class="modal-foot"><button class="btn btn-d btn-sm" onclick="closeM('classModal')">Cancel</button><button class="btn btn-p" id="saveClassBtn">Save Class</button></div></div></div>
+<div class="modal-overlay hidden" id="issueModal"><div class="modal" style="max-width:560px"><div class="modal-hdr"><h3>Issue Book</h3><button class="modal-close" onclick="closeM('issueModal')"><i class="fas fa-times"></i></button></div><div class="modal-body"><div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:14px"><div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px"><i class="fas fa-book" style="margin-right:6px;color:var(--accent)"></i>Step 1 — Select Book</div><div class="fg" style="margin-bottom:0"><select class="fi" id="issueBookId"><option value="">— Choose a book —</option></select><div class="fe" id="issueBookE">Please select a book</div></div></div><div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:14px"><div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px"><i class="fas fa-users" style="margin-right:6px;color:var(--info)"></i>Step 2 — Select Member</div><div class="fg" style="margin-bottom:8px"><label class="fl">Class</label><select class="fi" id="issueClassFilter"><option value="">— All Classes —</option></select></div><div class="fg" style="margin-bottom:0"><label class="fl">Student</label><select class="fi" id="issueMemId" size="5" style="height:auto;min-height:100px"><option value="">— Select class first —</option></select><div class="fe" id="issueMemE">Please select a member</div></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div class="fg"><label class="fl">Issue Date *</label><input class="fi" type="date" id="issueDate"></div><div class="fg"><label class="fl">Due Date *</label><input class="fi" type="date" id="dueDate"></div></div></div><div class="modal-foot"><button class="btn btn-d btn-sm" onclick="closeM('issueModal')">Cancel</button><button class="btn btn-p" id="doIssueBtn"><i class="fas fa-arrow-right"></i> Issue Book</button></div></div></div>
+<div class="modal-overlay hidden" id="returnModal"><div class="modal"><div class="modal-hdr"><h3>Return Book</h3><button class="modal-close" onclick="closeM('returnModal')"><i class="fas fa-times"></i></button></div><div class="modal-body"><div class="fg"><label class="fl">Transaction *</label><select class="fi" id="returnTxId"></select><div class="fe" id="returnTxE">Required</div></div><div class="fg"><label class="fl">Return Date *</label><input class="fi" type="date" id="returnDate"></div><div id="fineInfoBox"></div></div><div class="modal-foot"><button class="btn btn-d btn-sm" onclick="closeM('returnModal')">Cancel</button><button class="btn btn-p" id="doReturnBtn">Confirm Return</button></div></div></div>
+<div class="modal-overlay hidden" id="backupPwdModal"><div class="modal" style="max-width:380px"><div class="modal-hdr"><h3>Restricted Access</h3><button class="modal-close" onclick="closeM('backupPwdModal')"><i class="fas fa-times"></i></button></div><div class="modal-body" style="text-align:center"><div class="pwd-modal-icon"><i class="fas fa-shield-alt"></i></div><p style="font-size:13px;color:var(--muted);margin-bottom:18px;line-height:1.6">This area requires additional authorisation. Please enter the system password to continue.</p><div class="fg" style="margin-bottom:8px;text-align:left"><label class="fl">System Password</label><input class="fi" type="password" id="backupPwdInput" placeholder="Enter password" autocomplete="off"><div class="pwd-err" id="backupPwdErr"><i class="fas fa-times-circle"></i> Incorrect password. Access denied.</div></div></div><div class="modal-foot"><button class="btn btn-d btn-sm" onclick="closeM('backupPwdModal')">Cancel</button><button class="btn btn-p" id="backupPwdSubmit"><i class="fas fa-unlock"></i> Unlock</button></div></div></div>
+<div class="confirm-overlay hidden" id="confirmOverlay"><div class="confirm-box"><h3 id="confirmTitle"></h3><p id="confirmMsg"></p><div class="confirm-btns"><button class="btn btn-d btn-sm" id="confirmNo">Cancel</button><button class="btn btn-p" id="confirmYes">Confirm</button></div></div></div>
 <div class="toast-wrap" id="toastWrap"></div>
+
 <script>
+try {
+
 var API_URL='https://script.google.com/macros/s/AKfycbwAhYJ4HU-XetUFp6M9ZxtGnhWBbAQl6Ka6Yap9eu_FcqkP9qfGFMP9AvO78W-NZ2o_9A/exec';
 var TOKEN_KEY='alees_token';
 function getToken(){return localStorage.getItem(TOKEN_KEY)||'';}
@@ -506,453 +209,216 @@ function setToken(t){localStorage.setItem(TOKEN_KEY,t);}
 function clearAuth(){localStorage.removeItem(TOKEN_KEY);}
 var DB={books:[],members:[],tx:[],classes:[],fines:[],settings:{}};
 var currentUser=null;
-function apiCall(action,payload,silent){
-  payload=payload||{};payload.token=getToken();setSyncing(true);
-  return fetch(API_URL,{method:'POST',body:JSON.stringify({action:action,payload:payload})})
-  .then(function(r){return r.text();})
-  .then(function(txt){var d=JSON.parse(txt.replace(/^\)\]\}'/,'').trim());setSyncing(false);if(!d.ok)throw new Error(d.error||'API error');return d;})
-  .catch(function(err){setSyncing(false,true);if(!silent)toast('Sync error: '+err.message,'err');throw err;});
-}
-function loadAll(){
-  return apiCall('getAll').then(function(d){
-    DB.books=d.data.books||[];DB.members=d.data.members||[];DB.tx=d.data.tx||[];
-    DB.classes=d.data.classes||[];DB.fines=d.data.fines||[];
-    var s=(d.data.settings||[])[0];DB.settings=s||{currency:'₹',finePerDay:2,issueDays:14};
-    updateTxStatus();
-  });
-}
-function setSyncing(on,err){
-  var dot=document.getElementById('syncDot'),txt=document.getElementById('syncStatus');if(!dot)return;
-  dot.className='sync-dot'+(on?' syncing':(err?' error':''));
-  txt.textContent=on?'Syncing…':(err?'Sync error':'Synced with Alees Server');
-}
+var systemRevealed=false;
+var backupUnlocked=false;
+var secretClickCount=0;
+var secretClickTimer=null;
+var SYSTEM_PAGES=['a-reports','a-settings','a-backup'];
+var BACKUP_PASSWORD='Alees@5050';
+var _loginShown=false;
+
+function apiCall(action,payload,silent){payload=payload||{};payload.token=getToken();setSyncing(true);return fetch(API_URL,{method:'POST',body:JSON.stringify({action:action,payload:payload})}).then(function(r){return r.text();}).then(function(txt){var d=JSON.parse(txt.replace(/^\)\]\}'/,'').trim());setSyncing(false);if(!d.ok)throw new Error(d.error||'API error');return d;}).catch(function(err){setSyncing(false,true);if(!silent)toast('Sync error: '+err.message,'err');throw err;});}
+function loadAll(){return apiCall('getAll').then(function(d){DB.books=d.data.books||[];DB.members=d.data.members||[];DB.tx=d.data.tx||[];DB.classes=d.data.classes||[];DB.fines=d.data.fines||[];var s=(d.data.settings||[])[0];DB.settings=s||{currency:'\u20B9',finePerDay:2,issueDays:14};updateTxStatus();});}
+function setSyncing(on,err){var dot=document.getElementById('syncDot'),txt=document.getElementById('syncStatus');if(!dot)return;dot.className='sync-dot'+(on?' syncing':(err?' error':''));txt.textContent=on?'Syncing\u2026':(err?'Sync error':'Synced with Alees Server');}
 function gid(){return 'id_'+Math.random().toString(36).substr(2,9)+'_'+Date.now();}
 function td(){return new Date().toISOString().split('T')[0];}
-function fd(d){if(!d)return'—';var s=String(d).split('T')[0],p=s.split('-');return p.length!==3||!p[0]?String(d):p[2]+'/'+p[1]+'/'+p[0];}
+function fd(d){if(!d)return'\u2014';var s=String(d).split('T')[0],p=s.split('-');return p.length!==3||!p[0]?String(d):p[2]+'/'+p[1]+'/'+p[0];}
 function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function ad(d,n){var dt=new Date(d+'T00:00:00');dt.setDate(dt.getDate()+n);return dt.toISOString().split('T')[0];}
 function openM(id){document.getElementById(id).classList.remove('hidden');}
 function closeM(id){document.getElementById(id).classList.add('hidden');}
-function getS(){return DB.settings||{currency:'₹',finePerDay:2,issueDays:14};}
+function getS(){return DB.settings||{currency:'\u20B9',finePerDay:2,issueDays:14};}
 function updateTxStatus(){var t=td();DB.tx.forEach(function(x){if(x.status!=='returned'&&x.dueDate<t)x.status='overdue';});}
-function toast(msg,type){
-  type=type||'ok';var w=document.getElementById('toastWrap'),t=document.createElement('div');
-  t.className='toast '+type;var ic={ok:'fa-check-circle',err:'fa-times-circle',i:'fa-info-circle'}[type]||'fa-check-circle';
-  t.innerHTML='<i class="fas '+ic+'"></i> '+esc(msg);w.appendChild(t);setTimeout(function(){t.remove();},3500);
-}
+function toast(msg,type){type=type||'ok';var w=document.getElementById('toastWrap'),t=document.createElement('div');t.className='toast '+type;var ic={ok:'fa-check-circle',err:'fa-times-circle',i:'fa-info-circle'}[type]||'fa-check-circle';t.innerHTML='<i class="fas '+ic+'"></i> '+esc(msg);w.appendChild(t);setTimeout(function(){t.remove();},3500);}
+function animateLetters(elementId,text,speed){var el=document.getElementById(elementId);if(!el)return;el.innerHTML='';var chars=text.split('');chars.forEach(function(ch,i){var span=document.createElement('span');span.className='lh-char';span.style.animationDelay=(i*speed)+'ms';if(ch===' '){span.innerHTML='&nbsp;';}else{span.textContent=ch;}el.appendChild(span);});}
+
 var _cb=null;
 function showConfirm(title,msg,cb){document.getElementById('confirmTitle').textContent=title;document.getElementById('confirmMsg').innerHTML=msg;_cb=cb;openM('confirmOverlay');}
 document.getElementById('confirmYes').addEventListener('click',function(){closeM('confirmOverlay');if(_cb)_cb();});
 document.getElementById('confirmNo').addEventListener('click',function(){closeM('confirmOverlay');});
-// CHIP helpers
 function chipVal(attr){var a=document.querySelector('['+attr+'].active');return a?a.getAttribute(attr):'';}
-function initChips(attr,cb){
-  document.querySelectorAll('['+attr+']').forEach(function(c){
-    c.addEventListener('click',function(){document.querySelectorAll('['+attr+']').forEach(function(x){x.classList.remove('active');});this.classList.add('active');cb();});
-  });
-}
+function initChips(attr,cb){document.querySelectorAll('['+attr+']').forEach(function(c){c.addEventListener('click',function(){document.querySelectorAll('['+attr+']').forEach(function(x){x.classList.remove('active');});this.classList.add('active');cb();});});}
 initChips('data-txf',function(){refreshAdminTx();});
 initChips('data-ff',function(){refreshAdminFines();});
 initChips('data-av',function(){refreshStudentBooks();});
-// LOGIN
-function showLogin(){document.getElementById('loadingOverlay').classList.add('hidden');document.getElementById('loginPage').classList.remove('hidden');}
+
+function showLogin(){if(_loginShown)return;_loginShown=true;document.getElementById('loadingOverlay').classList.add('hidden');document.getElementById('loginPage').classList.remove('hidden');setTimeout(function(){animateLetters('aleesFooter','Created by Alees | Nusrath Secondary School',90);},600);}
 function hideLogin(){document.getElementById('loginPage').classList.add('hidden');}
+
+// TOGGLE 9-click secret on NOOR brand
+var brandEl=document.getElementById('adminBrand');
+if(brandEl){brandEl.addEventListener('click',function(){
+  secretClickCount++;
+  clearTimeout(secretClickTimer);
+  secretClickTimer=setTimeout(function(){secretClickCount=0;},2000);
+  if(secretClickCount===5){toast(systemRevealed?'Click to lock\u2026':'Keep going\u2026','i');}
+  if(secretClickCount>=9){
+    secretClickCount=0;
+    if(systemRevealed){
+      systemRevealed=false;backupUnlocked=false;
+      document.getElementById('systemSection').classList.remove('revealed');
+      var curPage=document.querySelector('#adminUI .page.active');
+      if(curPage&&SYSTEM_PAGES.indexOf(curPage.id.replace('page-',''))!==-1){adminNav('a-dash');}
+      toast('System area locked','i');
+    }else{
+      systemRevealed=true;
+      document.getElementById('systemSection').classList.add('revealed');
+      toast('System area unlocked','ok');
+    }
+  }
+});}
+
+document.getElementById('backupPwdSubmit').addEventListener('click',function(){var pwd=document.getElementById('backupPwdInput').value;if(pwd===BACKUP_PASSWORD){backupUnlocked=true;document.getElementById('backupPwdErr').style.display='none';document.getElementById('backupPwdInput').value='';closeM('backupPwdModal');toast('Export / Import area unlocked','ok');adminNav('a-backup');}else{document.getElementById('backupPwdErr').style.display='block';document.getElementById('backupPwdInput').value='';document.getElementById('backupPwdInput').focus();}});
+document.getElementById('backupPwdInput').addEventListener('keydown',function(e){if(e.key==='Enter')document.getElementById('backupPwdSubmit').click();});
+
 var loginRole='admin';
-document.querySelectorAll('.login-tab').forEach(function(tab){
-  tab.addEventListener('click',function(){
-    document.querySelectorAll('.login-tab').forEach(function(t){t.classList.remove('active');});
-    this.classList.add('active');loginRole=this.dataset.role;
-    document.getElementById('adminForm').classList.toggle('hidden',loginRole!=='admin');
-    document.getElementById('studentForm').classList.toggle('hidden',loginRole!=='student');
-    document.getElementById('loginErr').style.display='none';
-  });
-});
+document.querySelectorAll('.login-tab').forEach(function(tab){tab.addEventListener('click',function(){document.querySelectorAll('.login-tab').forEach(function(t){t.classList.remove('active');});this.classList.add('active');loginRole=this.dataset.role;document.getElementById('adminForm').classList.toggle('hidden',loginRole!=='admin');document.getElementById('studentForm').classList.toggle('hidden',loginRole!=='student');document.getElementById('loginErr').style.display='none';});});
 document.getElementById('loginBtn').addEventListener('click',doLogin);
 document.getElementById('loginPass').addEventListener('keydown',function(e){if(e.key==='Enter')doLogin();});
 document.getElementById('loginRoll').addEventListener('keydown',function(e){if(e.key==='Enter')doLogin();});
-function doLogin(){
-  var errEl=document.getElementById('loginErr');errEl.style.display='none';
-  var payload={role:loginRole};
-  if(loginRole==='admin'){payload.username=document.getElementById('loginUser').value.trim();payload.password=document.getElementById('loginPass').value.trim();}
-  else{payload.rollNo=document.getElementById('loginRoll').value.trim();}
-  var btn=document.getElementById('loginBtn');btn.disabled=true;btn.textContent='Signing in…';
-  apiCall('login',payload,true).then(function(d){
-    btn.disabled=false;btn.innerHTML='<i class="fas fa-sign-in-alt"></i> Sign In';setToken(d.token);
-    if(d.role==='admin'){currentUser={role:'admin'};enterAdmin();}
-    else{currentUser={role:'student',memberId:d.member.id,name:d.member.name,rollNo:d.member.rollNo,cls:d.member.classId};enterStudent();}
-  }).catch(function(err){btn.disabled=false;btn.innerHTML='<i class="fas fa-sign-in-alt"></i> Sign In';errEl.textContent=err.message||'Login failed';errEl.style.display='block';});
-}
+function doLogin(){var errEl=document.getElementById('loginErr');errEl.style.display='none';var payload={role:loginRole};if(loginRole==='admin'){payload.username=document.getElementById('loginUser').value.trim();payload.password=document.getElementById('loginPass').value.trim();}else{payload.rollNo=document.getElementById('loginRoll').value.trim();}var btn=document.getElementById('loginBtn');btn.disabled=true;btn.textContent='Signing in\u2026';apiCall('login',payload,true).then(function(d){btn.disabled=false;btn.innerHTML='<i class="fas fa-sign-in-alt"></i> Sign In';setToken(d.token);if(d.role==='admin'){currentUser={role:'admin'};enterAdmin();}else{currentUser={role:'student',memberId:d.member.id,name:d.member.name,rollNo:d.member.rollNo,cls:d.member.classId};enterStudent();}}).catch(function(err){btn.disabled=false;btn.innerHTML='<i class="fas fa-sign-in-alt"></i> Sign In';errEl.textContent=err.message||'Login failed';errEl.style.display='block';});}
 function enterAdmin(){hideLogin();document.getElementById('adminUI').classList.remove('hidden');document.getElementById('studentUI').classList.add('hidden');loadAll().then(function(){adminNav('a-dash');refreshAllAdmin();});}
 function enterStudent(){hideLogin();document.getElementById('studentUI').classList.remove('hidden');document.getElementById('adminUI').classList.add('hidden');document.getElementById('sRoleTag').textContent=currentUser.name;loadAll().then(function(){studentNav('s-dash');refreshStudentDash();});}
-function doLogout(){clearAuth();currentUser=null;document.getElementById('loginPage').classList.remove('hidden');document.getElementById('adminUI').classList.add('hidden');document.getElementById('studentUI').classList.add('hidden');document.getElementById('loginUser').value='';document.getElementById('loginPass').value='';document.getElementById('loginRoll').value='';document.getElementById('loginErr').style.display='none';}
+function doLogout(){clearAuth();currentUser=null;systemRevealed=false;backupUnlocked=false;secretClickCount=0;document.getElementById('systemSection').classList.remove('revealed');_loginShown=false;document.getElementById('loginPage').classList.remove('hidden');document.getElementById('adminUI').classList.add('hidden');document.getElementById('studentUI').classList.add('hidden');document.getElementById('loginUser').value='';document.getElementById('loginPass').value='';document.getElementById('loginRoll').value='';document.getElementById('loginErr').style.display='none';setTimeout(function(){animateLetters('aleesFooter','Created by Alees | Nusrath Secondary School',90);},400);}
 document.getElementById('aLogout').addEventListener('click',doLogout);
 document.getElementById('sLogout').addEventListener('click',doLogout);
-// NAV
-function adminNav(pg){
-  var titles={'a-dash':'Dashboard','a-books':'Book Collection','a-members':'Library Members','a-tx':'Transactions','a-classes':'Manage Classes','a-fines':'Fine Records','a-reports':'Print Reports','a-settings':'Settings','a-backup':'Export / Import'};
-  document.getElementById('aTopTitle').textContent=titles[pg]||pg;
-  document.querySelectorAll('#adminSidebar .nav-item').forEach(function(n){n.classList.remove('active');if(n.dataset.page===pg)n.classList.add('active');});
-  document.querySelectorAll('#adminUI .page').forEach(function(p){p.classList.remove('active');});
-  var el=document.getElementById('page-'+pg);if(el)el.classList.add('active');
-  if(pg==='a-dash')refreshAdminDash();if(pg==='a-books')refreshAdminBooks();if(pg==='a-members')refreshAdminMembers();
-  if(pg==='a-tx')refreshAdminTx();if(pg==='a-classes')refreshAdminClasses();if(pg==='a-fines')refreshAdminFines();if(pg==='a-settings')refreshSettings();
-  document.getElementById('adminSidebar').classList.remove('open');
-}
+
+function adminNav(pg){if(SYSTEM_PAGES.indexOf(pg)!==-1&&!systemRevealed){toast('This area is restricted','err');return;}if(pg==='a-backup'&&!backupUnlocked){openM('backupPwdModal');return;}var titles={'a-dash':'Dashboard','a-books':'Book Collection','a-members':'Library Members','a-tx':'Transactions','a-classes':'Manage Classes','a-fines':'Fine Records','a-reports':'Print Reports','a-settings':'Settings','a-backup':'Export / Import'};document.getElementById('aTopTitle').textContent=titles[pg]||pg;document.querySelectorAll('#adminSidebar .nav-item').forEach(function(n){n.classList.remove('active');if(n.dataset.page===pg)n.classList.add('active');});document.querySelectorAll('#adminUI .page').forEach(function(p){p.classList.remove('active');});var el=document.getElementById('page-'+pg);if(el)el.classList.add('active');if(pg==='a-dash')refreshAdminDash();if(pg==='a-books')refreshAdminBooks();if(pg==='a-members')refreshAdminMembers();if(pg==='a-tx')refreshAdminTx();if(pg==='a-classes')refreshAdminClasses();if(pg==='a-fines')refreshAdminFines();if(pg==='a-settings')refreshSettings();document.getElementById('adminSidebar').classList.remove('open');}
 document.querySelectorAll('#adminSidebar .nav-item').forEach(function(n){n.addEventListener('click',function(){adminNav(this.dataset.page);});});
 document.getElementById('aMobileBtn').addEventListener('click',function(){document.getElementById('adminSidebar').classList.toggle('open');});
 document.getElementById('aRefreshBtn').addEventListener('click',function(){loadAll().then(function(){refreshAllAdmin();toast('Synced from Alees Server','i');});});
-function studentNav(pg){
-  var titles={'s-dash':'My Dashboard','s-books':'Browse Books','s-fines':'My Fines'};
-  document.getElementById('sTopTitle').textContent=titles[pg]||pg;
-  document.querySelectorAll('#studentSidebar .nav-item').forEach(function(n){n.classList.remove('active');if(n.dataset.page===pg)n.classList.add('active');});
-  document.querySelectorAll('#studentUI .page').forEach(function(p){p.classList.remove('active');});
-  var el=document.getElementById('page-'+pg);if(el)el.classList.add('active');
-  if(pg==='s-dash')refreshStudentDash();if(pg==='s-books')refreshStudentBooks();if(pg==='s-fines')refreshStudentFines();
-  document.getElementById('studentSidebar').classList.remove('open');
-}
+function studentNav(pg){var titles={'s-dash':'My Dashboard','s-books':'Browse Books','s-fines':'My Fines'};document.getElementById('sTopTitle').textContent=titles[pg]||pg;document.querySelectorAll('#studentSidebar .nav-item').forEach(function(n){n.classList.remove('active');if(n.dataset.page===pg)n.classList.add('active');});document.querySelectorAll('#studentUI .page').forEach(function(p){p.classList.remove('active');});var el=document.getElementById('page-'+pg);if(el)el.classList.add('active');if(pg==='s-dash')refreshStudentDash();if(pg==='s-books')refreshStudentBooks();if(pg==='s-fines')refreshStudentFines();document.getElementById('studentSidebar').classList.remove('open');}
 document.querySelectorAll('#studentSidebar .nav-item').forEach(function(n){n.addEventListener('click',function(){studentNav(this.dataset.page);});});
 document.getElementById('sMobileBtn').addEventListener('click',function(){document.getElementById('studentSidebar').classList.toggle('open');});
-// CLASSES
+
 function buildClsOpts(sel){var h='<option value="">Choose class</option>';DB.classes.forEach(function(c){h+='<option value="'+c.id+'"'+(c.id===sel?' selected':'')+'>'+esc(c.name)+'</option>';});return h;}
-function refreshAdminClasses(){
-  var tb=document.getElementById('aClassTb');
-  if(!DB.classes.length){tb.innerHTML='<tr><td colspan="3"><div class="tbl-empty"><i class="fas fa-chalkboard"></i><p>No classes yet.</p></div></td></tr>';return;}
-  tb.innerHTML=DB.classes.map(function(c){var cnt=DB.members.filter(function(m){return m.classId===c.id;}).length;return'<tr><td style="font-weight:600">'+esc(c.name)+'</td><td>'+cnt+'</td><td><div class="act-btns"><button class="btn btn-i btn-icon btn-sm" onclick="window._ec(\''+c.id+'\')"><i class="fas fa-edit"></i></button><button class="btn btn-d btn-icon btn-sm" onclick="window._dc(\''+c.id+'\')"><i class="fas fa-trash"></i></button></div></td></tr>';}).join('');
-}
+function refreshAdminClasses(){var tb=document.getElementById('aClassTb');if(!DB.classes.length){tb.innerHTML='<tr><td colspan="3"><div class="tbl-empty"><i class="fas fa-chalkboard"></i><p>No classes yet.</p></div></td></tr>';return;}tb.innerHTML=DB.classes.map(function(c){var cnt=DB.members.filter(function(m){return m.classId===c.id;}).length;return'<tr><td style="font-weight:600">'+esc(c.name)+'</td><td>'+cnt+'</td><td><div class="act-btns"><button class="btn btn-i btn-icon btn-sm" onclick="window._ec(\''+c.id+'\')"><i class="fas fa-edit"></i></button><button class="btn btn-d btn-icon btn-sm" onclick="window._dc(\''+c.id+'\')"><i class="fas fa-trash"></i></button></div></td></tr>';}).join('');}
 window._ec=function(id){var c=DB.classes.find(function(x){return x.id===id;});if(!c)return;document.getElementById('classEditId').value=id;document.getElementById('classModalT').textContent='Edit Class';document.getElementById('className').value=c.name;openM('classModal');};
 window._dc=function(id){var c=DB.classes.find(function(x){return x.id===id;});if(!c)return;if(DB.members.some(function(m){return m.classId===id;})){toast('Cannot delete: class has members','err');return;}showConfirm('Delete Class','Delete <strong>"'+esc(c.name)+'"</strong>?',function(){apiCall('deleteClass',{id:id}).then(function(){DB.classes=DB.classes.filter(function(x){return x.id!==id;});toast('Class deleted','i');refreshAdminClasses();refreshAdminMembers();});});};
 document.getElementById('aAddClass').addEventListener('click',function(){document.getElementById('classEditId').value='';document.getElementById('classModalT').textContent='Add Class';document.getElementById('className').value='';document.getElementById('classNameE').style.display='none';openM('classModal');});
-document.getElementById('saveClassBtn').addEventListener('click',function(){
-  var name=document.getElementById('className').value.trim();if(!name){document.getElementById('classNameE').style.display='block';return;}
-  document.getElementById('classNameE').style.display='none';var eid=document.getElementById('classEditId').value,row={id:eid||gid(),name:name};
-  apiCall(eid?'updateClass':'addClass',{row:row}).then(function(){if(eid){var i=DB.classes.findIndex(function(x){return x.id===eid;});if(i!==-1)DB.classes[i]=row;}else DB.classes.push(row);closeM('classModal');toast('Class saved');refreshAdminClasses();refreshAdminMembers();});
-});
-// BOOKS with category chips
-function buildBookCatChips(){
-  var wrap=document.getElementById('aBookCatChips');
-  var cur=wrap.querySelector('.chip.active');var curCat=cur?(cur.dataset.cat||''):'';
-  var cats=[...new Set(DB.books.map(function(b){return b.category||'';}).filter(Boolean))];
-  wrap.innerHTML=[''].concat(cats).map(function(c,i){
-    var label=i===0?'All':c,val=i===0?'':c,active=(val===curCat)?'active':'';
-    return '<span class="chip '+active+'" data-cat="'+esc(val)+'">'+esc(label)+'</span>';
-  }).join('');
-  wrap.querySelectorAll('.chip').forEach(function(ch){ch.addEventListener('click',function(){wrap.querySelectorAll('.chip').forEach(function(x){x.classList.remove('active');});this.classList.add('active');refreshAdminBooks();});});
-  if(!wrap.querySelector('.active')&&wrap.firstChild)wrap.firstChild.classList.add('active');
-}
-function refreshAdminBooks(){
-  buildBookCatChips();
-  var search=document.getElementById('aBookSearch').value.toLowerCase();
-  var catEl=document.querySelector('#aBookCatChips .chip.active');var catF=catEl?catEl.dataset.cat:'';
-  var filtered=DB.books.filter(function(b){
-    var ms=!search||(b.title||'').toLowerCase().indexOf(search)!==-1||(b.author||'').toLowerCase().indexOf(search)!==-1||(b.isbn||'').toLowerCase().indexOf(search)!==-1||(b.category||'').toLowerCase().indexOf(search)!==-1;
-    return ms&&(!catF||b.category===catF);
-  });
-  document.getElementById('aBookCount').textContent=filtered.length+' book'+(filtered.length!==1?'s':'');
-  var tb=document.getElementById('aBookTb');
-  if(!filtered.length){tb.innerHTML='<tr><td colspan="7"><div class="tbl-empty"><i class="fas fa-book"></i><p>No books found.</p></div></td></tr>';return;}
-  tb.innerHTML=filtered.map(function(b){var av=b.availableCopies>0?'<span style="color:var(--ok);font-weight:600">'+b.availableCopies+'</span>':'<span style="color:var(--err);font-weight:600">0</span>';return'<tr><td style="font-weight:500">'+esc(b.title)+'</td><td>'+esc(b.author)+'</td><td style="color:var(--muted);font-size:12px">'+esc(b.isbn||'—')+'</td><td>'+esc(b.category||'—')+'</td><td>'+b.totalCopies+'</td><td>'+av+'</td><td><div class="act-btns"><button class="btn btn-i btn-icon btn-sm" onclick="window._eb(\''+b.id+'\')"><i class="fas fa-edit"></i></button><button class="btn btn-d btn-icon btn-sm" onclick="window._db(\''+b.id+'\')"><i class="fas fa-trash"></i></button></div></td></tr>';}).join('');
-}
+document.getElementById('saveClassBtn').addEventListener('click',function(){var name=document.getElementById('className').value.trim();if(!name){document.getElementById('classNameE').style.display='block';return;}document.getElementById('classNameE').style.display='none';var eid=document.getElementById('classEditId').value,row={id:eid||gid(),name:name};apiCall(eid?'updateClass':'addClass',{row:row}).then(function(){if(eid){var i=DB.classes.findIndex(function(x){return x.id===eid;});if(i!==-1)DB.classes[i]=row;}else DB.classes.push(row);closeM('classModal');toast('Class saved');refreshAdminClasses();refreshAdminMembers();});});
+
+function buildBookCatChips(){var wrap=document.getElementById('aBookCatChips');var cur=wrap.querySelector('.chip.active');var curCat=cur?(cur.dataset.cat||''):'';var catSet={};DB.books.forEach(function(b){if(b.category)catSet[b.category]=true;});var cats=Object.keys(catSet);wrap.innerHTML=[''].concat(cats).map(function(c,i){var label=i===0?'All':c,val=i===0?'':c,active=(val===curCat)?'active':'';return '<span class="chip '+active+'" data-cat="'+esc(val)+'">'+esc(label)+'</span>';}).join('');wrap.querySelectorAll('.chip').forEach(function(ch){ch.addEventListener('click',function(){wrap.querySelectorAll('.chip').forEach(function(x){x.classList.remove('active');});this.classList.add('active');refreshAdminBooks();});});if(!wrap.querySelector('.active')&&wrap.firstChild)wrap.firstChild.classList.add('active');}
+function refreshAdminBooks(){buildBookCatChips();var search=document.getElementById('aBookSearch').value.toLowerCase();var catEl=document.querySelector('#aBookCatChips .chip.active');var catF=catEl?catEl.dataset.cat:'';var filtered=DB.books.filter(function(b){var ms=!search||(b.title||'').toLowerCase().indexOf(search)!==-1||(b.author||'').toLowerCase().indexOf(search)!==-1||(b.isbn||'').toLowerCase().indexOf(search)!==-1||(b.category||'').toLowerCase().indexOf(search)!==-1;return ms&&(!catF||b.category===catF);});document.getElementById('aBookCount').textContent=filtered.length+' book'+(filtered.length!==1?'s':'');var tb=document.getElementById('aBookTb');if(!filtered.length){tb.innerHTML='<tr><td colspan="7"><div class="tbl-empty"><i class="fas fa-book"></i><p>No books found.</p></div></td></tr>';return;}tb.innerHTML=filtered.map(function(b){var av=b.availableCopies>0?'<span style="color:var(--ok);font-weight:600">'+b.availableCopies+'</span>':'<span style="color:var(--err);font-weight:600">0</span>';return'<tr><td style="font-weight:500">'+esc(b.title)+'</td><td>'+esc(b.author)+'</td><td style="color:var(--muted);font-size:12px">'+esc(b.isbn||'\u2014')+'</td><td>'+esc(b.category||'\u2014')+'</td><td>'+b.totalCopies+'</td><td>'+av+'</td><td><div class="act-btns"><button class="btn btn-i btn-icon btn-sm" onclick="window._eb(\''+b.id+'\')"><i class="fas fa-edit"></i></button><button class="btn btn-d btn-icon btn-sm" onclick="window._db(\''+b.id+'\')"><i class="fas fa-trash"></i></button></div></td></tr>';}).join('');}
 window._eb=function(id){var b=DB.books.find(function(x){return x.id===id;});if(!b)return;document.getElementById('bookEditId').value=id;document.getElementById('bookModalT').textContent='Edit Book';document.getElementById('bookTitle').value=b.title;document.getElementById('bookAuthor').value=b.author;document.getElementById('bookISBN').value=b.isbn||'';document.getElementById('bookCat').value=b.category||'';document.getElementById('bookCopies').value=b.totalCopies;openM('bookModal');};
 window._db=function(id){var b=DB.books.find(function(x){return x.id===id;});if(!b)return;if(DB.tx.some(function(t){return t.bookId===id&&(t.status==='issued'||t.status==='overdue');})){toast('Cannot delete: book is currently issued','err');return;}showConfirm('Delete Book','Delete <strong>"'+esc(b.title)+'"</strong>?',function(){apiCall('deleteBook',{id:id}).then(function(){DB.books=DB.books.filter(function(x){return x.id!==id;});toast('Book deleted','i');refreshAdminBooks();refreshAdminDash();});});};
 document.getElementById('aAddBook').addEventListener('click',function(){document.getElementById('bookEditId').value='';document.getElementById('bookModalT').textContent='Add Book';['bookTitle','bookAuthor','bookISBN','bookCat'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('bookCopies').value='1';['bookTitleE','bookAuthorE','bookCopiesE'].forEach(function(id){document.getElementById(id).style.display='none';});openM('bookModal');});
-document.getElementById('saveBookBtn').addEventListener('click',function(){
-  var v=true,title=document.getElementById('bookTitle').value.trim(),author=document.getElementById('bookAuthor').value.trim(),copies=parseInt(document.getElementById('bookCopies').value)||0;
-  if(!title){document.getElementById('bookTitleE').style.display='block';v=false;}if(!author){document.getElementById('bookAuthorE').style.display='block';v=false;}if(!copies){document.getElementById('bookCopiesE').style.display='block';v=false;}if(!v)return;
-  var eid=document.getElementById('bookEditId').value,ex=eid?DB.books.find(function(b){return b.id===eid;}):null,issued=ex?(ex.totalCopies-ex.availableCopies):0;
-  var row={id:eid||gid(),title:title,author:author,isbn:document.getElementById('bookISBN').value.trim(),category:document.getElementById('bookCat').value.trim(),totalCopies:copies,availableCopies:Math.max(0,copies-issued),addedDate:ex?ex.addedDate:td()};
-  apiCall(eid?'updateBook':'addBook',{row:row}).then(function(){if(eid){var i=DB.books.findIndex(function(x){return x.id===eid;});if(i!==-1)DB.books[i]=row;}else DB.books.push(row);closeM('bookModal');toast('Book saved');refreshAdminBooks();refreshAdminDash();});
-});
+document.getElementById('saveBookBtn').addEventListener('click',function(){var v=true,title=document.getElementById('bookTitle').value.trim(),author=document.getElementById('bookAuthor').value.trim(),copies=parseInt(document.getElementById('bookCopies').value)||0;if(!title){document.getElementById('bookTitleE').style.display='block';v=false;}if(!author){document.getElementById('bookAuthorE').style.display='block';v=false;}if(!copies){document.getElementById('bookCopiesE').style.display='block';v=false;}if(!v)return;var eid=document.getElementById('bookEditId').value,ex=eid?DB.books.find(function(b){return b.id===eid;}):null,issued=ex?(ex.totalCopies-ex.availableCopies):0;var row={id:eid||gid(),title:title,author:author,isbn:document.getElementById('bookISBN').value.trim(),category:document.getElementById('bookCat').value.trim(),totalCopies:copies,availableCopies:Math.max(0,copies-issued),addedDate:ex?ex.addedDate:td()};apiCall(eid?'updateBook':'addBook',{row:row}).then(function(){if(eid){var i=DB.books.findIndex(function(x){return x.id===eid;});if(i!==-1)DB.books[i]=row;}else DB.books.push(row);closeM('bookModal');toast('Book saved');refreshAdminBooks();refreshAdminDash();});});
 document.getElementById('aBookSearch').addEventListener('input',refreshAdminBooks);
-// MEMBERS with class chips
-function buildMemClsChips(){
-  var wrap=document.getElementById('aMemClassChips');
-  var cur=wrap.querySelector('.chip.active');var curCls=cur?(cur.dataset.cls||''):'';
-  var items=[{id:'',name:'All'}].concat(DB.classes);
-  wrap.innerHTML=items.map(function(c){return'<span class="chip '+(c.id===curCls?'active':'')+'" data-cls="'+esc(c.id)+'">'+esc(c.name)+'</span>';}).join('');
-  wrap.querySelectorAll('.chip').forEach(function(ch){ch.addEventListener('click',function(){wrap.querySelectorAll('.chip').forEach(function(x){x.classList.remove('active');});this.classList.add('active');refreshAdminMembers();});});
-}
-function refreshAdminMembers(){
-  buildMemClsChips();
-  var search=document.getElementById('aMemSearch').value.toLowerCase();
-  var clsEl=document.querySelector('#aMemClassChips .chip.active');var clsF=clsEl?clsEl.dataset.cls:'';
-  var filtered=DB.members.filter(function(m){
-    var ms=!search||(m.name||'').toLowerCase().indexOf(search)!==-1||(m.rollNo||'').toLowerCase().indexOf(search)!==-1||(m.phone||'').toLowerCase().indexOf(search)!==-1;
-    return ms&&(!clsF||m.classId===clsF);
-  });
-  document.getElementById('aMemCount').textContent=filtered.length+' member'+(filtered.length!==1?'s':'');
-  var tb=document.getElementById('aMemTb');
-  if(!filtered.length){tb.innerHTML='<tr><td colspan="6"><div class="tbl-empty"><i class="fas fa-users"></i><p>No members found.</p></div></td></tr>';return;}
-  tb.innerHTML=filtered.map(function(m){var cls=DB.classes.find(function(c){return c.id===m.classId;});return'<tr><td style="font-weight:500">'+esc(m.name)+'</td><td>'+esc(cls?cls.name:'—')+'</td><td>'+esc(m.rollNo)+'</td><td style="font-size:12px;color:var(--muted)">'+esc(m.phone||'—')+'</td><td style="font-size:12px;color:var(--muted)">'+esc(m.email||'—')+'</td><td><div class="act-btns"><button class="btn btn-i btn-icon btn-sm" onclick="window._em(\''+m.id+'\')"><i class="fas fa-edit"></i></button><button class="btn btn-d btn-icon btn-sm" onclick="window._dm(\''+m.id+'\')"><i class="fas fa-trash"></i></button></div></td></tr>';}).join('');
-}
+
+function buildMemClsChips(){var wrap=document.getElementById('aMemClassChips');var cur=wrap.querySelector('.chip.active');var curCls=cur?(cur.dataset.cls||''):'';var items=[{id:'',name:'All'}].concat(DB.classes);wrap.innerHTML=items.map(function(c){return'<span class="chip '+(c.id===curCls?'active':'')+'" data-cls="'+esc(c.id)+'">'+esc(c.name)+'</span>';}).join('');wrap.querySelectorAll('.chip').forEach(function(ch){ch.addEventListener('click',function(){wrap.querySelectorAll('.chip').forEach(function(x){x.classList.remove('active');});this.classList.add('active');refreshAdminMembers();});});}
+function refreshAdminMembers(){buildMemClsChips();var search=document.getElementById('aMemSearch').value.toLowerCase();var clsEl=document.querySelector('#aMemClassChips .chip.active');var clsF=clsEl?clsEl.dataset.cls:'';var filtered=DB.members.filter(function(m){var ms=!search||(m.name||'').toLowerCase().indexOf(search)!==-1||(m.rollNo||'').toLowerCase().indexOf(search)!==-1||(m.phone||'').toLowerCase().indexOf(search)!==-1;return ms&&(!clsF||m.classId===clsF);});document.getElementById('aMemCount').textContent=filtered.length+' member'+(filtered.length!==1?'s':'');var tb=document.getElementById('aMemTb');if(!filtered.length){tb.innerHTML='<tr><td colspan="6"><div class="tbl-empty"><i class="fas fa-users"></i><p>No members found.</p></div></td></tr>';return;}tb.innerHTML=filtered.map(function(m){var cls=DB.classes.find(function(c){return c.id===m.classId;});return'<tr><td style="font-weight:500">'+esc(m.name)+'</td><td>'+esc(cls?cls.name:'\u2014')+'</td><td>'+esc(m.rollNo)+'</td><td style="font-size:12px;color:var(--muted)">'+esc(m.phone||'\u2014')+'</td><td style="font-size:12px;color:var(--muted)">'+esc(m.email||'\u2014')+'</td><td><div class="act-btns"><button class="btn btn-i btn-icon btn-sm" onclick="window._em(\''+m.id+'\')"><i class="fas fa-edit"></i></button><button class="btn btn-d btn-icon btn-sm" onclick="window._dm(\''+m.id+'\')"><i class="fas fa-trash"></i></button></div></td></tr>';}).join('');}
 window._em=function(id){var m=DB.members.find(function(x){return x.id===id;});if(!m)return;document.getElementById('memEditId').value=id;document.getElementById('memModalT').textContent='Edit Member';document.getElementById('memName').value=m.name;document.getElementById('memClass').innerHTML=buildClsOpts(m.classId);document.getElementById('memRoll').value=m.rollNo;document.getElementById('memPhone').value=m.phone||'';document.getElementById('memEmail').value=m.email||'';openM('memModal');};
 window._dm=function(id){var m=DB.members.find(function(x){return x.id===id;});if(!m)return;if(DB.tx.some(function(t){return t.memberId===id&&(t.status==='issued'||t.status==='overdue');})){toast('Cannot delete: member has issued books','err');return;}showConfirm('Delete Member','Delete <strong>"'+esc(m.name)+'"</strong>?',function(){apiCall('deleteMember',{id:id}).then(function(){DB.members=DB.members.filter(function(x){return x.id!==id;});toast('Member deleted','i');refreshAdminMembers();refreshAdminDash();});});};
 document.getElementById('aAddMem').addEventListener('click',function(){document.getElementById('memEditId').value='';document.getElementById('memModalT').textContent='Add Member';document.getElementById('memName').value='';document.getElementById('memClass').innerHTML=buildClsOpts('');document.getElementById('memRoll').value='';document.getElementById('memPhone').value='';document.getElementById('memEmail').value='';['memNameE','memClassE','memRollE'].forEach(function(id){document.getElementById(id).style.display='none';});openM('memModal');});
-document.getElementById('saveMemBtn').addEventListener('click',function(){
-  var v=true,name=document.getElementById('memName').value.trim(),cls=document.getElementById('memClass').value,roll=document.getElementById('memRoll').value.trim();
-  if(!name){document.getElementById('memNameE').style.display='block';v=false;}if(!cls){document.getElementById('memClassE').style.display='block';v=false;}if(!roll){document.getElementById('memRollE').style.display='block';v=false;}if(!v)return;
-  var eid=document.getElementById('memEditId').value;
-  var row={id:eid||gid(),name:name,classId:cls,rollNo:roll,phone:document.getElementById('memPhone').value.trim(),email:document.getElementById('memEmail').value.trim(),addedDate:eid?(DB.members.find(function(x){return x.id===eid;})||{}).addedDate||td():td()};
-  apiCall(eid?'updateMember':'addMember',{row:row}).then(function(){if(eid){var i=DB.members.findIndex(function(x){return x.id===eid;});if(i!==-1)DB.members[i]=row;}else DB.members.push(row);closeM('memModal');toast('Member saved');refreshAdminMembers();refreshAdminDash();});
-});
+document.getElementById('saveMemBtn').addEventListener('click',function(){var v=true,name=document.getElementById('memName').value.trim(),cls=document.getElementById('memClass').value,roll=document.getElementById('memRoll').value.trim();if(!name){document.getElementById('memNameE').style.display='block';v=false;}if(!cls){document.getElementById('memClassE').style.display='block';v=false;}if(!roll){document.getElementById('memRollE').style.display='block';v=false;}if(!v)return;var eid=document.getElementById('memEditId').value;var row={id:eid||gid(),name:name,classId:cls,rollNo:roll,phone:document.getElementById('memPhone').value.trim(),email:document.getElementById('memEmail').value.trim(),addedDate:eid?(DB.members.find(function(x){return x.id===eid;})||{}).addedDate||td():td()};apiCall(eid?'updateMember':'addMember',{row:row}).then(function(){if(eid){var i=DB.members.findIndex(function(x){return x.id===eid;});if(i!==-1)DB.members[i]=row;}else DB.members.push(row);closeM('memModal');toast('Member saved');refreshAdminMembers();refreshAdminDash();});});
 document.getElementById('aMemSearch').addEventListener('input',refreshAdminMembers);
-// ISSUE MODAL — improved book search
-// ISSUE MODAL — simple select-based (reliable)
-function populateIssueBookSelect(){
-  var books=DB.books.filter(function(b){return Number(b.availableCopies)>0;});
-  var sel=document.getElementById('issueBookId');
-  sel.innerHTML='<option value="">— Choose a book —</option>'+books.map(function(b){
-    var avail=Number(b.availableCopies);
-    return'<option value="'+b.id+'">'+esc(b.title)+' — '+esc(b.author)+(b.isbn?' ['+esc(b.isbn)+']':'')+' ('+avail+' avail.)</option>';
-  }).join('');
-}
-function populateIssueClassFilter(){
-  var sel=document.getElementById('issueClassFilter');
-  sel.innerHTML='<option value="">— All Classes —</option>'+DB.classes.map(function(c){
-    return'<option value="'+c.id+'">'+esc(c.name)+'</option>';
-  }).join('');
-}
-function populateIssueMemberList(classId){
-  var mems=classId?DB.members.filter(function(m){return m.classId===classId;}):DB.members;
-  var sel=document.getElementById('issueMemId');
-  if(!mems.length){sel.innerHTML='<option value="">No members in this class</option>';return;}
-  sel.innerHTML='<option value="">— Select a student —</option>'+mems.map(function(m){
-    var roll=m.rollNo!==null&&m.rollNo!==undefined?String(m.rollNo):'';
-    return'<option value="'+m.id+'">'+esc(m.name)+' (Adm: '+esc(roll)+')</option>';
-  }).join('');
-}
-document.getElementById('issueClassFilter').addEventListener('change',function(){
-  populateIssueMemberList(this.value);
-});
-function openIssueModal(){
-  var avail=DB.books.filter(function(b){return Number(b.availableCopies)>0;});
-  if(!avail.length){toast('No books available to issue','err');return;}
-  if(!DB.members.length){toast('No members registered','err');return;}
-  // Populate book dropdown
-  populateIssueBookSelect();
-  // Populate class filter + show all members by default
-  populateIssueClassFilter();
-  populateIssueMemberList('');
-  // Reset fields
-  document.getElementById('issueDate').value=td();
-  document.getElementById('dueDate').value=ad(td(),getS().issueDays||14);
-  ['issueBookE','issueMemE'].forEach(function(id){document.getElementById(id).style.display='none';});
-  openM('issueModal');
-}
-document.getElementById('aIssueBtn').addEventListener('click',openIssueModal);
 
-document.getElementById('doIssueBtn').addEventListener('click',function(){
-  var bookId=document.getElementById('issueBookId').value,memId=document.getElementById('issueMemId').value;
-  var issueDate=document.getElementById('issueDate').value,dueDate=document.getElementById('dueDate').value;
-  var v=true;if(!bookId){document.getElementById('issueBookE').style.display='block';v=false;}if(!memId){document.getElementById('issueMemE').style.display='block';v=false;}if(!v)return;
-  if(!issueDate||!dueDate){toast('Fill in dates','err');return;}if(dueDate<=issueDate){toast('Due date must be after issue date','err');return;}
-  var bi=DB.books.findIndex(function(b){return b.id===bookId;});if(bi===-1||DB.books[bi].availableCopies<1){toast('Book not available','err');return;}
-  var txRow={id:gid(),bookId:bookId,memberId:memId,issueDate:issueDate,dueDate:dueDate,returnDate:'',status:'issued',fineAmount:0,fineStatus:''};
-  var bookRow=Object.assign({},DB.books[bi],{availableCopies:DB.books[bi].availableCopies-1});
-  Promise.all([apiCall('addTx',{row:txRow}),apiCall('updateBook',{row:bookRow})]).then(function(){DB.tx.push(txRow);DB.books[bi]=bookRow;closeM('issueModal');toast('Book issued successfully');refreshAdminTx();refreshAdminDash();});
-});
-// RETURN
-function openReturnModal(){
-  updateTxStatus();var active=DB.tx.filter(function(t){return t.status==='issued'||t.status==='overdue';});
-  if(!active.length){toast('No books currently issued','i');return;}
-  document.getElementById('returnTxId').innerHTML='<option value="">Choose a transaction</option>'+active.map(function(t){var b=DB.books.find(function(x){return x.id===t.bookId;}),m=DB.members.find(function(x){return x.id===t.memberId;});return'<option value="'+t.id+'">'+esc(b?b.title:'Unknown')+' — '+esc(m?m.name:'Unknown')+' (Due: '+fd(t.dueDate)+')'+(t.status==='overdue'?' [OVERDUE]':'')+'</option>';}).join('');
-  document.getElementById('returnDate').value=td();document.getElementById('fineInfoBox').classList.add('hidden');document.getElementById('fineInfoBox').innerHTML='';document.getElementById('returnTxE').style.display='none';openM('returnModal');
-}
+function populateIssueBookSelect(){var books=DB.books.filter(function(b){return Number(b.availableCopies)>0;});var sel=document.getElementById('issueBookId');sel.innerHTML='<option value="">\u2014 Choose a book \u2014</option>'+books.map(function(b){var avail=Number(b.availableCopies);return'<option value="'+b.id+'">'+esc(b.title)+' \u2014 '+esc(b.author)+(b.isbn?' ['+esc(b.isbn)+']':'')+' ('+avail+' avail.)</option>';}).join('');}
+function populateIssueClassFilter(){var sel=document.getElementById('issueClassFilter');sel.innerHTML='<option value="">\u2014 All Classes \u2014</option>'+DB.classes.map(function(c){return'<option value="'+c.id+'">'+esc(c.name)+'</option>';}).join('');}
+function populateIssueMemberList(classId){var mems=classId?DB.members.filter(function(m){return m.classId===classId;}):DB.members;var sel=document.getElementById('issueMemId');if(!mems.length){sel.innerHTML='<option value="">No members in this class</option>';return;}sel.innerHTML='<option value="">\u2014 Select a student \u2014</option>'+mems.map(function(m){var roll=m.rollNo!==null&&m.rollNo!==undefined?String(m.rollNo):'';return'<option value="'+m.id+'">'+esc(m.name)+' (Adm: '+esc(roll)+')</option>';}).join('');}
+document.getElementById('issueClassFilter').addEventListener('change',function(){populateIssueMemberList(this.value);});
+function openIssueModal(){var avail=DB.books.filter(function(b){return Number(b.availableCopies)>0;});if(!avail.length){toast('No books available to issue','err');return;}if(!DB.members.length){toast('No members registered','err');return;}populateIssueBookSelect();populateIssueClassFilter();populateIssueMemberList('');document.getElementById('issueDate').value=td();document.getElementById('dueDate').value=ad(td(),getS().issueDays||14);['issueBookE','issueMemE'].forEach(function(id){document.getElementById(id).style.display='none';});openM('issueModal');}
+document.getElementById('aIssueBtn').addEventListener('click',openIssueModal);
+document.getElementById('doIssueBtn').addEventListener('click',function(){var bookId=document.getElementById('issueBookId').value,memId=document.getElementById('issueMemId').value;var issueDate=document.getElementById('issueDate').value,dueDate=document.getElementById('dueDate').value;var v=true;if(!bookId){document.getElementById('issueBookE').style.display='block';v=false;}if(!memId){document.getElementById('issueMemE').style.display='block';v=false;}if(!v)return;if(!issueDate||!dueDate){toast('Fill in dates','err');return;}if(dueDate<=issueDate){toast('Due date must be after issue date','err');return;}var bi=DB.books.findIndex(function(b){return b.id===bookId;});if(bi===-1||DB.books[bi].availableCopies<1){toast('Book not available','err');return;}var txRow={id:gid(),bookId:bookId,memberId:memId,issueDate:issueDate,dueDate:dueDate,returnDate:'',status:'issued',fineAmount:0,fineStatus:''};var bookRow=Object.assign({},DB.books[bi],{availableCopies:DB.books[bi].availableCopies-1});Promise.all([apiCall('addTx',{row:txRow}),apiCall('updateBook',{row:bookRow})]).then(function(){DB.tx.push(txRow);DB.books[bi]=bookRow;closeM('issueModal');toast('Book issued successfully');refreshAdminTx();refreshAdminDash();});});
+
+function openReturnModal(){updateTxStatus();var active=DB.tx.filter(function(t){return t.status==='issued'||t.status==='overdue';});if(!active.length){toast('No books currently issued','i');return;}document.getElementById('returnTxId').innerHTML='<option value="">Choose a transaction</option>'+active.map(function(t){var b=DB.books.find(function(x){return x.id===t.bookId;}),m=DB.members.find(function(x){return x.id===t.memberId;});return'<option value="'+t.id+'">'+esc(b?b.title:'Unknown')+' \u2014 '+esc(m?m.name:'Unknown')+' (Due: '+fd(t.dueDate)+')'+(t.status==='overdue'?' [OVERDUE]':'')+'</option>';}).join('');document.getElementById('returnDate').value=td();document.getElementById('fineInfoBox').classList.add('hidden');document.getElementById('fineInfoBox').innerHTML='';document.getElementById('returnTxE').style.display='none';openM('returnModal');}
 document.getElementById('aReturnBtn').addEventListener('click',openReturnModal);
-document.getElementById('returnTxId').addEventListener('change',function(){
-  var txId=this.value,box=document.getElementById('fineInfoBox');if(!txId){box.classList.add('hidden');return;}
-  var tx=DB.tx.find(function(t){return t.id===txId;});if(!tx||tx.status==='returned'){box.classList.add('hidden');return;}
-  var s=getS(),perDay=s.finePerDay||0,cur=s.currency||'₹';
-  if(tx.dueDate<td()&&perDay>0){var days=Math.ceil((new Date()-new Date(tx.dueDate+'T00:00:00'))/86400000);box.classList.remove('hidden');box.innerHTML='<div class="fine-info-box"><div class="fi-title"><i class="fas fa-exclamation-triangle"></i> Overdue Fine</div><div class="fi-detail">'+days+' days × '+cur+perDay+'/day = <span class="fi-amount">'+cur+(days*perDay)+'</span></div><div class="fg" style="margin-bottom:0;margin-top:10px"><label class="fl">Fine Action</label><select class="fi" id="fineActionSelect"><option value="unpaid">Mark as Unpaid</option><option value="paid">Mark as Paid</option><option value="waived">Waive Fine</option></select></div></div>';}else{box.classList.add('hidden');box.innerHTML='';}
-});
-document.getElementById('doReturnBtn').addEventListener('click',function(){
-  var txId=document.getElementById('returnTxId').value,retDate=document.getElementById('returnDate').value;
-  if(!txId){document.getElementById('returnTxE').style.display='block';return;}if(!retDate){toast('Fill return date','err');return;}
-  var ti=DB.tx.findIndex(function(t){return t.id===txId;});if(ti===-1){toast('Transaction not found','err');return;}
-  var t=Object.assign({},DB.tx[ti]);t.status='returned';t.returnDate=retDate;
-  var bi=DB.books.findIndex(function(b){return b.id===t.bookId;});
-  var bookRow=bi!==-1?Object.assign({},DB.books[bi],{availableCopies:Math.min(DB.books[bi].totalCopies,DB.books[bi].availableCopies+1)}):null;
-  var s=getS(),perDay=s.finePerDay||0,cur=s.currency||'₹',fineRow=null;
-  if(t.dueDate<retDate&&perDay>0){var days=Math.ceil((new Date(retDate+'T00:00:00')-new Date(t.dueDate+'T00:00:00'))/86400000),amount=days*perDay;var actionEl=document.getElementById('fineActionSelect'),fineStatus=actionEl?actionEl.value:'unpaid';t.fineAmount=amount;t.fineStatus=fineStatus;fineRow={id:gid(),txId:t.id,bookId:t.bookId,memberId:t.memberId,daysOverdue:days,amount:amount,currency:cur,status:fineStatus,createdAt:td()};}
-  var calls=[apiCall('updateTx',{row:t})];if(bookRow)calls.push(apiCall('updateBook',{row:bookRow}));if(fineRow)calls.push(apiCall('addFine',{row:fineRow}));
-  Promise.all(calls).then(function(){DB.tx[ti]=t;if(bi!==-1&&bookRow)DB.books[bi]=bookRow;if(fineRow)DB.fines.push(fineRow);closeM('returnModal');toast(fineRow?'Book returned (fine processed)':'Book returned successfully',fineRow?'i':'ok');refreshAdminTx();refreshAdminDash();refreshAdminFines();});
-});
-function quickReturn(txId){
-  updateTxStatus();var ti=DB.tx.findIndex(function(x){return x.id===txId;});if(ti===-1)return;
-  var t=Object.assign({},DB.tx[ti]);t.status='returned';t.returnDate=td();
-  var bi=DB.books.findIndex(function(b){return b.id===t.bookId;});var bookRow=bi!==-1?Object.assign({},DB.books[bi],{availableCopies:Math.min(DB.books[bi].totalCopies,DB.books[bi].availableCopies+1)}):null;
-  var s=getS(),perDay=s.finePerDay||0,cur=s.currency||'₹',fineRow=null;
-  if(t.dueDate<td()&&perDay>0){var days=Math.ceil((new Date()-new Date(t.dueDate+'T00:00:00'))/86400000),amount=days*perDay;t.fineAmount=amount;t.fineStatus='unpaid';fineRow={id:gid(),txId:t.id,bookId:t.bookId,memberId:t.memberId,daysOverdue:days,amount:amount,currency:cur,status:'unpaid',createdAt:td()};}
-  var calls=[apiCall('updateTx',{row:t})];if(bookRow)calls.push(apiCall('updateBook',{row:bookRow}));if(fineRow)calls.push(apiCall('addFine',{row:fineRow}));
-  Promise.all(calls).then(function(){DB.tx[ti]=t;if(bi!==-1&&bookRow)DB.books[bi]=bookRow;if(fineRow)DB.fines.push(fineRow);toast(fineRow?'Book returned (fine recorded)':'Book returned successfully',fineRow?'i':'ok');refreshAdminTx();refreshAdminDash();refreshAdminFines();});
-}
+document.getElementById('returnTxId').addEventListener('change',function(){var txId=this.value,box=document.getElementById('fineInfoBox');if(!txId){box.classList.add('hidden');return;}var tx=DB.tx.find(function(t){return t.id===txId;});if(!tx||tx.status==='returned'){box.classList.add('hidden');return;}var s=getS(),perDay=s.finePerDay||0,cur=s.currency||'\u20B9';if(tx.dueDate<td()&&perDay>0){var days=Math.ceil((new Date()-new Date(tx.dueDate+'T00:00:00'))/86400000);box.classList.remove('hidden');box.innerHTML='<div class="fine-info-box"><div class="fi-title"><i class="fas fa-exclamation-triangle"></i> Overdue Fine</div><div class="fi-detail">'+days+' days \u00D7 '+cur+perDay+'/day = <span class="fi-amount">'+cur+(days*perDay)+'</span></div><div class="fg" style="margin-bottom:0;margin-top:10px"><label class="fl">Fine Action</label><select class="fi" id="fineActionSelect"><option value="unpaid">Mark as Unpaid</option><option value="paid">Mark as Paid</option><option value="waived">Waive Fine</option></select></div></div>';}else{box.classList.add('hidden');box.innerHTML='';}});
+document.getElementById('doReturnBtn').addEventListener('click',function(){var txId=document.getElementById('returnTxId').value,retDate=document.getElementById('returnDate').value;if(!txId){document.getElementById('returnTxE').style.display='block';return;}if(!retDate){toast('Fill return date','err');return;}var ti=DB.tx.findIndex(function(t){return t.id===txId;});if(ti===-1){toast('Transaction not found','err');return;}var t=Object.assign({},DB.tx[ti]);t.status='returned';t.returnDate=retDate;var bi=DB.books.findIndex(function(b){return b.id===t.bookId;});var bookRow=bi!==-1?Object.assign({},DB.books[bi],{availableCopies:Math.min(DB.books[bi].totalCopies,DB.books[bi].availableCopies+1)}):null;var s=getS(),perDay=s.finePerDay||0,cur=s.currency||'\u20B9',fineRow=null;if(t.dueDate<retDate&&perDay>0){var days=Math.ceil((new Date(retDate+'T00:00:00')-new Date(t.dueDate+'T00:00:00'))/86400000),amount=days*perDay;var actionEl=document.getElementById('fineActionSelect'),fineStatus=actionEl?actionEl.value:'unpaid';t.fineAmount=amount;t.fineStatus=fineStatus;fineRow={id:gid(),txId:t.id,bookId:t.bookId,memberId:t.memberId,daysOverdue:days,amount:amount,currency:cur,status:fineStatus,createdAt:td()};}var calls=[apiCall('updateTx',{row:t})];if(bookRow)calls.push(apiCall('updateBook',{row:bookRow}));if(fineRow)calls.push(apiCall('addFine',{row:fineRow}));Promise.all(calls).then(function(){DB.tx[ti]=t;if(bi!==-1&&bookRow)DB.books[bi]=bookRow;if(fineRow)DB.fines.push(fineRow);closeM('returnModal');toast(fineRow?'Book returned (fine processed)':'Book returned successfully',fineRow?'i':'ok');refreshAdminTx();refreshAdminDash();refreshAdminFines();});});
+function quickReturn(txId){updateTxStatus();var ti=DB.tx.findIndex(function(x){return x.id===txId;});if(ti===-1)return;var t=Object.assign({},DB.tx[ti]);t.status='returned';t.returnDate=td();var bi=DB.books.findIndex(function(b){return b.id===t.bookId;});var bookRow=bi!==-1?Object.assign({},DB.books[bi],{availableCopies:Math.min(DB.books[bi].totalCopies,DB.books[bi].availableCopies+1)}):null;var s=getS(),perDay=s.finePerDay||0,cur=s.currency||'\u20B9',fineRow=null;if(t.dueDate<td()&&perDay>0){var days=Math.ceil((new Date()-new Date(t.dueDate+'T00:00:00'))/86400000),amount=days*perDay;t.fineAmount=amount;t.fineStatus='unpaid';fineRow={id:gid(),txId:t.id,bookId:t.bookId,memberId:t.memberId,daysOverdue:days,amount:amount,currency:cur,status:'unpaid',createdAt:td()};}var calls=[apiCall('updateTx',{row:t})];if(bookRow)calls.push(apiCall('updateBook',{row:bookRow}));if(fineRow)calls.push(apiCall('addFine',{row:fineRow}));Promise.all(calls).then(function(){DB.tx[ti]=t;if(bi!==-1&&bookRow)DB.books[bi]=bookRow;if(fineRow)DB.fines.push(fineRow);toast(fineRow?'Book returned (fine recorded)':'Book returned successfully',fineRow?'i':'ok');refreshAdminTx();refreshAdminDash();refreshAdminFines();});}
 window._qr=quickReturn;
-window._dtx=function(id){
-  var ti=DB.tx.findIndex(function(x){return x.id===id;});if(ti===-1)return;var t=DB.tx[ti];
-  if(t.status==='issued'||t.status==='overdue'){var bi=DB.books.findIndex(function(b){return b.id===t.bookId;});if(bi!==-1){var br=Object.assign({},DB.books[bi],{availableCopies:Math.min(DB.books[bi].totalCopies,DB.books[bi].availableCopies+1)});apiCall('updateBook',{row:br}).then(function(){DB.books[bi]=br;});}}
-  showConfirm('Delete Transaction','Delete this record?',function(){apiCall('deleteTx',{id:id}).then(function(){DB.tx=DB.tx.filter(function(x){return x.id!==id;});toast('Transaction deleted','i');refreshAdminTx();refreshAdminDash();});});
-};
-function refreshAdminTx(){
-  updateTxStatus();var search=document.getElementById('aTxSearch').value.toLowerCase(),stF=chipVal('data-txf');
-  var filtered=DB.tx.filter(function(t){var b=DB.books.find(function(x){return x.id===t.bookId;}),m=DB.members.find(function(x){return x.id===t.memberId;});return(!search||(b?b.title:'').toLowerCase().indexOf(search)!==-1||(m?m.name:'').toLowerCase().indexOf(search)!==-1)&&(!stF||t.status===stF);});
-  filtered.sort(function(a,b){return(b.issueDate||'').localeCompare(a.issueDate||'');});
-  var s=getS(),cur=s.currency||'₹',sm={issued:'b-i',returned:'b-ok',overdue:'b-err'};
-  var tb=document.getElementById('aTxTb');
-  document.getElementById('aTxCount').textContent=filtered.length+' record'+(filtered.length!==1?'s':'');
-  if(!filtered.length){tb.innerHTML='<tr><td colspan="8"><div class="tbl-empty"><i class="fas fa-exchange-alt"></i><p>No transactions.</p></div></td></tr>';return;}
-  tb.innerHTML=filtered.map(function(t){var b=DB.books.find(function(x){return x.id===t.bookId;}),m=DB.members.find(function(x){return x.id===t.memberId;});var fine=t.fineAmount>0?'<span style="color:var(--err);font-weight:600">'+cur+t.fineAmount+'</span>':'—';var rbtn=t.status!=='returned'?'<button class="btn btn-ok btn-sm" onclick="window._qr(\''+t.id+'\')"><i class="fas fa-undo"></i> Return</button>':'';return'<tr><td style="font-weight:500">'+esc(b?b.title:'Deleted')+'</td><td>'+esc(m?m.name:'Deleted')+'</td><td style="font-size:12px;color:var(--muted)">'+fd(t.issueDate)+'</td><td style="font-size:12px;color:var(--muted)">'+fd(t.dueDate)+'</td><td style="font-size:12px;color:var(--muted)">'+fd(t.returnDate)+'</td><td>'+fine+'</td><td><span class="badge '+sm[t.status]+'">'+t.status.charAt(0).toUpperCase()+t.status.slice(1)+'</span></td><td><div class="act-btns">'+rbtn+'<button class="btn btn-d btn-icon btn-sm" onclick="window._dtx(\''+t.id+'\')"><i class="fas fa-trash"></i></button></div></td></tr>';}).join('');
-  var oc=DB.tx.filter(function(t){return t.status==='overdue';}).length;var ob=document.getElementById('aOverdueBadge');ob.style.display=oc>0?'inline':'none';ob.textContent=oc;
-  var uc=DB.fines.filter(function(f){return f.status==='unpaid';}).length;var fb=document.getElementById('aFinesBadge');fb.style.display=uc>0?'inline':'none';fb.textContent=uc;
-}
+window._dtx=function(id){var ti=DB.tx.findIndex(function(x){return x.id===id;});if(ti===-1)return;var t=DB.tx[ti];if(t.status==='issued'||t.status==='overdue'){var bi=DB.books.findIndex(function(b){return b.id===t.bookId;});if(bi!==-1){var br=Object.assign({},DB.books[bi],{availableCopies:Math.min(DB.books[bi].totalCopies,DB.books[bi].availableCopies+1)});apiCall('updateBook',{row:br}).then(function(){DB.books[bi]=br;});}}showConfirm('Delete Transaction','Delete this record?',function(){apiCall('deleteTx',{id:id}).then(function(){DB.tx=DB.tx.filter(function(x){return x.id!==id;});toast('Transaction deleted','i');refreshAdminTx();refreshAdminDash();});});};
+
+function refreshAdminTx(){updateTxStatus();var search=document.getElementById('aTxSearch').value.toLowerCase(),stF=chipVal('data-txf');var filtered=DB.tx.filter(function(t){var b=DB.books.find(function(x){return x.id===t.bookId;}),m=DB.members.find(function(x){return x.id===t.memberId;});return(!search||(b?b.title:'').toLowerCase().indexOf(search)!==-1||(m?m.name:'').toLowerCase().indexOf(search)!==-1)&&(!stF||t.status===stF);});filtered.sort(function(a,b){return(b.issueDate||'').localeCompare(a.issueDate||'');});var s=getS(),cur=s.currency||'\u20B9',sm={issued:'b-i',returned:'b-ok',overdue:'b-err'};var tb=document.getElementById('aTxTb');document.getElementById('aTxCount').textContent=filtered.length+' record'+(filtered.length!==1?'s':'');if(!filtered.length){tb.innerHTML='<tr><td colspan="8"><div class="tbl-empty"><i class="fas fa-exchange-alt"></i><p>No transactions.</p></div></td></tr>';return;}tb.innerHTML=filtered.map(function(t){var b=DB.books.find(function(x){return x.id===t.bookId;}),m=DB.members.find(function(x){return x.id===t.memberId;});var fine=t.fineAmount>0?'<span style="color:var(--err);font-weight:600">'+cur+t.fineAmount+'</span>':'\u2014';var rbtn=t.status!=='returned'?'<button class="btn btn-ok btn-sm" onclick="window._qr(\''+t.id+'\')"><i class="fas fa-undo"></i> Return</button>':'';return'<tr><td style="font-weight:500">'+esc(b?b.title:'Deleted')+'</td><td>'+esc(m?m.name:'Deleted')+'</td><td style="font-size:12px;color:var(--muted)">'+fd(t.issueDate)+'</td><td style="font-size:12px;color:var(--muted)">'+fd(t.dueDate)+'</td><td style="font-size:12px;color:var(--muted)">'+fd(t.returnDate)+'</td><td>'+fine+'</td><td><span class="badge '+sm[t.status]+'">'+t.status.charAt(0).toUpperCase()+t.status.slice(1)+'</span></td><td><div class="act-btns">'+rbtn+'<button class="btn btn-d btn-icon btn-sm" onclick="window._dtx(\''+t.id+'\')"><i class="fas fa-trash"></i></button></div></td></tr>';}).join('');var oc=DB.tx.filter(function(t){return t.status==='overdue';}).length;var ob=document.getElementById('aOverdueBadge');ob.style.display=oc>0?'inline':'none';ob.textContent=oc;var uc=DB.fines.filter(function(f){return f.status==='unpaid';}).length;var fb=document.getElementById('aFinesBadge');fb.style.display=uc>0?'inline':'none';fb.textContent=uc;}
 document.getElementById('aTxSearch').addEventListener('input',refreshAdminTx);
-// FINES
-function refreshAdminFines(){
-  var search=document.getElementById('aFineSearch').value.toLowerCase(),stF=chipVal('data-ff'),s=getS(),cur=s.currency||'₹';
-  var filtered=DB.fines.filter(function(f){var b=DB.books.find(function(x){return x.id===f.bookId;}),m=DB.members.find(function(x){return x.id===f.memberId;});var ms=!search||(b?b.title:'').toLowerCase().indexOf(search)!==-1||(m?m.name:'').toLowerCase().indexOf(search)!==-1;return ms&&(!stF||f.status===stF);});
-  filtered.sort(function(a,b){return(b.createdAt||'').localeCompare(a.createdAt||'');});
-  var tb=document.getElementById('aFineTb'),stm={unpaid:'b-err',paid:'b-ok',waived:'b-w'};
-  document.getElementById('aFineCount').textContent=filtered.length+' record'+(filtered.length!==1?'s':'');
-  if(!filtered.length){tb.innerHTML='<tr><td colspan="7"><div class="tbl-empty"><i class="fas fa-coins"></i><p>No fine records.</p></div></td></tr>';return;}
-  tb.innerHTML=filtered.map(function(f){var b=DB.books.find(function(x){return x.id===f.bookId;}),m=DB.members.find(function(x){return x.id===f.memberId;});var acts=f.status==='unpaid'?'<button class="btn btn-ok btn-sm" onclick="window._payFine(\''+f.id+'\')"><i class="fas fa-check"></i> Paid</button><button class="btn btn-w btn-sm" onclick="window._waiveFine(\''+f.id+'\')">Waive</button>':'';return'<tr><td>'+esc(b?b.title:'Deleted')+'</td><td>'+esc(m?m.name:'Deleted')+'</td><td>'+f.daysOverdue+' days</td><td style="font-weight:700;color:var(--err)">'+cur+f.amount+'</td><td><span class="badge '+stm[f.status]+'">'+f.status.charAt(0).toUpperCase()+f.status.slice(1)+'</span></td><td style="font-size:12px;color:var(--muted)">'+fd(f.createdAt)+'</td><td><div class="act-btns">'+acts+'</div></td></tr>';}).join('');
-}
+
+function refreshAdminFines(){var search=document.getElementById('aFineSearch').value.toLowerCase(),stF=chipVal('data-ff'),s=getS(),cur=s.currency||'\u20B9';var filtered=DB.fines.filter(function(f){var b=DB.books.find(function(x){return x.id===f.bookId;}),m=DB.members.find(function(x){return x.id===f.memberId;});var ms=!search||(b?b.title:'').toLowerCase().indexOf(search)!==-1||(m?m.name:'').toLowerCase().indexOf(search)!==-1;return ms&&(!stF||f.status===stF);});filtered.sort(function(a,b){return(b.createdAt||'').localeCompare(a.createdAt||'');});var tb=document.getElementById('aFineTb'),stm={unpaid:'b-err',paid:'b-ok',waived:'b-w'};document.getElementById('aFineCount').textContent=filtered.length+' record'+(filtered.length!==1?'s':'');if(!filtered.length){tb.innerHTML='<tr><td colspan="7"><div class="tbl-empty"><i class="fas fa-coins"></i><p>No fine records.</p></div></td></tr>';return;}tb.innerHTML=filtered.map(function(f){var b=DB.books.find(function(x){return x.id===f.bookId;}),m=DB.members.find(function(x){return x.id===f.memberId;});var acts=f.status==='unpaid'?'<button class="btn btn-ok btn-sm" onclick="window._payFine(\''+f.id+'\')"><i class="fas fa-check"></i> Paid</button><button class="btn btn-w btn-sm" onclick="window._waiveFine(\''+f.id+'\')">Waive</button>':'';return'<tr><td>'+esc(b?b.title:'Deleted')+'</td><td>'+esc(m?m.name:'Deleted')+'</td><td>'+f.daysOverdue+' days</td><td style="font-weight:700;color:var(--err)">'+cur+f.amount+'</td><td><span class="badge '+stm[f.status]+'">'+f.status.charAt(0).toUpperCase()+f.status.slice(1)+'</span></td><td style="font-size:12px;color:var(--muted)">'+fd(f.createdAt)+'</td><td><div class="act-btns">'+acts+'</div></td></tr>';}).join('');}
 window._payFine=function(id){var i=DB.fines.findIndex(function(f){return f.id===id;});if(i===-1)return;var row=Object.assign({},DB.fines[i],{status:'paid'});apiCall('updateFine',{row:row}).then(function(){DB.fines[i]=row;toast('Fine marked as paid');refreshAdminFines();refreshAdminTx();});};
 window._waiveFine=function(id){var i=DB.fines.findIndex(function(f){return f.id===id;});if(i===-1)return;var row=Object.assign({},DB.fines[i],{status:'waived'});apiCall('updateFine',{row:row}).then(function(){DB.fines[i]=row;toast('Fine waived','i');refreshAdminFines();refreshAdminTx();});};
 document.getElementById('aFineSearch').addEventListener('input',refreshAdminFines);
-// SETTINGS
-function refreshSettings(){
-  var s=getS(),cur=s.currency||'₹';document.getElementById('setCurrency').value=cur;document.getElementById('setFinePerDay').value=s.finePerDay||0;document.getElementById('setIssueDays').value=s.issueDays||14;
-  var unpaid=DB.fines.filter(function(f){return f.status==='unpaid';}),paid=DB.fines.filter(function(f){return f.status==='paid';});
-  var tu=0;unpaid.forEach(function(f){tu+=Number(f.amount)||0;});var tp=0;paid.forEach(function(f){tp+=Number(f.amount)||0;});
-  document.getElementById('settingsDisplay').innerHTML='Currency: <strong style="color:var(--fg)">'+esc(cur)+'</strong><br>Fine per day: <strong style="color:var(--fg)">'+cur+(s.finePerDay||0)+'</strong><br>Issue period: <strong style="color:var(--fg)">'+(s.issueDays||14)+' days</strong><br><br>Total collected: <strong style="color:var(--ok)">'+cur+tp+'</strong><br>Outstanding: <strong style="color:var(--err)">'+cur+tu+'</strong> ('+unpaid.length+' records)';
-}
-document.getElementById('saveSettingsBtn').addEventListener('click',function(){
-  var s={currency:document.getElementById('setCurrency').value.trim()||'₹',finePerDay:parseInt(document.getElementById('setFinePerDay').value)||0,issueDays:parseInt(document.getElementById('setIssueDays').value)||14};
-  apiCall('saveSettings',{settings:s}).then(function(){DB.settings=s;toast('Settings saved');refreshSettings();});
-});
-// DASHBOARD
-function refreshAdminDash(){
-  updateTxStatus();var s=getS(),cur=s.currency||'₹';var totalCopies=0;DB.books.forEach(function(b){totalCopies+=Number(b.totalCopies)||0;});
-  var issued=DB.tx.filter(function(t){return t.status==='issued'||t.status==='overdue';}).length;var overdue=DB.tx.filter(function(t){return t.status==='overdue';}).length;var uf=0;DB.fines.filter(function(f){return f.status==='unpaid';}).forEach(function(f){uf+=Number(f.amount)||0;});
-  document.getElementById('aStats').innerHTML=[['fas fa-book','Total Books',totalCopies],['fas fa-users','Members',DB.members.length],['fas fa-hand-holding','Currently Issued',issued],['fas fa-exclamation-triangle','Overdue',overdue],['fas fa-coins','Unpaid Fines',cur+uf]].map(function(s){return'<div class="stat-card"><div class="stat-icon"><i class="'+s[0]+'"></i></div><div class="stat-val">'+s[2]+'</div><div class="stat-lbl">'+s[1]+'</div></div>';}).join('');
-  var recent=DB.tx.slice().sort(function(a,b){return(b.issueDate||'').localeCompare(a.issueDate||'');}).slice(0,6);
-  var rd=document.getElementById('aRecentTx');
-  if(!recent.length){rd.innerHTML='<div class="tbl-empty"><i class="fas fa-inbox"></i><p>No transactions yet</p></div>';return;}
-  rd.innerHTML=recent.map(function(t){var b=DB.books.find(function(x){return x.id===t.bookId;}),m=DB.members.find(function(x){return x.id===t.memberId;});var ibg,ic,ii;if(t.status==='returned'){ibg='rgba(74,186,122,.12)';ic='var(--ok)';ii='fa-arrow-left';}else if(t.status==='overdue'){ibg='rgba(217,79,79,.12)';ic='var(--err)';ii='fa-exclamation';}else{ibg='rgba(74,154,186,.12)';ic='var(--info)';ii='fa-arrow-right';}return'<div class="recent-item"><div class="ri-icon" style="background:'+ibg+';color:'+ic+'"><i class="fas '+ii+'"></i></div><div class="ri-info"><div class="ri-title">'+esc(b?b.title:'Unknown')+'</div><div class="ri-sub">'+esc(m?m.name:'Unknown')+' · '+fd(t.issueDate)+'</div></div><span class="badge '+({issued:'b-i',returned:'b-ok',overdue:'b-err'}[t.status]||'b-i')+'">'+t.status.charAt(0).toUpperCase()+t.status.slice(1)+'</span></div>';}).join('');
-}
+
+function refreshSettings(){var s=getS(),cur=s.currency||'\u20B9';document.getElementById('setCurrency').value=cur;document.getElementById('setFinePerDay').value=s.finePerDay||0;document.getElementById('setIssueDays').value=s.issueDays||14;var unpaid=DB.fines.filter(function(f){return f.status==='unpaid';}),paid=DB.fines.filter(function(f){return f.status==='paid';});var tu=0;unpaid.forEach(function(f){tu+=Number(f.amount)||0;});var tp=0;paid.forEach(function(f){tp+=Number(f.amount)||0;});document.getElementById('settingsDisplay').innerHTML='Currency: <strong style="color:var(--fg)">'+esc(cur)+'</strong><br>Fine per day: <strong style="color:var(--fg)">'+cur+(s.finePerDay||0)+'</strong><br>Issue period: <strong style="color:var(--fg)">'+(s.issueDays||14)+' days</strong><br><br>Total collected: <strong style="color:var(--ok)">'+cur+tp+'</strong><br>Outstanding: <strong style="color:var(--err)">'+cur+tu+'</strong> ('+unpaid.length+' records)';}
+document.getElementById('saveSettingsBtn').addEventListener('click',function(){var s={currency:document.getElementById('setCurrency').value.trim()||'\u20B9',finePerDay:parseInt(document.getElementById('setFinePerDay').value)||0,issueDays:parseInt(document.getElementById('setIssueDays').value)||14};apiCall('saveSettings',{settings:s}).then(function(){DB.settings=s;toast('Settings saved');refreshSettings();});});
+
+function refreshAdminDash(){updateTxStatus();var s=getS(),cur=s.currency||'\u20B9';var totalCopies=0;DB.books.forEach(function(b){totalCopies+=Number(b.totalCopies)||0;});var issued=DB.tx.filter(function(t){return t.status==='issued'||t.status==='overdue';}).length;var overdue=DB.tx.filter(function(t){return t.status==='overdue';}).length;var uf=0;DB.fines.filter(function(f){return f.status==='unpaid';}).forEach(function(f){uf+=Number(f.amount)||0;});document.getElementById('aStats').innerHTML=[['fas fa-book','Total Books',totalCopies],['fas fa-users','Members',DB.members.length],['fas fa-hand-holding','Currently Issued',issued],['fas fa-exclamation-triangle','Overdue',overdue],['fas fa-coins','Unpaid Fines',cur+uf]].map(function(s){return'<div class="stat-card"><div class="stat-icon"><i class="'+s[0]+'"></i></div><div class="stat-val">'+s[2]+'</div><div class="stat-lbl">'+s[1]+'</div></div>';}).join('');var recent=DB.tx.slice().sort(function(a,b){return(b.issueDate||'').localeCompare(a.issueDate||'');}).slice(0,6);var rd=document.getElementById('aRecentTx');if(!recent.length){rd.innerHTML='<div class="tbl-empty"><i class="fas fa-inbox"></i><p>No transactions yet</p></div>';return;}rd.innerHTML=recent.map(function(t){var b=DB.books.find(function(x){return x.id===t.bookId;}),m=DB.members.find(function(x){return x.id===t.memberId;});var ibg,ic,ii;if(t.status==='returned'){ibg='rgba(74,186,122,.12)';ic='var(--ok)';ii='fa-arrow-left';}else if(t.status==='overdue'){ibg='rgba(217,79,79,.12)';ic='var(--err)';ii='fa-exclamation';}else{ibg='rgba(74,154,186,.12)';ic='var(--info)';ii='fa-arrow-right';}return'<div class="recent-item"><div class="ri-icon" style="background:'+ibg+';color:'+ic+'"><i class="fas '+ii+'"></i></div><div class="ri-info"><div class="ri-title">'+esc(b?b.title:'Unknown')+'</div><div class="ri-sub">'+esc(m?m.name:'Unknown')+' \u00B7 '+fd(t.issueDate)+'</div></div><span class="badge '+({issued:'b-i',returned:'b-ok',overdue:'b-err'}[t.status]||'b-i')+'">'+t.status.charAt(0).toUpperCase()+t.status.slice(1)+'</span></div>';}).join('');}
 function refreshAllAdmin(){refreshAdminDash();refreshAdminBooks();refreshAdminMembers();refreshAdminTx();refreshAdminClasses();refreshAdminFines();refreshSettings();}
-// STUDENT
-function refreshStudentDash(){
-  if(!currentUser)return;var myTx=DB.tx.filter(function(t){return t.memberId===currentUser.memberId;});
-  var issued=myTx.filter(function(t){return t.status==='issued'||t.status==='overdue';});var overdue=myTx.filter(function(t){return t.status==='overdue';});
-  var myFines=DB.fines.filter(function(f){return f.memberId===currentUser.memberId;});var s=getS(),cur=s.currency||'₹',unpaid=0;
-  myFines.filter(function(f){return f.status==='unpaid';}).forEach(function(f){unpaid+=Number(f.amount)||0;});
-  document.getElementById('sStats').innerHTML=[['fas fa-book','Books Issued',issued.length],['fas fa-exclamation-triangle','Overdue',overdue.length],['fas fa-coins','Unpaid Fines',cur+unpaid]].map(function(s){return'<div class="stat-card"><div class="stat-icon"><i class="'+s[0]+'"></i></div><div class="stat-val">'+s[2]+'</div><div class="stat-lbl">'+s[1]+'</div></div>';}).join('');
-  var sm={issued:'b-i',returned:'b-ok',overdue:'b-err'},tb=document.getElementById('sIssuedTb');
-  if(!issued.length){tb.innerHTML='<tr><td colspan="4"><div class="tbl-empty"><i class="fas fa-book-open"></i><p>No books currently issued</p></div></td></tr>';return;}
-  tb.innerHTML=issued.map(function(t){var b=DB.books.find(function(x){return x.id===t.bookId;});return'<tr><td style="font-weight:500">'+esc(b?b.title:'Unknown')+'</td><td>'+fd(t.issueDate)+'</td><td>'+fd(t.dueDate)+'</td><td><span class="badge '+sm[t.status]+'">'+t.status.charAt(0).toUpperCase()+t.status.slice(1)+'</span></td></tr>';}).join('');
-}
-function refreshStudentBooks(){
-  var search=document.getElementById('sBookSearch').value.toLowerCase(),avF=chipVal('data-av');
-  var filtered=DB.books.filter(function(b){var ms=!search||(b.title||'').toLowerCase().indexOf(search)!==-1||(b.author||'').toLowerCase().indexOf(search)!==-1||(b.isbn||'').toLowerCase().indexOf(search)!==-1;var av=Number(b.availableCopies)||0;var ma=!avF||(avF==='yes'&&av>0)||(avF==='no'&&av===0);return ms&&ma;});
-  var tb=document.getElementById('sBookTb');document.getElementById('sBookCount').textContent=filtered.length+' book'+(filtered.length!==1?'s':'');
-  if(!filtered.length){tb.innerHTML='<tr><td colspan="4"><div class="tbl-empty"><i class="fas fa-search"></i><p>No books found</p></div></td></tr>';return;}
-  tb.innerHTML=filtered.map(function(b){var av=Number(b.availableCopies)||0;return'<tr><td style="font-weight:500">'+esc(b.title)+'</td><td>'+esc(b.author)+'</td><td>'+esc(b.category||'—')+'</td><td>'+(av>0?'<span class="badge b-ok">'+av+' available</span>':'<span class="badge b-err">Unavailable</span>')+'</td></tr>';}).join('');
-}
-function refreshStudentFines(){
-  if(!currentUser)return;var myFines=DB.fines.filter(function(f){return f.memberId===currentUser.memberId;}),s=getS(),cur=s.currency||'₹';
-  var tb=document.getElementById('sFineTb'),stm={unpaid:'b-err',paid:'b-ok',waived:'b-w'};
-  if(!myFines.length){tb.innerHTML='<tr><td colspan="5"><div class="tbl-empty"><i class="fas fa-smile"></i><p>No fines — great!</p></div></td></tr>';return;}
-  tb.innerHTML=myFines.map(function(f){var b=DB.books.find(function(x){return x.id===f.bookId;});return'<tr><td>'+esc(b?b.title:'Unknown')+'</td><td>'+f.daysOverdue+' days</td><td style="font-weight:700;color:var(--err)">'+cur+f.amount+'</td><td><span class="badge '+stm[f.status]+'">'+f.status.charAt(0).toUpperCase()+f.status.slice(1)+'</span></td><td style="font-size:12px;color:var(--muted)">'+fd(f.createdAt)+'</td></tr>';}).join('');
-}
+
+function buildSBookCatChips(){var wrap=document.getElementById('sBookCatChips');var cur=wrap.querySelector('.chip.active');var curCat=cur?(cur.dataset.scat||''):'';var catSet={};DB.books.forEach(function(b){if(b.category)catSet[b.category]=true;});var cats=Object.keys(catSet);var html='<span class="chip '+(curCat===''?'active':'')+'" data-scat="" style="font-size:11px"><i class="fas fa-layer-group" style="font-size:10px"></i> All</span>';cats.forEach(function(c){var active=(c===curCat)?'active':'';html+='<span class="chip '+active+'" data-scat="'+esc(c)+'" style="font-size:11px">'+esc(c)+'</span>';});wrap.innerHTML=html;wrap.querySelectorAll('.chip').forEach(function(ch){ch.addEventListener('click',function(){wrap.querySelectorAll('.chip').forEach(function(x){x.classList.remove('active');});this.classList.add('active');refreshStudentBooks();});});}
+function refreshStudentBooks(){buildSBookCatChips();var search=document.getElementById('sBookSearch').value.toLowerCase();var avF=chipVal('data-av');var catEl=document.querySelector('#sBookCatChips .chip.active');var catF=catEl?catEl.dataset.scat:'';var filtered=DB.books.filter(function(b){var ms=!search||(b.title||'').toLowerCase().indexOf(search)!==-1||(b.author||'').toLowerCase().indexOf(search)!==-1||(b.isbn||'').toLowerCase().indexOf(search)!==-1;var av=Number(b.availableCopies)||0;var ma=!avF||(avF==='yes'&&av>0)||(avF==='no'&&av===0);var mc=!catF||b.category===catF;return ms&&ma&&mc;});var tb=document.getElementById('sBookTb');document.getElementById('sBookCount').textContent=filtered.length+' book'+(filtered.length!==1?'s':'');if(!filtered.length){tb.innerHTML='<tr><td colspan="4"><div class="tbl-empty"><i class="fas fa-search"></i><p>No books found</p></div></td></tr>';return;}tb.innerHTML=filtered.map(function(b){var av=Number(b.availableCopies)||0;return'<tr><td style="font-weight:500">'+esc(b.title)+'</td><td>'+esc(b.author)+'</td><td>'+esc(b.category||'\u2014')+'</td><td>'+(av>0?'<span class="badge b-ok">'+av+' available</span>':'<span class="badge b-err">Unavailable</span>')+'</td></tr>';}).join('');}
+function refreshStudentDash(){if(!currentUser)return;var myTx=DB.tx.filter(function(t){return t.memberId===currentUser.memberId;});var issued=myTx.filter(function(t){return t.status==='issued'||t.status==='overdue';});var overdue=myTx.filter(function(t){return t.status==='overdue';});var myFines=DB.fines.filter(function(f){return f.memberId===currentUser.memberId;});var s=getS(),cur=s.currency||'\u20B9',unpaid=0;myFines.filter(function(f){return f.status==='unpaid';}).forEach(function(f){unpaid+=Number(f.amount)||0;});document.getElementById('sStats').innerHTML=[['fas fa-book','Books Issued',issued.length],['fas fa-exclamation-triangle','Overdue',overdue.length],['fas fa-coins','Unpaid Fines',cur+unpaid]].map(function(s){return'<div class="stat-card"><div class="stat-icon"><i class="'+s[0]+'"></i></div><div class="stat-val">'+s[2]+'</div><div class="stat-lbl">'+s[1]+'</div></div>';}).join('');var sm={issued:'b-i',returned:'b-ok',overdue:'b-err'},tb=document.getElementById('sIssuedTb');if(!issued.length){tb.innerHTML='<tr><td colspan="4"><div class="tbl-empty"><i class="fas fa-book-open"></i><p>No books currently issued</p></div></td></tr>';return;}tb.innerHTML=issued.map(function(t){var b=DB.books.find(function(x){return x.id===t.bookId;});return'<tr><td style="font-weight:500">'+esc(b?b.title:'Unknown')+'</td><td>'+fd(t.issueDate)+'</td><td>'+fd(t.dueDate)+'</td><td><span class="badge '+sm[t.status]+'">'+t.status.charAt(0).toUpperCase()+t.status.slice(1)+'</span></td></tr>';}).join('');}
+function refreshStudentFines(){if(!currentUser)return;var myFines=DB.fines.filter(function(f){return f.memberId===currentUser.memberId;}),s=getS(),cur=s.currency||'\u20B9';var tb=document.getElementById('sFineTb'),stm={unpaid:'b-err',paid:'b-ok',waived:'b-w'};if(!myFines.length){tb.innerHTML='<tr><td colspan="5"><div class="tbl-empty"><i class="fas fa-smile"></i><p>No fines \u2014 great!</p></div></td></tr>';return;}tb.innerHTML=myFines.map(function(f){var b=DB.books.find(function(x){return x.id===f.bookId;});return'<tr><td>'+esc(b?b.title:'Unknown')+'</td><td>'+f.daysOverdue+' days</td><td style="font-weight:700;color:var(--err)">'+cur+f.amount+'</td><td><span class="badge '+stm[f.status]+'">'+f.status.charAt(0).toUpperCase()+f.status.slice(1)+'</span></td><td style="font-size:12px;color:var(--muted)">'+fd(f.createdAt)+'</td></tr>';}).join('');}
 document.getElementById('sBookSearch').addEventListener('input',refreshStudentBooks);
-// PRINT REPORTS
+
 var _rpt='summary';
 document.querySelectorAll('.rpt-card').forEach(function(c){c.addEventListener('click',function(){document.querySelectorAll('.rpt-card').forEach(function(x){x.classList.remove('selected');});this.classList.add('selected');_rpt=this.dataset.rpt;document.getElementById('optRangeRow').style.display=(_rpt==='tx')?'flex':'none';document.getElementById('previewWrap').classList.add('hidden');});});
 document.querySelectorAll('.toggle').forEach(function(t){t.addEventListener('click',function(){this.classList.toggle('on');});});
 function gO(id){return document.getElementById(id).classList.contains('on');}
-function buildReport(type){
-  updateTxStatus();var s=getS(),cur=s.currency||'₹';
-  var now=new Date(),nowStr=now.toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'})+' '+now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
-  var showH=gO('optHeader'),showD=gO('optDate'),showSt=gO('optStats');
-  var hdr=showH?'<div class="ph"><div class="ph-l"><h1>NOOR</h1><p>Nusrath Organization of Open Resources</p></div><div class="ph-r"><strong>Library Report</strong>'+(showD?'<span>'+nowStr+'</span>':'')+'</div></div>':'';
-  var ftr='<div class="pfoot"><span>NOOR · Nusrath Secondary School</span>'+(showD?'<span>Generated: '+nowStr+'</span>':'')+'</div>';
-  var totalCopies=0;DB.books.forEach(function(b){totalCopies+=Number(b.totalCopies)||0;});
-  var issuedTx=DB.tx.filter(function(t){return t.status==='issued'||t.status==='overdue';});
-  var overdueTx=DB.tx.filter(function(t){return t.status==='overdue';});
-  var uf=DB.fines.filter(function(f){return f.status==='unpaid';}),ufAmt=0;uf.forEach(function(f){ufAmt+=Number(f.amount)||0;});
-  var stHTML=showSt?'<div class="pstats">'+[['Total Books',totalCopies],['Members',DB.members.length],['Issued',issuedTx.length],['Overdue',overdueTx.length],['Unpaid Fines',cur+ufAmt]].map(function(x){return'<div class="pst"><div class="v">'+x[1]+'</div><div class="l">'+x[0]+'</div></div>';}).join('')+'</div>':'';
-  var body='';
-  if(type==='summary'){
-    body='<div class="pt">Library Summary Report</div><div class="ps">Overview of all library activities</div>'+stHTML;
-    var cats={};DB.books.forEach(function(b){var c=b.category||'Uncategorised';cats[c]=(cats[c]||0)+Number(b.totalCopies||0);});
-    body+='<hr class="pdiv"><p style="font-weight:700;margin-bottom:10px">Books by Category</p><table class="ptbl"><thead><tr><th>Category</th><th>Copies</th></tr></thead><tbody>'+Object.keys(cats).map(function(c){return'<tr><td>'+esc(c)+'</td><td>'+cats[c]+'</td></tr>';}).join('')+'</tbody></table>';
-    var clsSt=DB.classes.map(function(c){return{name:c.name,count:DB.members.filter(function(m){return m.classId===c.id;}).length};});
-    body+='<hr class="pdiv"><p style="font-weight:700;margin-bottom:10px">Members by Class</p><table class="ptbl"><thead><tr><th>Class</th><th>Members</th></tr></thead><tbody>'+clsSt.map(function(c){return'<tr><td>'+esc(c.name)+'</td><td>'+c.count+'</td></tr>';}).join('')+'</tbody></table>';
-  }else if(type==='books'){
-    body='<div class="pt">Book Catalogue</div><div class="ps">'+DB.books.length+' titles · '+totalCopies+' copies total</div>'+stHTML;
-    body+='<table class="ptbl"><thead><tr><th>#</th><th>Title</th><th>Author</th><th>Category</th><th>ISBN</th><th>Total</th><th>Available</th></tr></thead><tbody>'+DB.books.map(function(b,i){var av=Number(b.availableCopies)||0;return'<tr><td>'+(i+1)+'</td><td style="font-weight:600">'+esc(b.title)+'</td><td>'+esc(b.author)+'</td><td>'+esc(b.category||'—')+'</td><td>'+esc(b.isbn||'—')+'</td><td>'+b.totalCopies+'</td><td><span class="pb '+(av>0?'pb-ok':'pb-err')+'">'+av+'</span></td></tr>';}).join('')+'</tbody></table>';
-  }else if(type==='members'){
-    var sm=DB.members.slice().sort(function(a,b){var ca=DB.classes.find(function(x){return x.id===a.classId;}),cb=DB.classes.find(function(x){return x.id===b.classId;});return(ca?ca.name:'').localeCompare(cb?cb.name:'');});
-    body='<div class="pt">Member List</div><div class="ps">'+DB.members.length+' registered members</div>';
-    body+='<table class="ptbl"><thead><tr><th>#</th><th>Name</th><th>Class</th><th>Admission No</th><th>Phone</th></tr></thead><tbody>'+sm.map(function(m,i){var cls=DB.classes.find(function(c){return c.id===m.classId;});return'<tr><td>'+(i+1)+'</td><td style="font-weight:600">'+esc(m.name)+'</td><td>'+esc(cls?cls.name:'—')+'</td><td>'+esc(m.rollNo)+'</td><td>'+esc(m.phone||'—')+'</td></tr>';}).join('')+'</tbody></table>';
-  }else if(type==='issued'){
-    body='<div class="pt">Currently Issued Books</div><div class="ps">'+issuedTx.length+' transactions not yet returned</div>';
-    body+='<table class="ptbl"><thead><tr><th>#</th><th>Book</th><th>Member</th><th>Class</th><th>Issue Date</th><th>Due Date</th><th>Status</th></tr></thead><tbody>'+issuedTx.map(function(t,i){var b=DB.books.find(function(x){return x.id===t.bookId;}),m=DB.members.find(function(x){return x.id===t.memberId;}),cls=m?DB.classes.find(function(c){return c.id===m.classId;}):null;return'<tr><td>'+(i+1)+'</td><td style="font-weight:600">'+esc(b?b.title:'—')+'</td><td>'+esc(m?m.name:'—')+'</td><td>'+esc(cls?cls.name:'—')+'</td><td>'+fd(t.issueDate)+'</td><td>'+fd(t.dueDate)+'</td><td><span class="pb '+(t.status==='overdue'?'pb-err':'pb-i')+'">'+t.status+'</span></td></tr>';}).join('')+'</tbody></table>';
-  }else if(type==='overdue'){
-    body='<div class="pt">Overdue Books</div><div class="ps">'+overdueTx.length+' books past due date</div>';
-    body+='<table class="ptbl"><thead><tr><th>#</th><th>Book</th><th>Member</th><th>Adm. No</th><th>Due Date</th><th>Days Over</th><th>Fine ('+cur+')</th></tr></thead><tbody>'+overdueTx.map(function(t,i){var b=DB.books.find(function(x){return x.id===t.bookId;}),m=DB.members.find(function(x){return x.id===t.memberId;});var days=Math.ceil((new Date()-new Date((t.dueDate||'').split('T')[0]+'T00:00:00'))/86400000);var fine=days*(s.finePerDay||0);return'<tr><td>'+(i+1)+'</td><td style="font-weight:600">'+esc(b?b.title:'—')+'</td><td>'+esc(m?m.name:'—')+'</td><td>'+esc(m?m.rollNo:'—')+'</td><td>'+fd(t.dueDate)+'</td><td style="color:#b71c1c;font-weight:700">'+days+'</td><td style="color:#b71c1c;font-weight:700">'+fine+'</td></tr>';}).join('')+'</tbody></table>';
-    var totFine=overdueTx.reduce(function(acc,t){var days=Math.ceil((new Date()-new Date((t.dueDate||'').split('T')[0]+'T00:00:00'))/86400000);return acc+days*(s.finePerDay||0);},0);
-    body+='<div style="text-align:right;font-weight:700;margin-top:6px">Total Outstanding: '+cur+totFine+'</div>';
-  }else if(type==='fines'){
-    var paidAmt=0,waivedAmt=0;DB.fines.filter(function(f){return f.status==='paid';}).forEach(function(f){paidAmt+=Number(f.amount)||0;});DB.fines.filter(function(f){return f.status==='waived';}).forEach(function(f){waivedAmt+=Number(f.amount)||0;});
-    body='<div class="pt">Fine Statement</div><div class="ps">'+DB.fines.length+' fine records</div>';
-    if(showSt)body+='<div class="pstats"><div class="pst"><div class="v">'+cur+ufAmt+'</div><div class="l">Unpaid</div></div><div class="pst"><div class="v">'+cur+paidAmt+'</div><div class="l">Collected</div></div><div class="pst"><div class="v">'+cur+waivedAmt+'</div><div class="l">Waived</div></div></div>';
-    body+='<table class="ptbl"><thead><tr><th>#</th><th>Book</th><th>Member</th><th>Days Over</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead><tbody>'+DB.fines.map(function(f,i){var b=DB.books.find(function(x){return x.id===f.bookId;}),m=DB.members.find(function(x){return x.id===f.memberId;});var bm={unpaid:'pb-err',paid:'pb-ok',waived:'pb-w'}[f.status]||'pb-i';return'<tr><td>'+(i+1)+'</td><td>'+esc(b?b.title:'—')+'</td><td>'+esc(m?m.name:'—')+'</td><td>'+f.daysOverdue+'</td><td style="font-weight:700">'+cur+f.amount+'</td><td><span class="pb '+bm+'">'+f.status+'</span></td><td>'+fd(f.createdAt)+'</td></tr>';}).join('')+'</tbody></table>';
-  }else if(type==='tx'){
-    var from=document.getElementById('rptFrom').value,to=document.getElementById('rptTo').value;
-    var txData=DB.tx.slice();if(from)txData=txData.filter(function(t){return(t.issueDate||'')>=from;});if(to)txData=txData.filter(function(t){return(t.issueDate||'')<=to;});
-    txData.sort(function(a,b){return(b.issueDate||'').localeCompare(a.issueDate||'');});
-    var rl=from&&to?' ('+fd(from)+' – '+fd(to)+')':from?' (from '+fd(from)+')':to?' (to '+fd(to)+')':' (all time)';
-    body='<div class="pt">Transaction History</div><div class="ps">'+txData.length+' records'+rl+'</div>';
-    body+='<table class="ptbl"><thead><tr><th>#</th><th>Book</th><th>Member</th><th>Issue</th><th>Due</th><th>Return</th><th>Fine</th><th>Status</th></tr></thead><tbody>'+txData.map(function(t,i){var b=DB.books.find(function(x){return x.id===t.bookId;}),m=DB.members.find(function(x){return x.id===t.memberId;});var sm2={issued:'pb-i',returned:'pb-ok',overdue:'pb-err'}[t.status]||'pb-i';var fine=t.fineAmount>0?'<strong>'+cur+t.fineAmount+'</strong>':'—';return'<tr><td>'+(i+1)+'</td><td>'+esc(b?b.title:'—')+'</td><td>'+esc(m?m.name:'—')+'</td><td>'+fd(t.issueDate)+'</td><td>'+fd(t.dueDate)+'</td><td>'+fd(t.returnDate)+'</td><td>'+fine+'</td><td><span class="pb '+sm2+'">'+t.status+'</span></td></tr>';}).join('')+'</tbody></table>';
-  }else if(type==='classwise'){
-    body='<div class="pt">Class-wise Summary</div><div class="ps">Book issuance by class</div>';
-    body+='<table class="ptbl"><thead><tr><th>Class</th><th>Members</th><th>Issued</th><th>Overdue</th><th>Unpaid Fines</th></tr></thead><tbody>'+DB.classes.map(function(c){var mids=DB.members.filter(function(m){return m.classId===c.id;}).map(function(m){return m.id;});var ci=DB.tx.filter(function(t){return mids.indexOf(t.memberId)!==-1&&(t.status==='issued'||t.status==='overdue');}).length;var co=DB.tx.filter(function(t){return mids.indexOf(t.memberId)!==-1&&t.status==='overdue';}).length;var cf=0;DB.fines.filter(function(f){return mids.indexOf(f.memberId)!==-1&&f.status==='unpaid';}).forEach(function(f){cf+=Number(f.amount)||0;});return'<tr><td style="font-weight:700">'+esc(c.name)+'</td><td>'+mids.length+'</td><td>'+ci+'</td><td style="color:'+(co>0?'#b71c1c':'#1a7a42')+'">'+co+'</td><td>'+cur+cf+'</td></tr>';}).join('')+'</tbody></table>';
-  }
-  return'<div class="pdoc">'+hdr+body+ftr+'</div>';
+
+function buildReport(type){updateTxStatus();var s=getS(),cur=s.currency||'\u20B9';var now=new Date(),nowStr=now.toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'})+' '+now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});var showH=gO('optHeader'),showD=gO('optDate'),showSt=gO('optStats');var hdr=showH?'<div class="ph"><div class="ph-l"><h1>NOOR</h1><p>Nusrath Organization of Open Resources</p></div><div class="ph-r"><strong>Library Report</strong>'+(showD?'<span>'+nowStr+'</span>':'')+'</div></div>':'';var ftr='<div class="pfoot"><span>NOOR \u00B7 Nusrath Secondary School</span>'+(showD?'<span>Generated: '+nowStr+'</span>':'')+'</div>';var totalCopies=0;DB.books.forEach(function(b){totalCopies+=Number(b.totalCopies)||0;});var issuedTx=DB.tx.filter(function(t){return t.status==='issued'||t.status==='overdue';});var overdueTx=DB.tx.filter(function(t){return t.status==='overdue';});var uf=DB.fines.filter(function(f){return f.status==='unpaid';}),ufAmt=0;uf.forEach(function(f){ufAmt+=Number(f.amount)||0;});var stHTML=showSt?'<div class="pstats">'+[['Total Books',totalCopies],['Members',DB.members.length],['Issued',issuedTx.length],['Overdue',overdueTx.length],['Unpaid Fines',cur+ufAmt]].map(function(x){return'<div class="pst"><div class="v">'+x[1]+'</div><div class="l">'+x[0]+'</div></div>';}).join('')+'</div>':'';var body='';if(type==='summary'){body='<div class="pt">Library Summary Report</div><div class="ps">Overview of all library activities</div>'+stHTML;var cats={};DB.books.forEach(function(b){var c=b.category||'Uncategorised';cats[c]=(cats[c]||0)+Number(b.totalCopies||0);});body+='<hr class="pdiv"><p style="font-weight:700;margin-bottom:10px">Books by Category</p><table class="ptbl"><thead><tr><th>Category</th><th>Copies</th></tr></thead><tbody>'+Object.keys(cats).map(function(c){return'<tr><td>'+esc(c)+'</td><td>'+cats[c]+'</td></tr>';}).join('')+'</tbody></table>';var clsSt=DB.classes.map(function(c){return{name:c.name,count:DB.members.filter(function(m){return m.classId===c.id;}).length};});body+='<hr class="pdiv"><p style="font-weight:700;margin-bottom:10px">Members by Class</p><table class="ptbl"><thead><tr><th>Class</th><th>Members</th></tr></thead><tbody>'+clsSt.map(function(c){return'<tr><td>'+esc(c.name)+'</td><td>'+c.count+'</td></tr>';}).join('')+'</tbody></table>';}else if(type==='books'){body='<div class="pt">Book Catalogue</div><div class="ps">'+DB.books.length+' titles \u00B7 '+totalCopies+' copies total</div>'+stHTML;body+='<table class="ptbl"><thead><tr><th>#</th><th>Title</th><th>Author</th><th>Category</th><th>ISBN</th><th>Total</th><th>Available</th></tr></thead><tbody>'+DB.books.map(function(b,i){var av=Number(b.availableCopies)||0;return'<tr><td>'+(i+1)+'</td><td style="font-weight:600">'+esc(b.title)+'</td><td>'+esc(b.author)+'</td><td>'+esc(b.category||'\u2014')+'</td><td>'+esc(b.isbn||'\u2014')+'</td><td>'+b.totalCopies+'</td><td><span class="pb '+(av>0?'pb-ok':'pb-err')+'">'+av+'</span></td></tr>';}).join('')+'</tbody></table>';}else if(type==='members'){var sm2=DB.members.slice().sort(function(a,b){var ca=DB.classes.find(function(x){return x.id===a.classId;}),cb=DB.classes.find(function(x){return x.id===b.classId;});return(ca?ca.name:'').localeCompare(cb?cb.name:'');});body='<div class="pt">Member List</div><div class="ps">'+DB.members.length+' registered members</div>';body+='<table class="ptbl"><thead><tr><th>#</th><th>Name</th><th>Class</th><th>Admission No</th><th>Phone</th></tr></thead><tbody>'+sm2.map(function(m,i){var cls=DB.classes.find(function(c){return c.id===m.classId;});return'<tr><td>'+(i+1)+'</td><td style="font-weight:600">'+esc(m.name)+'</td><td>'+esc(cls?cls.name:'\u2014')+'</td><td>'+esc(m.rollNo)+'</td><td>'+esc(m.phone||'\u2014')+'</td></tr>';}).join('')+'</tbody></table>';}else if(type==='issued'){body='<div class="pt">Currently Issued Books</div><div class="ps">'+issuedTx.length+' transactions not yet returned</div>';body+='<table class="ptbl"><thead><tr><th>#</th><th>Book</th><th>Member</th><th>Class</th><th>Issue Date</th><th>Due Date</th><th>Status</th></tr></thead><tbody>'+issuedTx.map(function(t,i){var b=DB.books.find(function(x){return x.id===t.bookId;}),m=DB.members.find(function(x){return x.id===t.memberId;}),cls=m?DB.classes.find(function(c){return c.id===m.classId;}):null;return'<tr><td>'+(i+1)+'</td><td style="font-weight:600">'+esc(b?b.title:'\u2014')+'</td><td>'+esc(m?m.name:'\u2014')+'</td><td>'+esc(cls?cls.name:'\u2014')+'</td><td>'+fd(t.issueDate)+'</td><td>'+fd(t.dueDate)+'</td><td><span class="pb '+(t.status==='overdue'?'pb-err':'pb-i')+'">'+t.status+'</span></td></tr>';}).join('')+'</tbody></table>';}else if(type==='overdue'){body='<div class="pt">Overdue Books</div><div class="ps">'+overdueTx.length+' books past due date</div>';body+='<table class="ptbl"><thead><tr><th>#</th><th>Book</th><th>Member</th><th>Adm. No</th><th>Due Date</th><th>Days Over</th><th>Fine ('+cur+')</th></tr></thead><tbody>'+overdueTx.map(function(t,i){var b=DB.books.find(function(x){return x.id===t.bookId;}),m=DB.members.find(function(x){return x.id===t.memberId;});var days=Math.ceil((new Date()-new Date((t.dueDate||'').split('T')[0]+'T00:00:00'))/86400000);var fine=days*(s.finePerDay||0);return'<tr><td>'+(i+1)+'</td><td style="font-weight:600">'+esc(b?b.title:'\u2014')+'</td><td>'+esc(m?m.name:'\u2014')+'</td><td>'+esc(m?m.rollNo:'\u2014')+'</td><td>'+fd(t.dueDate)+'</td><td style="color:#b71c1c;font-weight:700">'+days+'</td><td style="color:#b71c1c;font-weight:700">'+fine+'</td></tr>';}).join('')+'</tbody></table>';var totFine=overdueTx.reduce(function(acc,t){var days=Math.ceil((new Date()-new Date((t.dueDate||'').split('T')[0]+'T00:00:00'))/86400000);return acc+days*(s.finePerDay||0);},0);body+='<div style="text-align:right;font-weight:700;margin-top:6px">Total Outstanding: '+cur+totFine+'</div>';}else if(type==='fines'){var paidAmt=0,waivedAmt=0;DB.fines.filter(function(f){return f.status==='paid';}).forEach(function(f){paidAmt+=Number(f.amount)||0;});DB.fines.filter(function(f){return f.status==='waived';}).forEach(function(f){waivedAmt+=Number(f.amount)||0;});body='<div class="pt">Fine Statement</div><div class="ps">'+DB.fines.length+' fine records</div>';if(showSt)body+='<div class="pstats"><div class="pst"><div class="v">'+cur+ufAmt+'</div><div class="l">Unpaid</div></div><div class="pst"><div class="v">'+cur+paidAmt+'</div><div class="l">Collected</div></div><div class="pst"><div class="v">'+cur+waivedAmt+'</div><div class="l">Waived</div></div></div>';body+='<table class="ptbl"><thead><tr><th>#</th><th>Book</th><th>Member</th><th>Days Over</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead><tbody>'+DB.fines.map(function(f,i){var b=DB.books.find(function(x){return x.id===f.bookId;}),m=DB.members.find(function(x){return x.id===f.memberId;});var bm={unpaid:'pb-err',paid:'pb-ok',waived:'pb-w'}[f.status]||'pb-i';return'<tr><td>'+(i+1)+'</td><td>'+esc(b?b.title:'\u2014')+'</td><td>'+esc(m?m.name:'\u2014')+'</td><td>'+f.daysOverdue+'</td><td style="font-weight:700">'+cur+f.amount+'</td><td><span class="pb '+bm+'">'+f.status+'</span></td><td>'+fd(f.createdAt)+'</td></tr>';}).join('')+'</tbody></table>';}else if(type==='tx'){var from=document.getElementById('rptFrom').value,to=document.getElementById('rptTo').value;var txData=DB.tx.slice();if(from)txData=txData.filter(function(t){return(t.issueDate||'')>=from;});if(to)txData=txData.filter(function(t){return(t.issueDate||'')<=to;});txData.sort(function(a,b){return(b.issueDate||'').localeCompare(a.issueDate||'');});var rl=from&&to?' ('+fd(from)+' \u2013 '+fd(to)+')':from?' (from '+fd(from)+')':to?' (to '+fd(to)+')':' (all time)';body='<div class="pt">Transaction History</div><div class="ps">'+txData.length+' records'+rl+'</div>';body+='<table class="ptbl"><thead><tr><th>#</th><th>Book</th><th>Member</th><th>Issue</th><th>Due</th><th>Return</th><th>Fine</th><th>Status</th></tr></thead><tbody>'+txData.map(function(t,i){var b=DB.books.find(function(x){return x.id===t.bookId;}),m=DB.members.find(function(x){return x.id===t.memberId;});var sm3={issued:'pb-i',returned:'pb-ok',overdue:'pb-err'}[t.status]||'pb-i';var fine=t.fineAmount>0?'<strong>'+cur+t.fineAmount+'</strong>':'\u2014';return'<tr><td>'+(i+1)+'</td><td>'+esc(b?b.title:'\u2014')+'</td><td>'+esc(m?m.name:'\u2014')+'</td><td>'+fd(t.issueDate)+'</td><td>'+fd(t.dueDate)+'</td><td>'+fd(t.returnDate)+'</td><td>'+fine+'</td><td><span class="pb '+sm3+'">'+t.status+'</span></td></tr>';}).join('')+'</tbody></table>';}else if(type==='classwise'){body='<div class="pt">Class-wise Summary</div><div class="ps">Book issuance by class</div>';body+='<table class="ptbl"><thead><tr><th>Class</th><th>Members</th><th>Issued</th><th>Overdue</th><th>Unpaid Fines</th></tr></thead><tbody>'+DB.classes.map(function(c){var mids=DB.members.filter(function(m){return m.classId===c.id;}).map(function(m){return m.id;});var ci=DB.tx.filter(function(t){return mids.indexOf(t.memberId)!==-1&&(t.status==='issued'||t.status==='overdue');}).length;var co=DB.tx.filter(function(t){return mids.indexOf(t.memberId)!==-1&&t.status==='overdue';}).length;var cf=0;DB.fines.filter(function(f){return mids.indexOf(f.memberId)!==-1&&f.status==='unpaid';}).forEach(function(f){cf+=Number(f.amount)||0;});return'<tr><td style="font-weight:700">'+esc(c.name)+'</td><td>'+mids.length+'</td><td>'+ci+'</td><td style="color:'+(co>0?'#b71c1c':'#1a7a42')+'">'+co+'</td><td>'+cur+cf+'</td></tr>';}).join('')+'</tbody></table>';}return'<div class="pdoc">'+hdr+body+ftr+'</div>';}
+
+// PROFESSIONAL IFRAME-BASED PRINTING
+document.getElementById('doPreview').addEventListener('click',function(){var html=buildReport(_rpt);document.getElementById('previewContent').innerHTML=html;var w=document.getElementById('previewWrap');w.classList.remove('hidden');w.scrollIntoView({behavior:'smooth'});});
+
+document.getElementById('doPrint').addEventListener('click',function(){var reportHTML=buildReport(_rpt);printViaIframe(reportHTML);});
+
+function printViaIframe(contentHTML){
+  var iframe=document.createElement('iframe');
+  iframe.style.cssText='position:fixed;left:-9999px;top:0;width:210mm;height:297mm;border:none;';
+  document.body.appendChild(iframe);
+  var doc=iframe.contentWindow.document;
+  doc.open();
+  doc.write('<!DOCTYPE html><html><head><meta charset="UTF-8">');
+  doc.write('<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">');
+  doc.write('<style>');
+  doc.write('@page{margin:12mm 10mm;size:A4}');
+  doc.write('*{margin:0;padding:0;box-sizing:border-box}');
+  doc.write('body{font-family:"DM Sans",Arial,sans-serif;color:#111;background:#fff!important;font-size:11px;line-height:1.5;-webkit-print-color-adjust:exact;print-color-adjust:exact}');
+  doc.write('h1,h2,h3{font-family:"Playfair Display",Georgia,serif;color:#0f1a14}');
+  doc.write('.ph{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2.5px solid #1a2b21;padding-bottom:12px;margin-bottom:16px}');
+  doc.write('.ph-l h1{font-size:20px;font-weight:900;color:#0f1a14;margin-bottom:2px}');
+  doc.write('.ph-l p{font-size:10px;color:#555}');
+  doc.write('.ph-r{text-align:right;font-size:10px;color:#666}');
+  doc.write('.ph-r strong{display:block;font-size:12px;color:#111;margin-bottom:1px}');
+  doc.write('.pt{font-size:15px;font-weight:700;color:#0f1a14;margin-bottom:2px}');
+  doc.write('.ps{font-size:10px;color:#777;margin-bottom:14px}');
+  doc.write('.pstats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}');
+  doc.write('.pst{background:#f4f7f4!important;border:1px solid #ccd8cc;border-radius:5px;padding:8px 14px;text-align:center}');
+  doc.write('.pst .v{font-size:18px;font-weight:700;font-family:"Playfair Display",Georgia,serif;color:#0f1a14}');
+  doc.write('.pst .l{font-size:9px;color:#666;text-transform:uppercase;letter-spacing:.5px}');
+  doc.write('.ptbl{width:100%;border-collapse:collapse;margin-bottom:12px;page-break-inside:auto}');
+  doc.write('.ptbl th{background:#0f1a14!important;color:#fff!important;padding:6px 8px;text-align:left;font-size:9px;text-transform:uppercase;letter-spacing:.5px;font-weight:600;-webkit-print-color-adjust:exact;print-color-adjust:exact}');
+  doc.write('.ptbl td{padding:5px 8px;border-bottom:1px solid #e0e8e0;vertical-align:middle;font-size:10px}');
+  doc.write('.ptbl tr:nth-child(even) td{background:#f8fbf8!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}');
+  doc.write('.ptbl tr{page-break-inside:avoid;break-inside:avoid}');
+  doc.write('.pb{display:inline-block;padding:1px 7px;border-radius:8px;font-size:9px;font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact}');
+  doc.write('.pb-ok{background:#e6f7ed!important;color:#1a7a42!important}');
+  doc.write('.pb-err{background:#fdecea!important;color:#b71c1c!important}');
+  doc.write('.pb-i{background:#e3f2fd!important;color:#1565c0!important}');
+  doc.write('.pb-w{background:#fff8e1!important;color:#e65100!important}');
+  doc.write('.pfoot{border-top:1px solid #ccd8cc;padding-top:8px;margin-top:8px;font-size:9px;color:#888;display:flex;justify-content:space-between}');
+  doc.write('.pdiv{border:none;border-top:1px solid #e0e8e0;margin:12px 0}');
+  doc.write('strong{color:#111}');
+  doc.write('</style></head><body>');
+  doc.write(contentHTML);
+  doc.write('</body></html>');
+  doc.close();
+  setTimeout(function(){try{iframe.contentWindow.focus();iframe.contentWindow.print();}catch(e){console.error('Print error:',e);}setTimeout(function(){if(iframe.parentNode)iframe.parentNode.removeChild(iframe);},3000);},800);
 }
-document.getElementById('doPreview').addEventListener('click',function(){
-  var html=buildReport(_rpt);document.getElementById('previewContent').innerHTML=html;
-  var w=document.getElementById('previewWrap');w.classList.remove('hidden');w.scrollIntoView({behavior:'smooth'});
-});
-document.getElementById('doPrint').addEventListener('click',function(){
-  var html=buildReport(_rpt);var pa=document.getElementById('printArea');pa.innerHTML=html;pa.style.display='block';
-  window.print();setTimeout(function(){pa.style.display='none';pa.innerHTML='';},1500);
-});
-// EXPORT/IMPORT
+
 function dlCSV(fname,cols,rows){var lines=[cols.join(',')].concat(rows.map(function(r){return cols.map(function(c){var v=r[c]||'';return'"'+String(v).replace(/"/g,'""')+'"';}).join(',');}));var a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(lines.join('\n'));a.download=fname;a.click();}
-document.getElementById('aExportBtn').addEventListener('click',function(){
-  var ts=new Date().toISOString().replace(/[:.]/g,'-').slice(0,19);
-  dlCSV('books_'+ts+'.csv',['id','title','author','isbn','category','totalCopies','availableCopies','addedDate'],DB.books);
-  setTimeout(function(){dlCSV('members_'+ts+'.csv',['id','name','classId','rollNo','phone','email','addedDate'],DB.members);},400);
-  setTimeout(function(){dlCSV('transactions_'+ts+'.csv',['id','bookId','memberId','issueDate','dueDate','returnDate','status','fineAmount','fineStatus'],DB.tx);},800);
-  setTimeout(function(){dlCSV('fines_'+ts+'.csv',['id','txId','bookId','memberId','daysOverdue','amount','currency','status','createdAt'],DB.fines);},1200);
-  setTimeout(function(){dlCSV('classes_'+ts+'.csv',['id','name'],DB.classes);},1600);toast('Exporting CSV files…','i');
-});
-document.getElementById('aExportJsonBtn').addEventListener('click',function(){
-  var data={ts:new Date().toISOString(),books:DB.books,members:DB.members,tx:DB.tx,fines:DB.fines,classes:DB.classes,settings:DB.settings};
-  var a=document.createElement('a');a.href='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(data,null,2));a.download='alees_backup_'+new Date().toISOString().replace(/[:.]/g,'-').slice(0,19)+'.json';a.click();toast('JSON backup downloaded','ok');
-});
+document.getElementById('aExportBtn').addEventListener('click',function(){var ts=new Date().toISOString().replace(/[:.]/g,'-').slice(0,19);dlCSV('books_'+ts+'.csv',['id','title','author','isbn','category','totalCopies','availableCopies','addedDate'],DB.books);setTimeout(function(){dlCSV('members_'+ts+'.csv',['id','name','classId','rollNo','phone','email','addedDate'],DB.members);},400);setTimeout(function(){dlCSV('transactions_'+ts+'.csv',['id','bookId','memberId','issueDate','dueDate','returnDate','status','fineAmount','fineStatus'],DB.tx);},800);setTimeout(function(){dlCSV('fines_'+ts+'.csv',['id','txId','bookId','memberId','daysOverdue','amount','currency','status','createdAt'],DB.fines);},1200);setTimeout(function(){dlCSV('classes_'+ts+'.csv',['id','name'],DB.classes);},1600);toast('Exporting CSV files\u2026','i');});
+document.getElementById('aExportJsonBtn').addEventListener('click',function(){var data={ts:new Date().toISOString(),books:DB.books,members:DB.members,tx:DB.tx,fines:DB.fines,classes:DB.classes,settings:DB.settings};var a=document.createElement('a');a.href='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(data,null,2));a.download='alees_backup_'+new Date().toISOString().replace(/[:.]/g,'-').slice(0,19)+'.json';a.click();toast('JSON backup downloaded','ok');});
 document.getElementById('aImportBtn').addEventListener('click',function(){document.getElementById('restoreFileInput').click();});
-document.getElementById('restoreFileInput').addEventListener('change',function(e){
-  var f=e.target.files[0];if(!f)return;var r=new FileReader();
-  r.onload=function(ev){try{var data=JSON.parse(ev.target.result);showConfirm('Restore Backup','This will <strong>replace all current data</strong>. Are you sure?',function(){var calls=[];(data.books||[]).forEach(function(row){calls.push(apiCall('addBook',{row:row},true));});(data.members||[]).forEach(function(row){calls.push(apiCall('addMember',{row:row},true));});(data.classes||[]).forEach(function(row){calls.push(apiCall('addClass',{row:row},true));});(data.tx||[]).forEach(function(row){calls.push(apiCall('addTx',{row:row},true));});(data.fines||[]).forEach(function(row){calls.push(apiCall('addFine',{row:row},true));});if(data.settings)calls.push(apiCall('saveSettings',{settings:data.settings},true));Promise.all(calls).then(function(){return loadAll();}).then(function(){refreshAllAdmin();toast('Data restored from JSON backup');});});}catch(err){toast('Invalid JSON file','err');}};
-  r.readAsText(f);e.target.value='';
-});
-document.getElementById('aClearBtn').addEventListener('click',function(){
-  showConfirm('Clear All Data','<strong>Permanently delete</strong> all data from Google Sheets? Export a backup first!',function(){toast('Clearing data…','i');var calls=[];DB.books.forEach(function(r){calls.push(apiCall('deleteBook',{id:r.id},true));});DB.members.forEach(function(r){calls.push(apiCall('deleteMember',{id:r.id},true));});DB.classes.forEach(function(r){calls.push(apiCall('deleteClass',{id:r.id},true));});DB.tx.forEach(function(r){calls.push(apiCall('deleteTx',{id:r.id},true));});DB.fines.forEach(function(r){calls.push(apiCall('deleteFine',{id:r.id},true));});Promise.all(calls).then(function(){DB={books:[],members:[],tx:[],classes:[],fines:[],settings:{}};refreshAllAdmin();toast('All data cleared','i');});});
-});
-// STARTUP
-window.addEventListener('DOMContentLoaded',function(){fetch(API_URL).then(function(r){return r.json();}).then(function(){showLogin();}).catch(function(){showLogin();});});
+document.getElementById('restoreFileInput').addEventListener('change',function(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(ev){try{var data=JSON.parse(ev.target.result);showConfirm('Restore Backup','This will <strong>replace all current data</strong>. Are you sure?',function(){var calls=[];(data.books||[]).forEach(function(row){calls.push(apiCall('addBook',{row:row},true));});(data.members||[]).forEach(function(row){calls.push(apiCall('addMember',{row:row},true));});(data.classes||[]).forEach(function(row){calls.push(apiCall('addClass',{row:row},true));});(data.tx||[]).forEach(function(row){calls.push(apiCall('addTx',{row:row},true));});(data.fines||[]).forEach(function(row){calls.push(apiCall('addFine',{row:row},true));});if(data.settings)calls.push(apiCall('saveSettings',{settings:data.settings},true));Promise.all(calls).then(function(){return loadAll();}).then(function(){refreshAllAdmin();toast('Data restored from JSON backup');});});}catch(err){toast('Invalid JSON file','err');}};r.readAsText(f);e.target.value='';});
+document.getElementById('aClearBtn').addEventListener('click',function(){showConfirm('Clear All Data','<strong>Permanently delete</strong> all data from Alees Server? Export a backup first!',function(){toast('Clearing data\u2026','i');var calls=[];DB.books.forEach(function(r){calls.push(apiCall('deleteBook',{id:r.id},true));});DB.members.forEach(function(r){calls.push(apiCall('deleteMember',{id:r.id},true));});DB.classes.forEach(function(r){calls.push(apiCall('deleteClass',{id:r.id},true));});DB.tx.forEach(function(r){calls.push(apiCall('deleteTx',{id:r.id},true));});DB.fines.forEach(function(r){calls.push(apiCall('deleteFine',{id:r.id},true));});Promise.all(calls).then(function(){DB={books:[],members:[],tx:[],classes:[],fines:[],settings:{}};refreshAllAdmin();toast('All data cleared','i');});});});
+
+(function startup(){var safetyTimer=setTimeout(function(){console.warn('NOOR: Safety timeout, forcing login');showLogin();},4000);try{fetch(API_URL,{mode:'no-cors'}).then(function(){clearTimeout(safetyTimer);showLogin();}).catch(function(){clearTimeout(safetyTimer);showLogin();});}catch(e){clearTimeout(safetyTimer);showLogin();}})();
+
+} catch(e) {
+  console.error('NOOR JS Error:', e);
+  setTimeout(function(){var lo=document.getElementById('loadingOverlay');var lp=document.getElementById('loginPage');if(lo)lo.style.display='none';if(lp)lp.style.display='flex';},1000);
+}
 </script>
 </body>
 </html>
