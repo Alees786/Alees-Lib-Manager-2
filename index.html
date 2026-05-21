@@ -749,21 +749,42 @@
         }
         setTimeout(animateProgress, 1200);
 
-        // ==========================================
-        // Countdown ETA timer (3 hours from now)
-        // ==========================================
-        const etaEl = document.getElementById('etaValue');
-        const etaTarget = Date.now() + (3 * 60 * 60 * 1000); // 3 hours
+// ==========================================
+// Countdown ETA timer (12 hours from now)
+// ==========================================
+const etaEl = document.getElementById('etaValue');
+const etaTarget = Date.now() + (12 * 60 * 60 * 1000); // 12 hours
+let countdownDone = false;
 
-        function updateETA() {
-            const remaining = Math.max(0, etaTarget - Date.now());
-            const h = String(Math.floor(remaining / 3600000)).padStart(2, '0');
-            const m = String(Math.floor((remaining % 3600000) / 60000)).padStart(2, '0');
-            const s = String(Math.floor((remaining % 60000) / 1000)).padStart(2, '0');
-            etaEl.textContent = `${h}:${m}:${s}`;
-            requestAnimationFrame(updateETA);
-        }
-        updateETA();
+function updateETA() {
+    const remaining = Math.max(0, etaTarget - Date.now());
+
+    if (remaining <= 0 && !countdownDone) {
+        countdownDone = true;
+        etaEl.textContent = 'Soon...';
+        etaEl.style.color = 'var(--mint)';
+        etaEl.style.animation = 'pulseGlow 1.5s ease-in-out infinite';
+
+        // Bump progress to 100%
+        currentProgress = 100;
+        progressFill.style.width = '100%';
+        progressPercent.textContent = '100%';
+        progressTrack.setAttribute('aria-valuenow', 100);
+
+        requestAnimationFrame(updateETA);
+        return;
+    }
+
+    if (!countdownDone) {
+        const h = String(Math.floor(remaining / 3600000)).padStart(2, '0');
+        const m = String(Math.floor((remaining % 3600000) / 60000)).padStart(2, '0');
+        const s = String(Math.floor((remaining % 60000) / 1000)).padStart(2, '0');
+        etaEl.textContent = `${h}:${m}:${s}`;
+    }
+
+    requestAnimationFrame(updateETA);
+}
+updateETA();
 
         // ==========================================
         // Server status cycling
