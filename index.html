@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NOOR - School Library</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<style>
+:root{--bg:#0a1510;--bg2:#111e16;--card:#162119;--border:#253830;--fg:#edf5ee;--muted:#8fb89a;--accent:#f0b84e;--accent-glow:rgba(240,184,78,0.18);--accent-h:#f5c96a;--ok:#3ecf7a;--err:#f05a5a;--err-bg:rgba(240,90,90,0.1);--warn:#e8a830;--info:#4ab0d4;--r:12px;--led-size:14px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--fg);min-height:100vh;overflow-x:hidden}
+/* Floating sparkle particles */
+body::before{content:'';position:fixed;top:-30%;left:-20%;width:60vw;height:60vw;background:radial-gradient(circle,rgba(240,184,78,0.06) 0%,transparent 70%);pointer-events:none;z-index:0;animation:bgFloat 8s ease-in-out infinite}
+body::after{content:'';position:fixed;bottom:-20%;right:-10%;width:50vw;height:50vw;background:radial-gradient(circle,rgba(62,207,122,0.05) 0%,transparent 70%);pointer-events:none;z-index:0;animation:bgFloat 10s ease-in-out infinite reverse}
+@keyframes bgFloat{0%,100%{transform:scale(1) translate(0,0)}50%{transform:scale(1.1) translate(2%,2%)}}
+/* Floating stars in background */
+.star{position:fixed;width:3px;height:3px;border-radius:50%;background:rgba(240,184,78,0.5);pointer-events:none;z-index:0;animation:starTwinkle var(--d,3s) ease-in-out infinite var(--delay,0s)}
+@keyframes starTwinkle{0%,100%{opacity:0.1;transform:scale(0.8)}50%{opacity:0.8;transform:scale(1.3)}}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+.sidebar{position:fixed;top:0;left:0;width:260px;height:100vh;background:var(--bg2);border-right:1px solid var(--border);z-index:100;display:flex;flex-direction:column;transition:transform .35s cubic-bezier(.25,.8,.25,1);box-shadow:4px 0 24px rgba(0,0,0,0.3)}
+.sidebar-brand{padding:24px;border-bottom:1px solid var(--border);position:relative;overflow:hidden;cursor:default;user-select:none}
+.sidebar-brand::before{content:'';position:absolute;top:50%;left:12px;width:80px;height:80px;transform:translateY(-50%);background:radial-gradient(circle,rgba(212,162,78,0.18) 0%,transparent 70%);pointer-events:none;animation:brandGlowBg 4s ease-in-out infinite}
+@keyframes brandGlowBg{0%,100%{opacity:.6;transform:translateY(-50%) scale(1)}50%{opacity:1;transform:translateY(-50%) scale(1.3)}}
+.glow-title{position:relative;color:var(--accent);animation:glowPulse 3.5s ease-in-out infinite}
+@keyframes glowPulse{0%,100%{text-shadow:0 0 8px rgba(212,162,78,0.4),0 0 20px rgba(212,162,78,0.2),0 0 40px rgba(212,162,78,0.1),0 0 60px rgba(212,162,78,0.05)}50%{text-shadow:0 0 12px rgba(212,162,78,0.8),0 0 30px rgba(212,162,78,0.5),0 0 60px rgba(212,162,78,0.3),0 0 100px rgba(212,162,78,0.15),0 0 140px rgba(212,162,78,0.08)}}
+.sidebar-brand h1{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:var(--accent)}
+.sidebar-brand p{font-size:11px;color:var(--muted);margin-top:2px}
+.sidebar-brand .role-tag{display:inline-block;margin-top:6px;padding:2px 10px;border-radius:20px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px}
+.role-admin{background:var(--accent-glow);color:var(--accent)}
+.role-student{background:rgba(74,154,186,0.12);color:var(--info)}
+.sidebar-nav{flex:1;padding:12px;overflow-y:auto}
+.nav-label{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);padding:12px 12px 6px;font-weight:600}
+.nav-item{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:10px;cursor:pointer;transition:all .22s cubic-bezier(.25,.8,.25,1);font-size:14px;font-weight:500;color:var(--muted);position:relative;margin-bottom:3px;user-select:none}
+.nav-item:hover{background:var(--card);color:var(--fg);transform:translateX(3px)}
+.nav-item.active{background:linear-gradient(135deg,rgba(240,184,78,0.2),rgba(240,184,78,0.08));color:var(--accent);font-weight:700;transform:translateX(3px)}
+.nav-item.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:4px;height:24px;background:linear-gradient(to bottom,var(--accent-h),var(--accent));border-radius:0 4px 4px 0;box-shadow:0 0 8px rgba(240,184,78,0.5)}
+.nav-item i{width:20px;text-align:center;font-size:15px}
+.nav-badge{margin-left:auto;background:var(--err);color:#fff;font-size:10px;padding:2px 7px;border-radius:10px;font-weight:700}
+.system-section{display:none;animation:sysReveal .5s ease}
+.system-section.revealed{display:block}
+@keyframes sysReveal{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.sidebar-footer{padding:14px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);text-align:center}
+.sync-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--ok);margin-right:4px;vertical-align:middle}
+.sync-dot.syncing{background:var(--warn);animation:pulse 1s infinite}
+.sync-dot.error{background:var(--err)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.main{margin-left:260px;min-height:100vh;position:relative;z-index:1}
+.topbar{position:sticky;top:0;background:rgba(10,21,16,.9);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;z-index:50;box-shadow:0 2px 16px rgba(0,0,0,0.2)}
+.topbar-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.btn-logout{background:none;border:1px solid var(--border);color:var(--muted);padding:7px 14px;border-radius:8px;font-size:12px;cursor:pointer;font-family:inherit;transition:all .2s}
+.btn-logout:hover{border-color:var(--err);color:var(--err)}
+.mobile-menu{display:none;background:none;border:none;color:var(--fg);font-size:20px;cursor:pointer}
+.page-content{padding:24px 28px 60px}
+.page{display:none}.page.active{display:block;animation:fadeIn .35s cubic-bezier(.25,.8,.25,1)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:24px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;position:relative;overflow:hidden;transition:transform .22s cubic-bezier(.25,.8,.25,1),border-color .22s,box-shadow .22s}
+.stat-card:hover{transform:translateY(-4px);border-color:var(--accent);box-shadow:0 8px 28px rgba(240,184,78,0.15)}
+.stat-card::before{content:'';position:absolute;top:-50%;right:-20%;width:100px;height:100px;border-radius:50%;background:radial-gradient(circle,rgba(240,184,78,0.07),transparent);pointer-events:none;transition:transform .3s}
+.stat-card:hover::before{transform:scale(1.4)}
+.stat-icon{font-size:22px;margin-bottom:10px;color:var(--accent)}
+.stat-val{font-size:32px;font-weight:700;font-family:'Playfair Display',serif}
+.stat-lbl{font-size:12px;color:var(--muted);margin-top:2px}
+.section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px}
+.section-hdr h2{font-family:'Playfair Display',serif;font-size:20px}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:10px 18px;border-radius:10px;border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .18s cubic-bezier(.25,.8,.25,1);position:relative;overflow:hidden}
+.btn:active{transform:scale(0.96)!important}
+.btn-p{background:linear-gradient(135deg,var(--accent-h),var(--accent));color:#1a1a0e;box-shadow:0 4px 14px rgba(240,184,78,0.25)}.btn-p:hover{background:linear-gradient(135deg,#ffd97a,var(--accent-h));transform:translateY(-1px);box-shadow:0 6px 20px rgba(240,184,78,0.4)}
+.btn-ok{background:rgba(62,207,122,.15);color:var(--ok);border:1px solid rgba(62,207,122,.35)}.btn-ok:hover{background:rgba(62,207,122,.28);transform:translateY(-1px)}
+.btn-d{background:var(--err-bg);color:var(--err);border:1px solid rgba(240,90,90,.3)}.btn-d:hover{background:rgba(240,90,90,.2);transform:translateY(-1px)}
+.btn-w{background:rgba(232,168,48,.12);color:var(--warn);border:1px solid rgba(232,168,48,.3)}.btn-w:hover{background:rgba(232,168,48,.2)}
+.btn-i{background:rgba(74,176,212,.12);color:var(--info);border:1px solid rgba(74,176,212,.3)}.btn-i:hover{background:rgba(74,176,212,.2)}
+.btn-sm{padding:6px 12px;font-size:12px}
+.btn-icon{padding:7px 10px}
+.tbl-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead{background:var(--bg2)}
+th{padding:12px 14px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);font-weight:600}
+td{padding:11px 14px;border-top:1px solid var(--border);vertical-align:middle}
+tr:hover td{background:rgba(255,255,255,.02)}
+.tbl-empty{text-align:center;padding:48px;color:var(--muted)}
+.tbl-empty i{font-size:28px;margin-bottom:10px;display:block;opacity:.4}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.b-ok{background:rgba(74,186,122,.12);color:var(--ok)}
+.b-err{background:var(--err-bg);color:var(--err)}
+.b-i{background:rgba(74,154,186,.12);color:var(--info)}
+.b-w{background:rgba(224,160,48,.12);color:var(--warn)}
+.act-btns{display:flex;gap:6px;align-items:center}
+.search-bar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px 18px;transition:border-color .2s,box-shadow .2s}
+.search-bar:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(240,184,78,0.1)}
+.search-input-wrap{position:relative;flex:1;min-width:220px}
+.search-input-wrap i.si{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--accent);font-size:14px;pointer-events:none;transition:color .2s}
+.search-input-wrap input{width:100%;background:var(--bg);border:2px solid var(--border);color:var(--fg);padding:11px 14px 11px 40px;border-radius:10px;font-size:14px;font-family:inherit;outline:none;transition:all .2s}
+.search-input-wrap input:focus{border-color:var(--accent);background:var(--bg2);box-shadow:0 0 0 3px rgba(240,184,78,0.08)}
+.search-input-wrap input::placeholder{color:var(--muted)}
+.filter-chips{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:22px;font-size:12px;font-weight:700;cursor:pointer;border:2px solid var(--border);background:var(--bg2);color:var(--muted);transition:all .18s cubic-bezier(.25,.8,.25,1);white-space:nowrap;user-select:none}
+.chip:hover{border-color:var(--accent);color:var(--accent);transform:scale(1.04)}
+.chip.active{background:linear-gradient(135deg,rgba(240,184,78,0.2),rgba(240,184,78,0.08));border-color:var(--accent);color:var(--accent);box-shadow:0 0 10px rgba(240,184,78,0.2)}
+.search-count{font-size:12px;color:var(--muted);white-space:nowrap}
+.fi{background:var(--bg2);border:1px solid var(--border);color:var(--fg);padding:9px 12px;border-radius:8px;font-size:13px;font-family:inherit;outline:none;transition:border-color .2s;width:100%}
+.fi:focus{border-color:var(--accent)}
+select.fi option{background:var(--bg2)}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:14px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto}
+.modal-hdr{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-hdr h3{font-family:'Playfair Display',serif;font-size:18px}
+.modal-close{background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:4px}
+.modal-close:hover{color:var(--fg)}
+.modal-body{padding:22px 24px}
+.modal-foot{padding:14px 24px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end}
+.fg{margin-bottom:16px}
+.fl{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:600}
+.fe{color:var(--err);font-size:11px;margin-top:4px;display:none}
+.confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:300;display:flex;align-items:center;justify-content:center;padding:20px}
+.confirm-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px;max-width:380px;width:100%}
+.confirm-box h3{margin-bottom:12px;font-family:'Playfair Display',serif}
+.confirm-box p{font-size:14px;color:var(--muted);margin-bottom:20px;line-height:1.6}
+.confirm-btns{display:flex;gap:10px;justify-content:flex-end}
+.toast-wrap{position:fixed;bottom:24px;right:24px;z-index:400;display:flex;flex-direction:column;gap:8px}
+.toast{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:13px 20px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:10px;animation:slideIn .3s cubic-bezier(.25,.8,.25,1);box-shadow:0 8px 32px rgba(0,0,0,.4),0 2px 8px rgba(0,0,0,.2)}
+@keyframes slideIn{from{opacity:0;transform:translateX(28px) scale(0.95)}to{opacity:1;transform:translateX(0) scale(1)}}
+.toast.ok{border-color:rgba(74,186,122,.4);color:var(--ok)}
+.toast.err{border-color:rgba(217,79,79,.4);color:var(--err)}
+.toast.i{border-color:rgba(74,154,186,.4);color:var(--info)}
+.recent-item{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--border)}
+.recent-item:last-child{border-bottom:none}
+.ri-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.ri-info{flex:1;min-width:0}
+.ri-title{font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ri-sub{font-size:12px;color:var(--muted)}
+.settings-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:22px;margin-bottom:18px}
+.settings-card h3{font-size:16px;margin-bottom:16px;display:flex;align-items:center;gap:8px;color:var(--accent)}
+.fine-info-box{background:var(--err-bg);border:1px solid rgba(217,79,79,.3);border-radius:8px;padding:14px;margin-top:12px}
+.fi-title{font-size:12px;font-weight:700;color:var(--err);margin-bottom:6px}
+.fi-detail{font-size:13px;color:var(--muted)}
+.fi-amount{color:var(--err);font-weight:700}
+.hidden{display:none!important}
+.login-page{position:fixed;top:0;left:0;width:100%;height:100%;z-index:500;display:flex;align-items:center;justify-content:center;background:var(--bg);padding:20px;overflow-y:auto}
+.login-page::before{content:'';position:absolute;top:40%;left:50%;width:700px;height:700px;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(240,184,78,0.09) 0%,transparent 70%);pointer-events:none;animation:loginGlow 5s ease-in-out infinite}
+@keyframes loginGlow{0%,100%{opacity:.5;transform:translate(-50%,-50%) scale(1)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.2)}}
+.login-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:38px;width:100%;max-width:420px;position:relative;box-shadow:0 24px 80px rgba(0,0,0,.55),0 0 0 1px rgba(240,184,78,0.08);animation:cardEntrance .6s cubic-bezier(.25,.8,.25,1)}
+@keyframes cardEntrance{from{opacity:0;transform:translateY(24px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+.login-brand{text-align:center;margin-bottom:28px;position:relative}
+.login-brand h1{font-family:'Playfair Display',serif;font-size:40px;font-weight:900;color:var(--accent);position:relative;animation:glowPulse 3.5s ease-in-out infinite}
+.login-brand h1::after{content:'';position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);width:120px;height:30px;background:radial-gradient(ellipse,rgba(240,184,78,0.3) 0%,transparent 70%);pointer-events:none;animation:loginTitleGlow 3.5s ease-in-out infinite}
+@keyframes loginTitleGlow{0%,100%{opacity:.4;transform:translateX(-50%) scaleX(1)}50%{opacity:1;transform:translateX(-50%) scaleX(1.5)}}
+.login-brand p{font-size:12px;color:var(--muted);margin-top:14px}
+.login-tabs{display:flex;border:2px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:24px;background:var(--bg)}
+.login-tab{flex:1;padding:11px;text-align:center;font-size:13px;font-weight:700;cursor:pointer;border:none;background:transparent;color:var(--muted);font-family:inherit;transition:all .22s}
+.login-tab.active{background:linear-gradient(135deg,var(--accent-h),var(--accent));color:#1a1a0e;border-radius:10px}
+.login-err{color:var(--err);font-size:13px;margin-bottom:12px;text-align:center;display:none;padding:10px;background:rgba(240,90,90,0.1);border-radius:8px;border:1px solid rgba(240,90,90,0.25);animation:shake .4s}
+.login-hint{text-align:center;font-size:11px;color:var(--muted);margin-top:16px;opacity:.7;min-height:18px}
+.login-hint .lh-char{display:inline-block;opacity:0;animation:charReveal .6s ease forwards}
+@keyframes charReveal{0%{opacity:0;transform:translateY(4px);filter:blur(4px)}100%{opacity:1;transform:translateY(0);filter:blur(0)}}
+/* === LED PANEL === */
+.led-panel{display:flex;justify-content:center;gap:22px;margin-top:20px;padding:16px;background:var(--bg);border-radius:12px;border:1px solid var(--border)}
+.led-unit{display:flex;flex-direction:column;align-items:center;gap:6px}
+.led{width:var(--led-size);height:var(--led-size);border-radius:50%;background:#1a1a1a;border:2px solid #2a2a2a;box-shadow:inset 0 2px 4px rgba(0,0,0,0.5);position:relative;transition:all .2s}
+.led::after{content:'';position:absolute;top:2px;left:3px;width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,0.1);pointer-events:none}
+.led-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
+/* LED states */
+.led.green{background:radial-gradient(circle at 35% 35%,#7fff7f,#00cc44);border-color:#00aa33;box-shadow:0 0 8px rgba(0,200,80,0.6),0 0 20px rgba(0,200,80,0.3),inset 0 2px 4px rgba(255,255,255,0.2)}
+.led.red{background:radial-gradient(circle at 35% 35%,#ff8080,#dd2222);border-color:#bb1111;box-shadow:0 0 8px rgba(220,50,50,0.7),0 0 20px rgba(220,50,50,0.3),inset 0 2px 4px rgba(255,255,255,0.2)}
+.led.off{background:#1a2a1a;border-color:#223322}
+/* LED blink animations */
+@keyframes ledGreenBlink{0%,100%{background:radial-gradient(circle at 35% 35%,#7fff7f,#00cc44);border-color:#00aa33;box-shadow:0 0 8px rgba(0,200,80,0.6),0 0 20px rgba(0,200,80,0.3)}50%{background:#1a2a1a;border-color:#223322;box-shadow:none}}
+@keyframes ledRedBlink{0%,100%{background:radial-gradient(circle at 35% 35%,#ff8080,#dd2222);border-color:#bb1111;box-shadow:0 0 10px rgba(220,50,50,0.8),0 0 24px rgba(220,50,50,0.4)}50%{background:#2a1a1a;border-color:#331a1a;box-shadow:none}}
+.led.blink-green{animation:ledGreenBlink 0.4s ease-in-out}
+.led.blink-red{animation:ledRedBlink 0.35s ease-in-out}
+.loading-overlay{position:fixed;inset:0;background:var(--bg);z-index:600;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px}
+.spinner{width:48px;height:48px;position:relative}
+.spinner::before,.spinner::after{content:'';position:absolute;inset:0;border-radius:50%;border:3px solid transparent}
+.spinner::before{border-top-color:var(--accent);border-right-color:rgba(240,184,78,0.3);animation:spin .9s linear infinite}
+.spinner::after{inset:8px;border-top-color:var(--ok);border-left-color:rgba(62,207,122,0.3);animation:spin .7s linear infinite reverse}
+@keyframes spin{to{transform:rotate(360deg)}}
+.backup-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-bottom:28px}
+.backup-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:24px;text-align:center;transition:border-color .2s,transform .2s}
+.backup-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.backup-card i{font-size:32px;margin-bottom:14px}
+.backup-card h3{font-size:16px;margin-bottom:6px}
+.upload-row{display:flex;align-items:center;gap:12px;margin-bottom:10px;font-size:13px}
+.upload-row-label{width:110px;font-weight:600;color:var(--muted);flex-shrink:0}
+.upload-row-bar-wrap{flex:1;background:var(--bg);border-radius:6px;height:7px;overflow:hidden}
+.upload-row-bar{height:100%;width:0%;border-radius:6px;transition:width 0.25s ease}
+.upload-row-count{width:90px;text-align:right;font-size:11px;color:var(--muted);flex-shrink:0}
+.upload-row.done .upload-row-label{color:var(--ok)}
+.upload-row.err .upload-row-label{color:var(--err)}
+.backup-card p{font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.5}
+.pwd-modal-icon{width:56px;height:56px;border-radius:50%;background:var(--accent-glow);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:22px;color:var(--accent);border:2px solid rgba(212,162,78,.3)}
+.pwd-modal-icon i{animation:shieldPulse 2s ease-in-out infinite}
+@keyframes shieldPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.pwd-err{color:var(--err);font-size:12px;text-align:center;margin-top:8px;display:none;animation:shake .4s}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+.report-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:20px}
+.rpt-card{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:18px;cursor:pointer;transition:all .2s;text-align:center}
+.rpt-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.rpt-card.selected{border-color:var(--accent);background:var(--accent-glow)}
+.rpt-card i{font-size:24px;color:var(--accent);margin-bottom:10px;display:block}
+.rpt-card h4{font-size:13px;font-weight:700;margin-bottom:4px}
+.rpt-card p{font-size:11px;color:var(--muted);line-height:1.4}
+.print-opts{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:16px}
+.print-opts h4{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px}
+.opt-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;font-size:13px}
+.opt-row:last-child{margin-bottom:0}
+.toggle{width:38px;height:21px;background:var(--border);border-radius:11px;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0}
+.toggle.on{background:var(--accent)}
+.toggle::after{content:'';position:absolute;width:15px;height:15px;background:#fff;border-radius:50%;top:3px;left:3px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.toggle.on::after{left:20px}
+.preview-wrap{margin-top:22px;background:#fff;border-radius:var(--r);padding:28px 32px;color:#111;box-shadow:0 4px 24px rgba(0,0,0,.25);overflow-x:auto}
+@media(max-width:768px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:none}.main{margin-left:0}.mobile-menu{display:block}.topbar{padding:12px 16px}.page-content{padding:14px 12px 80px}.report-grid{grid-template-columns:1fr 1fr}.stats-grid{grid-template-columns:1fr 1fr}.login-card{padding:26px 22px}.btn{padding:10px 14px;font-size:13px}.search-input-wrap input{font-size:16px/* prevents iOS zoom */}.led-panel{gap:16px;padding:14px}.led{--led-size:16px}}
+@media(max-width:480px){.stats-grid{grid-template-columns:1fr}.search-bar{padding:10px 12px}.led-panel{gap:12px}}
+</style>
+</head>
+<body>
+
+<script>(function(){setTimeout(function(){var lo=document.getElementById('loadingOverlay');var lp=document.getElementById('loginPage');if(lo)lo.classList.add('hidden');if(lp)lp.classList.remove('hidden');},5000);})();</script>
+
+<script>
+// Inject floating star particles for child-friendly sparkle effect
+(function(){for(var i=0;i<20;i++){var s=document.createElement('div');s.className='star';s.style.cssText='left:'+Math.random()*100+'vw;top:'+Math.random()*100+'vh;--d:'+(2+Math.random()*4)+'s;--delay:-'+(Math.random()*4)+'s';document.body.appendChild(s);}})();
+</script>
+
+<div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div><div style="color:var(--muted);font-size:14px" id="loadingMsg">Connecting to Alees Server...</div></div>
+
+<div class="login-page hidden" id="loginPage"><div class="login-card"><div class="login-brand"><h1 class="glow-title">NOOR</h1><p>Nusrath Organization of Open Resources</p></div><div class="login-tabs"><button class="login-tab active" data-role="admin">Admin / Librarian</button><button class="login-tab" data-role="student">Student</button></div><div id="adminForm"><div class="fg"><label class="fl">Username</label><input class="fi" id="loginUser" placeholder="Enter username"></div><div class="fg"><label class="fl">Password</label><input class="fi" type="password" id="loginPass" placeholder="Enter password"></div></div><div id="studentForm" class="hidden"><div class="fg"><label class="fl">Admission Number</label><input class="fi" id="loginRoll" placeholder="Enter your Admission Number"></div></div><div class="login-err" id="loginErr"></div><button class="btn btn-p" style="width:100%;justify-content:center;padding:13px" id="loginBtn"><i class="fas fa-sign-in-alt"></i> Sign In</button>
+<!-- LED panel -->
+<div class="led-panel" id="ledPanel">
+  <div class="led-unit"><div class="led off" id="led1"></div><div class="led-label">SYS</div></div>
+  <div class="led-unit"><div class="led off" id="led2"></div><div class="led-label">AUTH</div></div>
+  <div class="led-unit"><div class="led off" id="led3"></div><div class="led-label">NET</div></div>
+</div>
+<p class="login-hint" id="aleesFooter"></p></div></div>
+
+<div class="hidden" id="adminUI"><aside class="sidebar" id="adminSidebar"><div class="sidebar-brand" id="adminBrand"><h1 class="glow-title">NOOR</h1><p>School Library System</p><span class="role-tag role-admin">Admin</span></div><nav class="sidebar-nav"><div class="nav-label">Overview</div><div class="nav-item active" data-page="a-dash"><i class="fas fa-chart-line"></i> Dashboard</div><div class="nav-label">Library</div><div class="nav-item" data-page="a-books"><i class="fas fa-book"></i> Books</div><div class="nav-item" data-page="a-members"><i class="fas fa-users"></i> Members</div><div class="nav-item" data-page="a-classes"><i class="fas fa-chalkboard"></i> Classes</div><div class="nav-label">Circulation</div><div class="nav-item" data-page="a-tx"><i class="fas fa-exchange-alt"></i> Transactions <span class="nav-badge hidden" id="aOverdueBadge">0</span></div><div class="nav-item" data-page="a-fines"><i class="fas fa-coins"></i> Fines <span class="nav-badge hidden" id="aFinesBadge">0</span></div><div class="system-section" id="systemSection"><div class="nav-label">System</div><div class="nav-item" data-page="a-reports"><i class="fas fa-print"></i> Print Reports</div><div class="nav-item" data-page="a-settings"><i class="fas fa-cog"></i> Settings</div><div class="nav-item" data-page="a-backup"><i class="fas fa-shield-alt"></i> Export / Import</div></div></nav><div class="sidebar-footer"><span class="sync-dot" id="syncDot"></span><span id="syncStatus">Synced with Alees Server</span></div></aside><div class="main"><div class="topbar"><div style="display:flex;align-items:center;gap:14px"><button class="mobile-menu" id="aMobileBtn"><i class="fas fa-bars"></i></button><div class="topbar-title" id="aTopTitle">Dashboard</div></div><div class="topbar-right"><button class="btn btn-ok btn-sm" id="aRefreshBtn"><i class="fas fa-sync-alt"></i> Sync</button><button class="btn-logout" id="aLogout"><i class="fas fa-sign-out-alt"></i> Logout</button></div></div><div class="page-content"><div class="page active" id="page-a-dash"><div class="stats-grid" id="aStats"></div><div class="section-hdr"><h2>Recent Transactions</h2></div><div class="tbl-wrap" style="padding:16px 20px"><div id="aRecentTx"></div></div></div><div class="page" id="page-a-books"><div class="section-hdr"><h2>Book Collection</h2><button class="btn btn-p" id="aAddBook"><i class="fas fa-plus"></i> Add Book</button></div><div class="search-bar" style="padding:10px 16px"><div class="filter-chips" id="aBookCatChips"></div><span class="search-count" id="aBookCount"></span></div><div class="tbl-wrap"><table><thead><tr><th>Title</th><th>Author</th><th>ISBN</th><th>Category</th><th>Copies</th><th>Available</th><th>Actions</th></tr></thead><tbody id="aBookTb"></tbody></table></div></div><div class="page" id="page-a-members"><div class="section-hdr"><h2>Library Members</h2><button class="btn btn-p" id="aAddMem"><i class="fas fa-user-plus"></i> Add Member</button></div><div class="search-bar" style="padding:10px 16px"><div class="filter-chips" id="aMemClassChips"></div><span class="search-count" id="aMemCount"></span></div><div class="tbl-wrap"><table><thead><tr><th>Name</th><th>Class</th><th>Admission No</th><th>Phone</th><th>Email</th><th>Actions</th></tr></thead><tbody id="aMemTb"></tbody></table></div></div><div class="page" id="page-a-classes"><div class="section-hdr"><h2>Manage Classes</h2><button class="btn btn-p" id="aAddClass"><i class="fas fa-plus"></i> Add Class</button></div><div class="tbl-wrap"><table><thead><tr><th>Class Name</th><th>Members</th><th>Actions</th></tr></thead><tbody id="aClassTb"></tbody></table></div></div><div class="page" id="page-a-tx"><div class="section-hdr"><h2>Transactions</h2><div style="display:flex;gap:8px"><button class="btn btn-p" id="aIssueBtn"><i class="fas fa-arrow-right"></i> Issue Book</button><button class="btn btn-ok" id="aReturnBtn"><i class="fas fa-undo"></i> Return Book</button></div></div><div class="search-bar"><div class="search-input-wrap"><i class="fas fa-search si"></i><input id="aTxSearch" placeholder="Search by book title or member name…" autocomplete="off"></div><div class="filter-chips"><span class="chip active" data-txf="">All</span><span class="chip" data-txf="issued"><i class="fas fa-circle" style="color:var(--info);font-size:8px"></i> Issued</span><span class="chip" data-txf="overdue"><i class="fas fa-circle" style="color:var(--err);font-size:8px"></i> Overdue</span><span class="chip" data-txf="returned"><i class="fas fa-circle" style="color:var(--ok);font-size:8px"></i> Returned</span></div><span class="search-count" id="aTxCount"></span></div><div class="tbl-wrap"><table><thead><tr><th>Book</th><th>Member</th><th>Issue Date</th><th>Due Date</th><th>Return Date</th><th>Fine</th><th>Status</th><th>Actions</th></tr></thead><tbody id="aTxTb"></tbody></table></div></div><div class="page" id="page-a-fines"><div class="section-hdr"><h2>Fine Records</h2></div><div class="search-bar"><div class="search-input-wrap"><i class="fas fa-search si"></i><input id="aFineSearch" placeholder="Search by book or member name…" autocomplete="off"></div><div class="filter-chips"><span class="chip active" data-ff="">All</span><span class="chip" data-ff="unpaid"><i class="fas fa-circle" style="color:var(--err);font-size:8px"></i> Unpaid</span><span class="chip" data-ff="paid"><i class="fas fa-circle" style="color:var(--ok);font-size:8px"></i> Paid</span><span class="chip" data-ff="waived"><i class="fas fa-circle" style="color:var(--warn);font-size:8px"></i> Waived</span></div><span class="search-count" id="aFineCount"></span></div><div class="tbl-wrap"><table><thead><tr><th>Book</th><th>Member</th><th>Days Overdue</th><th>Amount</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead><tbody id="aFineTb"></tbody></table></div></div><div class="page" id="page-a-reports"><div class="section-hdr"><h2>Print Reports</h2></div><div class="report-grid"><div class="rpt-card selected" data-rpt="summary"><i class="fas fa-chart-pie"></i><h4>Library Summary</h4><p>Overview stats, books by category, members by class</p></div><div class="rpt-card" data-rpt="books"><i class="fas fa-book"></i><h4>Book Catalogue</h4><p>Full list with availability status</p></div><div class="rpt-card" data-rpt="members"><i class="fas fa-users"></i><h4>Member List</h4><p>All members sorted by class</p></div><div class="rpt-card" data-rpt="issued"><i class="fas fa-hand-holding"></i><h4>Currently Issued</h4><p>All books not yet returned</p></div><div class="rpt-card" data-rpt="overdue"><i class="fas fa-exclamation-triangle"></i><h4>Overdue Books</h4><p>Past due date with fine amounts</p></div><div class="rpt-card" data-rpt="fines"><i class="fas fa-coins"></i><h4>Fine Statement</h4><p>Paid, unpaid and waived fines</p></div><div class="rpt-card" data-rpt="tx"><i class="fas fa-exchange-alt"></i><h4>Transaction History</h4><p>Complete issue &amp; return log</p></div><div class="rpt-card" data-rpt="classwise"><i class="fas fa-chalkboard-teacher"></i><h4>Class-wise Summary</h4><p>Books issued per class</p></div></div><div class="print-opts"><h4>Report Options</h4><div class="opt-row"><span>Include school header</span><div class="toggle on" id="optHeader"></div></div><div class="opt-row"><span>Show generated date &amp; time</span><div class="toggle on" id="optDate"></div></div><div class="opt-row"><span>Include summary statistics</span><div class="toggle on" id="optStats"></div></div><div class="opt-row" id="optRangeRow" style="display:none"><span>Date range (Issue date)</span><div style="display:flex;gap:8px"><input type="date" class="fi" style="width:140px;padding:6px 10px" id="rptFrom"><input type="date" class="fi" style="width:140px;padding:6px 10px" id="rptTo"></div></div></div><div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn btn-p" id="doPrint"><i class="fas fa-print"></i> Print Report</button><button class="btn btn-i" id="doPreview"><i class="fas fa-eye"></i> Preview</button></div><div class="preview-wrap hidden" id="previewWrap"><div id="previewContent"></div></div></div><div class="page" id="page-a-settings"><div class="settings-card"><h3><i class="fas fa-coins"></i> Fine Configuration</h3><div class="fg"><label class="fl">Currency Symbol</label><input class="fi" id="setCurrency" value="₹"></div><div class="fg"><label class="fl">Fine Per Day (Overdue)</label><input class="fi" type="number" id="setFinePerDay" min="0" value="2"></div><div class="fg"><label class="fl">Default Issue Period (Days)</label><input class="fi" type="number" id="setIssueDays" min="1" value="14"></div><button class="btn btn-p" id="saveSettingsBtn"><i class="fas fa-save"></i> Save Settings</button></div><div class="settings-card"><h3><i class="fas fa-info-circle"></i> Current Summary</h3><div id="settingsDisplay" style="font-size:13px;color:var(--muted);line-height:2"></div></div></div><div class="page" id="page-a-backup"><div class="backup-cards"><div class="backup-card"><i class="fas fa-file-csv" style="color:var(--accent)"></i><h3>Export CSV</h3><p>Download all data as separate CSV files (one per sheet).</p><button class="btn btn-p" id="aExportBtn"><i class="fas fa-download"></i> Export All</button></div><div class="backup-card"><i class="fas fa-file-code" style="color:var(--ok)"></i><h3>Export JSON</h3><p>Download full JSON snapshot with duplicates removed.</p><button class="btn btn-ok" id="aExportJsonBtn"><i class="fas fa-download"></i> Export JSON</button></div><div class="backup-card"><i class="fas fa-file-import" style="color:var(--accent)"></i><h3>Import CSV</h3><p>Upload exported CSV files back to Alees Server. Only new records (by ID) are added — no duplicates.</p><button class="btn btn-p" id="aImportCsvBtn"><i class="fas fa-folder-open"></i> Choose CSV Files</button><input type="file" id="csvFileInput" accept=".csv" multiple style="display:none"></div><div class="backup-card"><i class="fas fa-upload" style="color:var(--info)"></i><h3>Import JSON</h3><p>Restore from a JSON backup. Uploads all data to Alees Server.</p><button class="btn btn-i" id="aImportBtn"><i class="fas fa-folder-open"></i> Choose File</button><input type="file" id="restoreFileInput" accept=".json" style="display:none"></div><div class="backup-card"><i class="fas fa-broom" style="color:var(--warn)"></i><h3>Remove Duplicates</h3><p>Scans server for duplicate rows and deletes extras, keeping one copy.</p><button class="btn btn-w" id="aDedupeBtn"><i class="fas fa-broom"></i> Remove Duplicates</button></div><div class="backup-card"><i class="fas fa-trash-alt" style="color:var(--err)"></i><h3>Clear All Data</h3><p>Permanently deletes everything from Alees Server.</p><button class="btn btn-d" id="aClearBtn"><i class="fas fa-exclamation-triangle"></i> Clear Data</button></div></div>
+<!-- Upload Progress Panel -->
+<div id="uploadProgressPanel" style="display:none;margin-top:20px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px 24px">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+    <div style="font-weight:700;font-size:15px" id="uploadPanelTitle">Uploading to Alees Server…</div>
+    <div style="font-size:12px;color:var(--muted)" id="uploadPanelEta"></div>
+  </div>
+  <!-- Overall progress bar -->
+  <div style="background:var(--bg);border-radius:8px;height:10px;overflow:hidden;margin-bottom:10px">
+    <div id="uploadOverallBar" style="height:100%;width:0%;background:linear-gradient(90deg,var(--ok),var(--accent));border-radius:8px;transition:width 0.3s ease"></div>
+  </div>
+  <div style="font-size:12px;color:var(--muted);margin-bottom:18px" id="uploadOverallText">0 / 0 records</div>
+  <!-- Per-section progress rows -->
+  <div id="uploadSections"></div>
+  <div id="uploadDoneMsg" style="display:none;text-align:center;padding:14px 0;color:var(--ok);font-weight:700;font-size:14px"><i class="fas fa-check-circle"></i> All data uploaded to Alees Server successfully!</div>
+</div>
+</div></div></div></div>
+
+<div class="hidden" id="studentUI"><aside class="sidebar" id="studentSidebar"><div class="sidebar-brand"><h1 class="glow-title">NOOR</h1><p>School Library System</p><span class="role-tag role-student" id="sRoleTag">Student</span></div><nav class="sidebar-nav"><div class="nav-label">My Library</div><div class="nav-item active" data-page="s-dash"><i class="fas fa-home"></i> My Dashboard</div><div class="nav-item" data-page="s-books"><i class="fas fa-book"></i> Browse Books</div><div class="nav-item" data-page="s-fines"><i class="fas fa-coins"></i> My Fines</div></nav><div class="sidebar-footer" style="font-size:11px;color:var(--muted)">NOOR</div></aside><div class="main"><div class="topbar"><div style="display:flex;align-items:center;gap:14px"><button class="mobile-menu" id="sMobileBtn"><i class="fas fa-bars"></i></button><div class="topbar-title" id="sTopTitle">My Dashboard</div></div><div class="topbar-right"><button class="btn btn-ok btn-sm" id="sSyncBtn" title="Sync latest books from server"><i class="fas fa-sync-alt"></i> Sync</button><button class="btn-logout" id="sLogout"><i class="fas fa-sign-out-alt"></i> Logout</button></div></div><div class="page-content"><div class="page active" id="page-s-dash"><div class="stats-grid" id="sStats"></div><div class="section-hdr"><h2>My Current Books</h2></div><div class="tbl-wrap"><table><thead><tr><th>Book</th><th>Issue Date</th><th>Due Date</th><th>Status</th></tr></thead><tbody id="sIssuedTb"></tbody></table></div></div><div class="page" id="page-s-books"><div class="section-hdr"><h2>Browse Books</h2></div>
+<div id="sCacheBar" style="display:none;font-size:11px;color:var(--muted);background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:7px 14px;margin-bottom:10px;display:flex;align-items:center;gap:8px"><i class="fas fa-database" style="color:var(--accent)"></i><span id="sCacheMsg">Data loaded from cache</span><button onclick="document.getElementById('sSyncBtn').click()" style="margin-left:auto;background:none;border:none;color:var(--accent);cursor:pointer;font-size:11px;font-weight:700;font-family:inherit"><i class="fas fa-sync-alt"></i> Refresh</button></div><div class="search-bar"><div class="search-input-wrap"><i class="fas fa-search si"></i><input id="sBookSearch" placeholder="Search by title, author, ISBN or category…" autocomplete="off" style="padding-right:38px"><button onclick="document.getElementById('sBookSearch').value='';filterStudentBooks();" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;padding:4px;display:flex;align-items:center" title="Clear search"><i class="fas fa-times-circle"></i></button></div><div class="filter-chips" id="sBookCatChips"></div><div class="filter-chips"><span class="chip active" id="savAll" onclick="setSavFilter('')"><i class="fas fa-layer-group" style="font-size:10px"></i> All</span><span class="chip" id="savYes" onclick="setSavFilter('yes')"><i class="fas fa-circle" style="color:var(--ok);font-size:8px"></i> Available</span><span class="chip" id="savNo" onclick="setSavFilter('no')"><i class="fas fa-circle" style="color:var(--err);font-size:8px"></i> Unavailable</span></div><span class="search-count" id="sBookCount"></span></div><div class="tbl-wrap"><table><thead><tr><th>Title</th><th>Author</th><th>Category</th><th>Available</th></tr></thead><tbody id="sBookTb"></tbody></table></div></div><div class="page" id="page-s-fines"><div class="section-hdr"><h2>My Fines</h2></div><div class="tbl-wrap"><table><thead><tr><th>Book</th><th>Days Overdue</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead><tbody id="sFineTb"></tbody></table></div></div></div></div></div>
+
+<div class="modal-overlay hidden" id="bookModal"><div class="modal"><div class="modal-hdr"><h3 id="bookModalT">Add Book</h3><button class="modal-close" onclick="closeM('bookModal')"><i class="fas fa-times"></i></button></div><div class="modal-body"><input type="hidden" id="bookEditId"><div class="fg"><label class="fl">Title *</label><input class="fi" id="bookTitle" placeholder="Book title"><div class="fe" id="bookTitleE">Required</div></div><div class="fg"><label class="fl">Author *</label><input class="fi" id="bookAuthor" placeholder="Author name"><div class="fe" id="bookAuthorE">Required</div></div><div class="fg"><label class="fl">ISBN</label><input class="fi" id="bookISBN" placeholder="ISBN (optional)"></div><div class="fg"><label class="fl">Category</label><input class="fi" id="bookCat" placeholder="e.g. Science, Fiction…"></div><div class="fg"><label class="fl">Total Copies *</label><input class="fi" type="number" id="bookCopies" min="1" value="1"><div class="fe" id="bookCopiesE">Required</div></div></div><div class="modal-foot"><button class="btn btn-d btn-sm" onclick="closeM('bookModal')">Cancel</button><button class="btn btn-p" id="saveBookBtn">Save Book</button></div></div></div>
+<div class="modal-overlay hidden" id="memModal"><div class="modal"><div class="modal-hdr"><h3 id="memModalT">Add Member</h3><button class="modal-close" onclick="closeM('memModal')"><i class="fas fa-times"></i></button></div><div class="modal-body"><input type="hidden" id="memEditId"><div class="fg"><label class="fl">Full Name *</label><input class="fi" id="memName" placeholder="Student name"><div class="fe" id="memNameE">Required</div></div><div class="fg"><label class="fl">Class *</label><select class="fi" id="memClass"><option value="">Choose class</option></select><div class="fe" id="memClassE">Required</div></div><div class="fg"><label class="fl">Admission Number *</label><input class="fi" id="memRoll" placeholder="Admission number"><div class="fe" id="memRollE">Required</div></div><div class="fg"><label class="fl">Phone</label><input class="fi" id="memPhone" placeholder="Contact number"></div><div class="fg"><label class="fl">Email</label><input class="fi" id="memEmail" placeholder="Email address"></div></div><div class="modal-foot"><button class="btn btn-d btn-sm" onclick="closeM('memModal')">Cancel</button><button class="btn btn-p" id="saveMemBtn">Save Member</button></div></div></div>
+<div class="modal-overlay hidden" id="classModal"><div class="modal" style="max-width:380px"><div class="modal-hdr"><h3 id="classModalT">Add Class</h3><button class="modal-close" onclick="closeM('classModal')"><i class="fas fa-times"></i></button></div><div class="modal-body"><input type="hidden" id="classEditId"><div class="fg"><label class="fl">Class Name *</label><input class="fi" id="className" placeholder="e.g. 8A, 9B…"><div class="fe" id="classNameE">Required</div></div></div><div class="modal-foot"><button class="btn btn-d btn-sm" onclick="closeM('classModal')">Cancel</button><button class="btn btn-p" id="saveClassBtn">Save Class</button></div></div></div>
+<div class="modal-overlay hidden" id="issueModal"><div class="modal" style="max-width:560px"><div class="modal-hdr"><h3>Issue Book</h3><button class="modal-close" onclick="closeM('issueModal')"><i class="fas fa-times"></i></button></div><div class="modal-body"><div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:14px"><div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px"><i class="fas fa-book" style="margin-right:6px;color:var(--accent)"></i>Step 1 — Select Book</div><div class="fg" style="margin-bottom:0"><select class="fi" id="issueBookId"><option value="">— Choose a book —</option></select><div class="fe" id="issueBookE">Please select a book</div></div></div><div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:14px"><div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px"><i class="fas fa-users" style="margin-right:6px;color:var(--info)"></i>Step 2 — Select Member</div><div class="fg" style="margin-bottom:8px"><label class="fl">Class</label><select class="fi" id="issueClassFilter"><option value="">— All Classes —</option></select></div><div class="fg" style="margin-bottom:0"><label class="fl">Student</label><select class="fi" id="issueMemId" size="5" style="height:auto;min-height:100px"><option value="">— Select class first —</option></select><div class="fe" id="issueMemE">Please select a member</div></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div class="fg"><label class="fl">Issue Date *</label><input class="fi" type="date" id="issueDate"></div><div class="fg"><label class="fl">Due Date *</label><input class="fi" type="date" id="dueDate"></div></div></div><div class="modal-foot"><button class="btn btn-d btn-sm" onclick="closeM('issueModal')">Cancel</button><button class="btn btn-p" id="doIssueBtn"><i class="fas fa-arrow-right"></i> Issue Book</button></div></div></div>
+<div class="modal-overlay hidden" id="returnModal"><div class="modal"><div class="modal-hdr"><h3>Return Book</h3><button class="modal-close" onclick="closeM('returnModal')"><i class="fas fa-times"></i></button></div><div class="modal-body"><div class="fg"><label class="fl">Transaction *</label><select class="fi" id="returnTxId"></select><div class="fe" id="returnTxE">Required</div></div><div class="fg"><label class="fl">Return Date *</label><input class="fi" type="date" id="returnDate"></div><div id="fineInfoBox"></div></div><div class="modal-foot"><button class="btn btn-d btn-sm" onclick="closeM('returnModal')">Cancel</button><button class="btn btn-p" id="doReturnBtn">Confirm Return</button></div></div></div>
+<div class="modal-overlay hidden" id="backupPwdModal"><div class="modal" style="max-width:380px"><div class="modal-hdr"><h3>Restricted Access</h3><button class="modal-close" onclick="closeM('backupPwdModal')"><i class="fas fa-times"></i></button></div><div class="modal-body" style="text-align:center"><div class="pwd-modal-icon"><i class="fas fa-shield-alt"></i></div><p style="font-size:13px;color:var(--muted);margin-bottom:18px;line-height:1.6">This area requires additional authorisation. Please enter the system password to continue.</p><div class="fg" style="margin-bottom:8px;text-align:left"><label class="fl">System Password</label><input class="fi" type="password" id="backupPwdInput" placeholder="Enter password" autocomplete="off"><div class="pwd-err" id="backupPwdErr"><i class="fas fa-times-circle"></i> Incorrect password. Access denied.</div></div></div><div class="modal-foot"><button class="btn btn-d btn-sm" onclick="closeM('backupPwdModal')">Cancel</button><button class="btn btn-p" id="backupPwdSubmit"><i class="fas fa-unlock"></i> Unlock</button></div></div></div>
+<div class="confirm-overlay hidden" id="confirmOverlay"><div class="confirm-box"><h3 id="confirmTitle"></h3><p id="confirmMsg"></p><div class="confirm-btns"><button class="btn btn-d btn-sm" id="confirmNo">Cancel</button><button class="btn btn-p" id="confirmYes">Confirm</button></div></div></div>
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+try {
+
+var API_URL='https://script.google.com/macros/s/AKfycbwAhYJ4HU-XetUFp6M9ZxtGnhWBbAQl6Ka6Yap9eu_FcqkP9qfGFMP9AvO78W-NZ2o_9A/exec';
+var TOKEN_KEY='alees_token';
+function getToken(){return localStorage.getItem(TOKEN_KEY)||'';}
+function setToken(t){localStorage.setItem(TOKEN_KEY,t);}
+function clearAuth(){localStorage.removeItem(TOKEN_KEY);}
+var DB={books:[],members:[],tx:[],classes:[],fines:[],settings:{}};
+var currentUser=null;
+var systemRevealed=false;
+var backupUnlocked=false;
+var secretClickCount=0;
+var secretClickTimer=null;
+var SYSTEM_PAGES=['a-reports','a-settings','a-backup'];
+var BACKUP_PASSWORD='Alees@5050';
+var _loginShown=false;
+
+
+// Fetch with hard timeout (ms)
+function fetchWithTimeout(url,opts,ms){
+  var ctrl=typeof AbortController!=='undefined'?new AbortController():null;
+  if(ctrl)opts.signal=ctrl.signal;
+  var timer=setTimeout(function(){if(ctrl)ctrl.abort();},ms);
+  return fetch(url,opts).finally?
+    fetch(url,opts).finally(function(){clearTimeout(timer);}) :
+    fetch(url,opts).then(function(r){clearTimeout(timer);return r;},function(e){clearTimeout(timer);throw e;});
+}
+
+function apiCall(action,payload,silent){
+  payload=payload||{};
+  payload.token=getToken();
+  setSyncing(true);
+  return fetchWithTimeout(API_URL,{method:'POST',body:JSON.stringify({action:action,payload:payload})},10000)
+    .then(function(r){return r.text();})
+    .then(function(txt){
+      var d=JSON.parse(txt.replace(/^\)\]\}'/,'').trim());
+      setSyncing(false);
+      if(!d.ok)throw new Error(d.error||'API error');
+      return d;
+    }).catch(function(err){
+      setSyncing(false,true);
+      if(!silent)toast('Server error: '+err.message,'err');
+      throw err;
+    });
+}
+
+var LS_KEY='noor_db_cache';
+function saveToLocal(){
+  try{localStorage.setItem(LS_KEY,JSON.stringify({books:DB.books,members:DB.members,tx:DB.tx,classes:DB.classes,fines:DB.fines,settings:DB.settings,savedAt:new Date().toISOString()}));}
+  catch(e){}
+}
+function loadFromLocal(){
+  try{
+    var raw=localStorage.getItem(LS_KEY);
+    if(!raw)return false;
+    var d=JSON.parse(raw);
+    DB.books=d.books||[];DB.members=d.members||[];DB.tx=d.tx||[];
+    DB.classes=d.classes||[];DB.fines=d.fines||[];
+    DB.settings=d.settings||{currency:'\u20B9',finePerDay:2,issueDays:14};
+    updateTxStatus();
+    return d.savedAt||true;
+  }catch(e){return false;}
+}
+function getCacheAge(){
+  try{var raw=localStorage.getItem(LS_KEY);if(!raw)return null;var d=JSON.parse(raw);return d.savedAt?new Date(d.savedAt):null;}
+  catch(e){return null;}
+}
+function timeAgo(date){
+  var secs=Math.floor((new Date()-date)/1000);
+  if(secs<60)return secs+'s ago';
+  if(secs<3600)return Math.floor(secs/60)+'m ago';
+  if(secs<86400)return Math.floor(secs/3600)+'h ago';
+  return Math.floor(secs/86400)+'d ago';
+}
+function updateSyncTime(){
+  var age=getCacheAge();
+  var txt=document.getElementById('syncStatus');
+  if(txt&&age)txt.textContent='Synced '+timeAgo(age);
+}
+
+// loadAll: ALWAYS show cached data instantly, then try server in background
+function loadAll(silent){
+  // Step 1 — load cache immediately (synchronous)
+  var hasCached=loadFromLocal();
+
+  // Step 2 — show UI immediately from cache
+  if(hasCached){
+    updateTxStatus();
+    _refreshCurrentUI();
+    var age=getCacheAge();
+    if(!silent&&age)toast('\u2601 Using cached data \u00B7 '+timeAgo(age),'i');
+  }
+
+  // Step 3 — try server in background with 10s timeout
+  return apiCall('getAll',{},true).then(function(d){
+    DB.books=d.data.books||[];
+    DB.members=d.data.members||[];
+    DB.tx=d.data.tx||[];
+    DB.classes=d.data.classes||[];
+    DB.fines=d.data.fines||[];
+    var s=(d.data.settings||[])[0];
+    DB.settings=s||{currency:'\u20B9',finePerDay:2,issueDays:14};
+    updateTxStatus();
+    saveToLocal();
+    setSyncing(false);
+    updateSyncTime();
+    _refreshCurrentUI();
+    if(!silent)toast('\u2714 Synced with server','ok');
+    return d;
+  }).catch(function(err){
+    setSyncing(false,true);
+    if(!hasCached){
+      toast('No cache & server unreachable. Try syncing when online.','err');
+    } else {
+      if(!silent){
+        var age=getCacheAge();
+        toast('\u26A0 Server offline \u2013 showing data from '+(age?timeAgo(age):'cache'),'i');
+      }
+    }
+    // Still resolve so callers don't crash
+    return Promise.resolve(null);
+  });
+}
+
+function _refreshCurrentUI(){
+  if(!currentUser)return;
+  if(currentUser.role==='student'){
+    if(typeof refreshStudentDash==='function')refreshStudentDash();
+    if(typeof refreshStudentBooks==='function')refreshStudentBooks();
+    if(typeof refreshStudentFines==='function')refreshStudentFines();
+  } else {
+    if(typeof refreshAllAdmin==='function')refreshAllAdmin();
+  }
+}
+
+function setSyncing(on,err){var dot=document.getElementById('syncDot'),txt=document.getElementById('syncStatus');if(!dot)return;dot.className='sync-dot'+(on?' syncing':(err?' error':''));txt.textContent=on?'Syncing\u2026':(err?'Sync error':'Synced with Alees Server');}
+var _uploadInProgress=false; // global lock — prevents double-upload
+function gid(){return 'id_'+Math.random().toString(36).substr(2,9)+'_'+Date.now();}
+function td(){return new Date().toISOString().split('T')[0];}
+function fd(d){if(!d)return'\u2014';var s=String(d).split('T')[0],p=s.split('-');return p.length!==3||!p[0]?String(d):p[2]+'/'+p[1]+'/'+p[0];}
+function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function ad(d,n){var dt=new Date(d+'T00:00:00');dt.setDate(dt.getDate()+n);return dt.toISOString().split('T')[0];}
+function openM(id){document.getElementById(id).classList.remove('hidden');}
+function closeM(id){document.getElementById(id).classList.add('hidden');}
+function getS(){return DB.settings||{currency:'\u20B9',finePerDay:2,issueDays:14};}
+function updateTxStatus(){var t=td();DB.tx.forEach(function(x){if(x.status!=='returned'&&x.dueDate<t)x.status='overdue';});}
+function toast(msg,type){type=type||'ok';var w=document.getElementById('toastWrap'),t=document.createElement('div');t.className='toast '+type;var ic={ok:'fa-check-circle',err:'fa-times-circle',i:'fa-info-circle'}[type]||'fa-check-circle';t.innerHTML='<i class="fas '+ic+'"></i> '+esc(msg);w.appendChild(t);setTimeout(function(){t.remove();},3500);}
+function animateLetters(elementId,text,speed){var el=document.getElementById(elementId);if(!el)return;el.innerHTML='';var chars=text.split('');chars.forEach(function(ch,i){var span=document.createElement('span');span.className='lh-char';span.style.animationDelay=(i*speed)+'ms';if(ch===' '){span.innerHTML='&nbsp;';}else{span.textContent=ch;}el.appendChild(span);});}
+
+var _cb=null;
+function showConfirm(title,msg,cb){document.getElementById('confirmTitle').textContent=title;document.getElementById('confirmMsg').innerHTML=msg;_cb=cb;openM('confirmOverlay');}
+document.getElementById('confirmYes').addEventListener('click',function(){closeM('confirmOverlay');if(_cb)_cb();});
+document.getElementById('confirmNo').addEventListener('click',function(){closeM('confirmOverlay');});
+function chipVal(attr){var a=document.querySelector('['+attr+'].active');return a?a.getAttribute(attr):'';}
+function initChips(attr,cb){document.querySelectorAll('['+attr+']').forEach(function(c){c.addEventListener('click',function(){document.querySelectorAll('['+attr+']').forEach(function(x){x.classList.remove('active');});this.classList.add('active');cb();});});}
+initChips('data-txf',function(){refreshAdminTx();});
+initChips('data-ff',function(){refreshAdminFines();});
+
+// Student availability filter — simple variable, no DOM querying
+var _savFilter=''; // '' = all, 'yes' = available only, 'no' = unavailable only
+function setSavFilter(val){
+  _savFilter=val;
+  var ids={'':[true,false,false],'yes':[false,true,false],'no':[false,false,true]};
+  var states=ids[val]||[true,false,false];
+  var chips=['savAll','savYes','savNo'];
+  chips.forEach(function(id,i){
+    var el=document.getElementById(id);
+    if(el){if(states[i])el.classList.add('active');else el.classList.remove('active');}
+  });
+  filterStudentBooks();
+}
+
+function showLogin(){if(_loginShown)return;_loginShown=true;document.getElementById('loadingOverlay').classList.add('hidden');document.getElementById('loginPage').classList.remove('hidden');setTimeout(function(){animateLetters('aleesFooter','Created by Alees | Nusrath Secondary School',90);},600);}
+function hideLogin(){document.getElementById('loginPage').classList.add('hidden');}
+
+// TOGGLE 9-click secret on NOOR brand
+var brandEl=document.getElementById('adminBrand');
+if(brandEl){brandEl.addEventListener('click',function(){
+  secretClickCount++;
+  clearTimeout(secretClickTimer);
+  secretClickTimer=setTimeout(function(){secretClickCount=0;},2000);
+  if(secretClickCount===5){toast(systemRevealed?'Click to lock\u2026':'Keep going\u2026','i');}
+  if(secretClickCount>=9){
+    secretClickCount=0;
+    if(systemRevealed){
+      systemRevealed=false;backupUnlocked=false;
+      document.getElementById('systemSection').classList.remove('revealed');
+      var curPage=document.querySelector('#adminUI .page.active');
+      if(curPage&&SYSTEM_PAGES.indexOf(curPage.id.replace('page-',''))!==-1){adminNav('a-dash');}
+      toast('System area locked','i');
+    }else{
+      systemRevealed=true;
+      document.getElementById('systemSection').classList.add('revealed');
+      toast('System area unlocked','ok');
+    }
+  }
+});}
+
+document.getElementById('backupPwdSubmit').addEventListener('click',function(){var pwd=document.getElementById('backupPwdInput').value;if(pwd===BACKUP_PASSWORD){backupUnlocked=true;document.getElementById('backupPwdErr').style.display='none';document.getElementById('backupPwdInput').value='';closeM('backupPwdModal');toast('Export / Import area unlocked','ok');adminNav('a-backup');}else{document.getElementById('backupPwdErr').style.display='block';document.getElementById('backupPwdInput').value='';document.getElementById('backupPwdInput').focus();}});
+document.getElementById('backupPwdInput').addEventListener('keydown',function(e){if(e.key==='Enter')document.getElementById('backupPwdSubmit').click();});
+
+var loginRole='admin';
+document.querySelectorAll('.login-tab').forEach(function(tab){tab.addEventListener('click',function(){document.querySelectorAll('.login-tab').forEach(function(t){t.classList.remove('active');});this.classList.add('active');loginRole=this.dataset.role;document.getElementById('adminForm').classList.toggle('hidden',loginRole!=='admin');document.getElementById('studentForm').classList.toggle('hidden',loginRole!=='student');document.getElementById('loginErr').style.display='none';});});
+document.getElementById('loginBtn').addEventListener('click',doLogin);
+document.getElementById('loginPass').addEventListener('keydown',function(e){if(e.key==='Enter')doLogin();});
+document.getElementById('loginRoll').addEventListener('keydown',function(e){if(e.key==='Enter')doLogin();});
+// === LED CONTROL ===
+function setLedsOff(){['led1','led2','led3'].forEach(function(id){var el=document.getElementById(id);if(el){el.className='led off';}});}
+function blinkLedsGreen(){// Blink all 3 LEDs green 3 times sequentially then stay green
+  var leds=['led1','led2','led3'];
+  var count=0;var totalBlinks=3;
+  function doBlink(){if(count>=totalBlinks){leds.forEach(function(id){var el=document.getElementById(id);if(el)el.className='led green';});return;}
+  leds.forEach(function(id,i){setTimeout(function(){var el=document.getElementById(id);if(el){el.className='led off';el.className='led blink-green';}},i*60);});
+  setTimeout(function(){leds.forEach(function(id){var el=document.getElementById(id);if(el)el.className='led off';});count++;setTimeout(doBlink,200);},350);}
+  doBlink();}
+function blinkLedsRed(){var leds=['led1','led2','led3'];var count=0;var totalBlinks=4;
+  function doBlink(){if(count>=totalBlinks){leds.forEach(function(id){var el=document.getElementById(id);if(el)el.className='led off';});return;}
+  leds.forEach(function(id){var el=document.getElementById(id);if(el)el.className='led blink-red';});
+  setTimeout(function(){leds.forEach(function(id){var el=document.getElementById(id);if(el)el.className='led off';});count++;setTimeout(doBlink,180);},280);}
+  doBlink();}
+
+function doLogin(){var errEl=document.getElementById('loginErr');errEl.style.display='none';var payload={role:loginRole};if(loginRole==='admin'){payload.username=document.getElementById('loginUser').value.trim();payload.password=document.getElementById('loginPass').value.trim();}else{payload.rollNo=document.getElementById('loginRoll').value.trim();}var btn=document.getElementById('loginBtn');btn.disabled=true;btn.textContent='Signing in\u2026';setLedsOff();apiCall('login',payload,true).then(function(d){btn.disabled=false;btn.innerHTML='<i class="fas fa-sign-in-alt"></i> Sign In';setToken(d.token);blinkLedsGreen();setTimeout(function(){if(d.role==='admin'){currentUser={role:'admin'};enterAdmin();}else{currentUser={role:'student',memberId:d.member.id,name:d.member.name,rollNo:d.member.rollNo,cls:d.member.classId};enterStudent();}},1400);}).catch(function(err){btn.disabled=false;btn.innerHTML='<i class="fas fa-sign-in-alt"></i> Sign In';errEl.textContent=err.message||'Login failed';errEl.style.display='block';blinkLedsRed();});}
+function enterAdmin(){
+  hideLogin();
+  document.getElementById('adminUI').classList.remove('hidden');
+  document.getElementById('studentUI').classList.add('hidden');
+  // Load cache instantly, show UI, then sync in background
+  loadFromLocal();
+  adminNav('a-dash');
+  refreshAllAdmin();
+  loadAll(true); // background sync, don't await
+}
+function enterStudent(){
+  hideLogin();
+  document.getElementById('studentUI').classList.remove('hidden');
+  document.getElementById('adminUI').classList.add('hidden');
+  document.getElementById('sRoleTag').textContent=currentUser.name;
+  // Load cache instantly, show UI, then sync in background
+  loadFromLocal();
+  studentNav('s-dash');
+  refreshStudentDash();
+  refreshStudentBooks();
+  loadAll(true); // background sync, don't await
+}
+function doLogout(){clearAuth();currentUser=null;systemRevealed=false;backupUnlocked=false;secretClickCount=0;document.getElementById('systemSection').classList.remove('revealed');_loginShown=false;document.getElementById('loginPage').classList.remove('hidden');document.getElementById('adminUI').classList.add('hidden');document.getElementById('studentUI').classList.add('hidden');document.getElementById('loginUser').value='';document.getElementById('loginPass').value='';document.getElementById('loginRoll').value='';document.getElementById('loginErr').style.display='none';setTimeout(function(){animateLetters('aleesFooter','Created by Alees | Nusrath Secondary School',90);},400);}
+document.getElementById('aLogout').addEventListener('click',doLogout);
+document.getElementById('sLogout').addEventListener('click',doLogout);
+document.getElementById('sSyncBtn').addEventListener('click',function(){
+  var btn=this;
+  var icon=btn.querySelector('i');
+  btn.disabled=true;
+  icon.style.animation='spin 0.7s linear infinite';
+  btn.innerHTML='<i class="fas fa-sync-alt" style="animation:spin 0.7s linear infinite"></i> Syncing…';
+  // Hard stop after 12 seconds no matter what
+  var hardStop=setTimeout(function(){
+    btn.disabled=false;
+    btn.innerHTML='<i class="fas fa-sync-alt"></i> Sync';
+    toast('Server timed out \u2013 showing cached data','i');
+    refreshStudentBooks();
+  },12000);
+  apiCall('getAll',{},true).then(function(d){
+    clearTimeout(hardStop);
+    DB.books=d.data.books||[];DB.members=d.data.members||[];
+    DB.tx=d.data.tx||[];DB.classes=d.data.classes||[];
+    DB.fines=d.data.fines||[];
+    var s=(d.data.settings||[])[0];
+    DB.settings=s||{currency:'\u20B9',finePerDay:2,issueDays:14};
+    updateTxStatus();saveToLocal();updateSyncTime();
+    btn.disabled=false;
+    btn.innerHTML='<i class="fas fa-sync-alt"></i> Sync';
+    toast('\u2714 Books updated from server!','ok');
+    refreshStudentDash();refreshStudentBooks();refreshStudentFines();
+  }).catch(function(){
+    clearTimeout(hardStop);
+    btn.disabled=false;
+    btn.innerHTML='<i class="fas fa-sync-alt"></i> Sync';
+    toast('Server unreachable \u2013 showing cached data','i');
+    refreshStudentBooks();
+  });
+});
+
+function adminNav(pg){if(SYSTEM_PAGES.indexOf(pg)!==-1&&!systemRevealed){toast('This area is restricted','err');return;}if(pg==='a-backup'&&!backupUnlocked){openM('backupPwdModal');return;}var titles={'a-dash':'Dashboard','a-books':'Book Collection','a-members':'Library Members','a-tx':'Transactions','a-classes':'Manage Classes','a-fines':'Fine Records','a-reports':'Print Reports','a-settings':'Settings','a-backup':'Export / Import'};document.getElementById('aTopTitle').textContent=titles[pg]||pg;document.querySelectorAll('#adminSidebar .nav-item').forEach(function(n){n.classList.remove('active');if(n.dataset.page===pg)n.classList.add('active');});document.querySelectorAll('#adminUI .page').forEach(function(p){p.classList.remove('active');});var el=document.getElementById('page-'+pg);if(el)el.classList.add('active');if(pg==='a-dash')refreshAdminDash();if(pg==='a-books')refreshAdminBooks();if(pg==='a-members')refreshAdminMembers();if(pg==='a-tx')refreshAdminTx();if(pg==='a-classes')refreshAdminClasses();if(pg==='a-fines')refreshAdminFines();if(pg==='a-settings')refreshSettings();document.getElementById('adminSidebar').classList.remove('open');}
+document.querySelectorAll('#adminSidebar .nav-item').forEach(function(n){n.addEventListener('click',function(){adminNav(this.dataset.page);});});
+document.getElementById('aMobileBtn').addEventListener('click',function(){document.getElementById('adminSidebar').classList.toggle('open');});
+document.getElementById('aRefreshBtn').addEventListener('click',function(){loadAll(false).then(function(){refreshAllAdmin();}).catch(function(){refreshAllAdmin();});});
+function studentNav(pg){var titles={'s-dash':'My Dashboard','s-books':'Browse Books','s-fines':'My Fines'};document.getElementById('sTopTitle').textContent=titles[pg]||pg;document.querySelectorAll('#studentSidebar .nav-item').forEach(function(n){n.classList.remove('active');if(n.dataset.page===pg)n.classList.add('active');});document.querySelectorAll('#studentUI .page').forEach(function(p){p.classList.remove('active');});var el=document.getElementById('page-'+pg);if(el)el.classList.add('active');if(pg==='s-dash')refreshStudentDash();if(pg==='s-books')refreshStudentBooks();if(pg==='s-fines')refreshStudentFines();document.getElementById('studentSidebar').classList.remove('open');}
+document.querySelectorAll('#studentSidebar .nav-item').forEach(function(n){n.addEventListener('click',function(){studentNav(this.dataset.page);});});
+document.getElementById('sMobileBtn').addEventListener('click',function(){document.getElementById('studentSidebar').classList.toggle('open');});
+
+function buildClsOpts(sel){var h='<option value="">Choose class</option>';DB.classes.forEach(function(c){h+='<option value="'+c.id+'"'+(c.id===sel?' selected':'')+'>'+esc(c.name)+'</option>';});return h;}
+function refreshAdminClasses(){var tb=document.getElementById('aClassTb');if(!DB.classes.length){tb.innerHTML='<tr><td colspan="3"><div class="tbl-empty"><i class="fas fa-chalkboard"></i><p>No classes yet.</p></div></td></tr>';return;}tb.innerHTML=DB.classes.map(function(c){var cnt=DB.members.filter(function(m){return m.classId===c.id;}).length;return'<tr><td style="font-weight:600">'+esc(c.name)+'</td><td>'+cnt+'</td><td><div class="act-btns"><button class="btn btn-i btn-icon btn-sm" onclick="window._ec(\''+c.id+'\')"><i class="fas fa-edit"></i></button><button class="btn btn-d btn-icon btn-sm" onclick="window._dc(\''+c.id+'\')"><i class="fas fa-trash"></i></button></div></td></tr>';}).join('');}
+window._ec=function(id){var c=DB.classes.find(function(x){return x.id===id;});if(!c)return;document.getElementById('classEditId').value=id;document.getElementById('classModalT').textContent='Edit Class';document.getElementById('className').value=c.name;openM('classModal');};
+window._dc=function(id){var c=DB.classes.find(function(x){return x.id===id;});if(!c)return;if(DB.members.some(function(m){return m.classId===id;})){toast('Cannot delete: class has members','err');return;}showConfirm('Delete Class','Delete <strong>"'+esc(c.name)+'"</strong>?',function(){apiCall('deleteClass',{id:id}).then(function(){DB.classes=DB.classes.filter(function(x){return x.id!==id;});toast('Class deleted','i');refreshAdminClasses();refreshAdminMembers();});});};
+document.getElementById('aAddClass').addEventListener('click',function(){document.getElementById('classEditId').value='';document.getElementById('classModalT').textContent='Add Class';document.getElementById('className').value='';document.getElementById('classNameE').style.display='none';openM('classModal');});
+document.getElementById('saveClassBtn').addEventListener('click',function(){var name=document.getElementById('className').value.trim();if(!name){document.getElementById('classNameE').style.display='block';return;}document.getElementById('classNameE').style.display='none';var eid=document.getElementById('classEditId').value,row={id:eid||gid(),name:name};apiCall(eid?'updateClass':'addClass',{row:row}).then(function(){if(eid){var i=DB.classes.findIndex(function(x){return x.id===eid;});if(i!==-1)DB.classes[i]=row;}else DB.classes.push(row);closeM('classModal');toast('Class saved');refreshAdminClasses();refreshAdminMembers();});});
+
+function buildBookCatChips(){var wrap=document.getElementById('aBookCatChips');var cur=wrap.querySelector('.chip.active');var curCat=cur?(cur.dataset.cat||''):'';var catSet={};DB.books.forEach(function(b){if(b.category)catSet[b.category]=true;});var cats=Object.keys(catSet).sort();wrap.innerHTML=[''].concat(cats).map(function(c,i){var label=i===0?'All':c,val=i===0?'':c,active=(val===curCat)?'active':'';return'<span class="chip '+active+'" data-cat="'+esc(val)+'">'+esc(label)+'</span>';}).join('');wrap.querySelectorAll('.chip').forEach(function(ch){ch.addEventListener('click',function(){wrap.querySelectorAll('.chip').forEach(function(x){x.classList.remove('active');});this.classList.add('active');refreshAdminBooks();});});if(!wrap.querySelector('.active')&&wrap.firstChild)wrap.firstChild.classList.add('active');}
+function refreshAdminBooks(){buildBookCatChips();var catEl=document.querySelector('#aBookCatChips .chip.active');var catF=catEl?catEl.dataset.cat:'';var filtered=DB.books.filter(function(b){return!catF||b.category===catF;});document.getElementById('aBookCount').textContent=filtered.length+' book'+(filtered.length!==1?'s':'');var tb=document.getElementById('aBookTb');if(!filtered.length){tb.innerHTML='<tr><td colspan="7"><div class="tbl-empty"><i class="fas fa-book"></i><p>No books found.</p></div></td></tr>';return;}tb.innerHTML=filtered.map(function(b){var av=b.availableCopies>0?'<span style="color:var(--ok);font-weight:600">'+b.availableCopies+'</span>':'<span style="color:var(--err);font-weight:600">0</span>';return'<tr><td style="font-weight:500">'+esc(b.title)+'</td><td>'+esc(b.author)+'</td><td style="color:var(--muted);font-size:12px">'+esc(b.isbn||'\u2014')+'</td><td>'+esc(b.category||'\u2014')+'</td><td>'+b.totalCopies+'</td><td>'+av+'</td><td><div class="act-btns"><button class="btn btn-i btn-icon btn-sm" onclick="window._eb(\''+b.id+'\')"><i class="fas fa-edit"></i></button><button class="btn btn-d btn-icon btn-sm" onclick="window._db(\''+b.id+'\')"><i class="fas fa-trash"></i></button></div></td></tr>';}).join('');}
+window._eb=function(id){var b=DB.books.find(function(x){return x.id===id;});if(!b)return;document.getElementById('bookEditId').value=id;document.getElementById('bookModalT').textContent='Edit Book';document.getElementById('bookTitle').value=b.title;document.getElementById('bookAuthor').value=b.author;document.getElementById('bookISBN').value=b.isbn||'';document.getElementById('bookCat').value=b.category||'';document.getElementById('bookCopies').value=b.totalCopies;openM('bookModal');};
+window._db=function(id){var b=DB.books.find(function(x){return x.id===id;});if(!b)return;if(DB.tx.some(function(t){return t.bookId===id&&(t.status==='issued'||t.status==='overdue');})){toast('Cannot delete: book is currently issued','err');return;}showConfirm('Delete Book','Delete <strong>"'+esc(b.title)+'"</strong>?',function(){apiCall('deleteBook',{id:id}).then(function(){DB.books=DB.books.filter(function(x){return x.id!==id;});toast('Book deleted','i');refreshAdminBooks();refreshAdminDash();});});};
+document.getElementById('aAddBook').addEventListener('click',function(){document.getElementById('bookEditId').value='';document.getElementById('bookModalT').textContent='Add Book';['bookTitle','bookAuthor','bookISBN','bookCat'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('bookCopies').value='1';['bookTitleE','bookAuthorE','bookCopiesE'].forEach(function(id){document.getElementById(id).style.display='none';});openM('bookModal');});
+document.getElementById('saveBookBtn').addEventListener('click',function(){var v=true,title=document.getElementById('bookTitle').value.trim(),author=document.getElementById('bookAuthor').value.trim(),copies=parseInt(document.getElementById('bookCopies').value)||0;if(!title){document.getElementById('bookTitleE').style.display='block';v=false;}if(!author){document.getElementById('bookAuthorE').style.display='block';v=false;}if(!copies){document.getElementById('bookCopiesE').style.display='block';v=false;}if(!v)return;var eid=document.getElementById('bookEditId').value,ex=eid?DB.books.find(function(b){return b.id===eid;}):null,issued=ex?(ex.totalCopies-ex.availableCopies):0;var row={id:eid||gid(),title:title,author:author,isbn:document.getElementById('bookISBN').value.trim(),category:document.getElementById('bookCat').value.trim(),totalCopies:copies,availableCopies:Math.max(0,copies-issued),addedDate:ex?ex.addedDate:td()};apiCall(eid?'updateBook':'addBook',{row:row}).then(function(){if(eid){var i=DB.books.findIndex(function(x){return x.id===eid;});if(i!==-1)DB.books[i]=row;}else DB.books.push(row);closeM('bookModal');toast('Book saved');refreshAdminBooks();refreshAdminDash();});});
+
+function buildMemClsChips(){var wrap=document.getElementById('aMemClassChips');var cur=wrap.querySelector('.chip.active');var curCls=cur?(cur.dataset.cls||''):'';var items=[{id:'',name:'All'}].concat(DB.classes);wrap.innerHTML=items.map(function(c){return'<span class="chip '+(c.id===curCls?'active':'')+'" data-cls="'+esc(c.id)+'">'+esc(c.name)+'</span>';}).join('');wrap.querySelectorAll('.chip').forEach(function(ch){ch.addEventListener('click',function(){wrap.querySelectorAll('.chip').forEach(function(x){x.classList.remove('active');});this.classList.add('active');refreshAdminMembers();});});}
+function refreshAdminMembers(){buildMemClsChips();var clsEl=document.querySelector('#aMemClassChips .chip.active');var clsF=clsEl?clsEl.dataset.cls:'';var filtered=DB.members.filter(function(m){return!clsF||m.classId===clsF;});document.getElementById('aMemCount').textContent=filtered.length+' member'+(filtered.length!==1?'s':'');var tb=document.getElementById('aMemTb');if(!filtered.length){tb.innerHTML='<tr><td colspan="6"><div class="tbl-empty"><i class="fas fa-users"></i><p>No members found.</p></div></td></tr>';return;}tb.innerHTML=filtered.map(function(m){var cls=DB.classes.find(function(c){return c.id===m.classId;});return'<tr><td style="font-weight:500">'+esc(m.name)+'</td><td>'+esc(cls?cls.name:'\u2014')+'</td><td>'+esc(m.rollNo)+'</td><td style="font-size:12px;color:var(--muted)">'+esc(m.phone||'\u2014')+'</td><td style="font-size:12px;color:var(--muted)">'+esc(m.email||'\u2014')+'</td><td><div class="act-btns"><button class="btn btn-i btn-icon btn-sm" onclick="window._em(\''+m.id+'\')"><i class="fas fa-edit"></i></button><button class="btn btn-d btn-icon btn-sm" onclick="window._dm(\''+m.id+'\')"><i class="fas fa-trash"></i></button></div></td></tr>';}).join('');}
+window._em=function(id){var m=DB.members.find(function(x){return x.id===id;});if(!m)return;document.getElementById('memEditId').value=id;document.getElementById('memModalT').textContent='Edit Member';document.getElementById('memName').value=m.name;document.getElementById('memClass').innerHTML=buildClsOpts(m.classId);document.getElementById('memRoll').value=m.rollNo;document.getElementById('memPhone').value=m.phone||'';document.getElementById('memEmail').value=m.email||'';openM('memModal');};
+window._dm=function(id){var m=DB.members.find(function(x){return x.id===id;});if(!m)return;if(DB.tx.some(function(t){return t.memberId===id&&(t.status==='issued'||t.status==='overdue');})){toast('Cannot delete: member has issued books','err');return;}showConfirm('Delete Member','Delete <strong>"'+esc(m.name)+'"</strong>?',function(){apiCall('deleteMember',{id:id}).then(function(){DB.members=DB.members.filter(function(x){return x.id!==id;});toast('Member deleted','i');refreshAdminMembers();refreshAdminDash();});});};
+document.getElementById('aAddMem').addEventListener('click',function(){document.getElementById('memEditId').value='';document.getElementById('memModalT').textContent='Add Member';document.getElementById('memName').value='';document.getElementById('memClass').innerHTML=buildClsOpts('');document.getElementById('memRoll').value='';document.getElementById('memPhone').value='';document.getElementById('memEmail').value='';['memNameE','memClassE','memRollE'].forEach(function(id){document.getElementById(id).style.display='none';});openM('memModal');});
+document.getElementById('saveMemBtn').addEventListener('click',function(){var v=true,name=document.getElementById('memName').value.trim(),cls=document.getElementById('memClass').value,roll=document.getElementById('memRoll').value.trim();if(!name){document.getElementById('memNameE').style.display='block';v=false;}if(!cls){document.getElementById('memClassE').style.display='block';v=false;}if(!roll){document.getElementById('memRollE').style.display='block';v=false;}if(!v)return;var eid=document.getElementById('memEditId').value;var row={id:eid||gid(),name:name,classId:cls,rollNo:roll,phone:document.getElementById('memPhone').value.trim(),email:document.getElementById('memEmail').value.trim(),addedDate:eid?(DB.members.find(function(x){return x.id===eid;})||{}).addedDate||td():td()};apiCall(eid?'updateMember':'addMember',{row:row}).then(function(){if(eid){var i=DB.members.findIndex(function(x){return x.id===eid;});if(i!==-1)DB.members[i]=row;}else DB.members.push(row);closeM('memModal');toast('Member saved');refreshAdminMembers();refreshAdminDash();});});
+
+function populateIssueBookSelect(){var books=DB.books.filter(function(b){return Number(b.availableCopies)>0;});var sel=document.getElementById('issueBookId');sel.innerHTML='<option value="">\u2014 Choose a book \u2014</option>'+books.map(function(b){var avail=Number(b.availableCopies);return'<option value="'+b.id+'">'+esc(b.title)+' \u2014 '+esc(b.author)+(b.isbn?' ['+esc(b.isbn)+']':'')+' ('+avail+' avail.)</option>';}).join('');}
+function populateIssueClassFilter(){var sel=document.getElementById('issueClassFilter');sel.innerHTML='<option value="">\u2014 All Classes \u2014</option>'+DB.classes.map(function(c){return'<option value="'+c.id+'">'+esc(c.name)+'</option>';}).join('');}
+function populateIssueMemberList(classId){var mems=classId?DB.members.filter(function(m){return m.classId===classId;}):DB.members;var sel=document.getElementById('issueMemId');if(!mems.length){sel.innerHTML='<option value="">No members in this class</option>';return;}sel.innerHTML='<option value="">\u2014 Select a student \u2014</option>'+mems.map(function(m){var roll=m.rollNo!==null&&m.rollNo!==undefined?String(m.rollNo):'';return'<option value="'+m.id+'">'+esc(m.name)+' (Adm: '+esc(roll)+')</option>';}).join('');}
+document.getElementById('issueClassFilter').addEventListener('change',function(){populateIssueMemberList(this.value);});
+function openIssueModal(){var avail=DB.books.filter(function(b){return Number(b.availableCopies)>0;});if(!avail.length){toast('No books available to issue','err');return;}if(!DB.members.length){toast('No members registered','err');return;}populateIssueBookSelect();populateIssueClassFilter();populateIssueMemberList('');document.getElementById('issueDate').value=td();document.getElementById('dueDate').value=ad(td(),getS().issueDays||14);['issueBookE','issueMemE'].forEach(function(id){document.getElementById(id).style.display='none';});openM('issueModal');}
+document.getElementById('aIssueBtn').addEventListener('click',openIssueModal);
+document.getElementById('doIssueBtn').addEventListener('click',function(){var bookId=document.getElementById('issueBookId').value,memId=document.getElementById('issueMemId').value;var issueDate=document.getElementById('issueDate').value,dueDate=document.getElementById('dueDate').value;var v=true;if(!bookId){document.getElementById('issueBookE').style.display='block';v=false;}if(!memId){document.getElementById('issueMemE').style.display='block';v=false;}if(!v)return;if(!issueDate||!dueDate){toast('Fill in dates','err');return;}if(dueDate<=issueDate){toast('Due date must be after issue date','err');return;}var bi=DB.books.findIndex(function(b){return b.id===bookId;});if(bi===-1||DB.books[bi].availableCopies<1){toast('Book not available','err');return;}var txRow={id:gid(),bookId:bookId,memberId:memId,issueDate:issueDate,dueDate:dueDate,returnDate:'',status:'issued',fineAmount:0,fineStatus:''};var bookRow=Object.assign({},DB.books[bi],{availableCopies:DB.books[bi].availableCopies-1});Promise.all([apiCall('addTx',{row:txRow}),apiCall('updateBook',{row:bookRow})]).then(function(){DB.tx.push(txRow);DB.books[bi]=bookRow;closeM('issueModal');toast('Book issued successfully');refreshAdminTx();refreshAdminDash();});});
+
+function openReturnModal(){updateTxStatus();var active=DB.tx.filter(function(t){return t.status==='issued'||t.status==='overdue';});if(!active.length){toast('No books currently issued','i');return;}document.getElementById('returnTxId').innerHTML='<option value="">Choose a transaction</option>'+active.map(function(t){var b=DB.books.find(function(x){return x.id===t.bookId;}),m=DB.members.find(function(x){return x.id===t.memberId;});return'<option value="'+t.id+'">'+esc(b?b.title:'Unknown')+' \u2014 '+esc(m?m.name:'Unknown')+' (Due: '+fd(t.dueDate)+')'+(t.status==='overdue'?' [OVERDUE]':'')+'</option>';}).join('');document.getElementById('returnDate').value=td();document.getElementById('fineInfoBox').classList.add('hidden');document.getElementById('fineInfoBox').innerHTML='';document.getElementById('returnTxE').style.display='none';openM('returnModal');}
+document.getElementById('aReturnBtn').addEventListener('click',openReturnModal);
+document.getElementById('returnTxId').addEventListener('change',function(){var txId=this.value,box=document.getElementById('fineInfoBox');if(!txId){box.classList.add('hidden');return;}var tx=DB.tx.find(function(t){return t.id===txId;});if(!tx||tx.status==='returned'){box.classList.add('hidden');return;}var s=getS(),perDay=s.finePerDay||0,cur=s.currency||'\u20B9';if(tx.dueDate<td()&&perDay>0){var days=Math.ceil((new Date()-new Date(tx.dueDate+'T00:00:00'))/86400000);box.classList.remove('hidden');box.innerHTML='<div class="fine-info-box"><div class="fi-title"><i class="fas fa-exclamation-triangle"></i> Overdue Fine</div><div class="fi-detail">'+days+' days \u00D7 '+cur+perDay+'/day = <span class="fi-amount">'+cur+(days*perDay)+'</span></div><div class="fg" style="margin-bottom:0;margin-top:10px"><label class="fl">Fine Action</label><select class="fi" id="fineActionSelect"><option value="unpaid">Mark as Unpaid</option><option value="paid">Mark as Paid</option><option value="waived">Waive Fine</option></select></div></div>';}else{box.classList.add('hidden');box.innerHTML='';}});
+document.getElementById('doReturnBtn').addEventListener('click',function(){var txId=document.getElementById('returnTxId').value,retDate=document.getElementById('returnDate').value;if(!txId){document.getElementById('returnTxE').style.display='block';return;}if(!retDate){toast('Fill return date','err');return;}var ti=DB.tx.findIndex(function(t){return t.id===txId;});if(ti===-1){toast('Transaction not found','err');return;}var t=Object.assign({},DB.tx[ti]);t.status='returned';t.returnDate=retDate;var bi=DB.books.findIndex(function(b){return b.id===t.bookId;});var bookRow=bi!==-1?Object.assign({},DB.books[bi],{availableCopies:Math.min(DB.books[bi].totalCopies,DB.books[bi].availableCopies+1)}):null;var s=getS(),perDay=s.finePerDay||0,cur=s.currency||'\u20B9',fineRow=null;if(t.dueDate<retDate&&perDay>0){var days=Math.ceil((new Date(retDate+'T00:00:00')-new Date(t.dueDate+'T00:00:00'))/86400000),amount=days*perDay;var actionEl=document.getElementById('fineActionSelect'),fineStatus=actionEl?actionEl.value:'unpaid';t.fineAmount=amount;t.fineStatus=fineStatus;fineRow={id:gid(),txId:t.id,bookId:t.bookId,memberId:t.memberId,daysOverdue:days,amount:amount,currency:cur,status:fineStatus,createdAt:td()};}var calls=[apiCall('updateTx',{row:t})];if(bookRow)calls.push(apiCall('updateBook',{row:bookRow}));if(fineRow)calls.push(apiCall('addFine',{row:fineRow}));Promise.all(calls).then(function(){DB.tx[ti]=t;if(bi!==-1&&bookRow)DB.books[bi]=bookRow;if(fineRow)DB.fines.push(fineRow);closeM('returnModal');toast(fineRow?'Book returned (fine processed)':'Book returned successfully',fineRow?'i':'ok');refreshAdminTx();refreshAdminDash();refreshAdminFines();});});
+function quickReturn(txId){updateTxStatus();var ti=DB.tx.findIndex(function(x){return x.id===txId;});if(ti===-1)return;var t=Object.assign({},DB.tx[ti]);t.status='returned';t.returnDate=td();var bi=DB.books.findIndex(function(b){return b.id===t.bookId;});var bookRow=bi!==-1?Object.assign({},DB.books[bi],{availableCopies:Math.min(DB.books[bi].totalCopies,DB.books[bi].availableCopies+1)}):null;var s=getS(),perDay=s.finePerDay||0,cur=s.currency||'\u20B9',fineRow=null;if(t.dueDate<td()&&perDay>0){var days=Math.ceil((new Date()-new Date(t.dueDate+'T00:00:00'))/86400000),amount=days*perDay;t.fineAmount=amount;t.fineStatus='unpaid';fineRow={id:gid(),txId:t.id,bookId:t.bookId,memberId:t.memberId,daysOverdue:days,amount:amount,currency:cur,status:'unpaid',createdAt:td()};}var calls=[apiCall('updateTx',{row:t})];if(bookRow)calls.push(apiCall('updateBook',{row:bookRow}));if(fineRow)calls.push(apiCall('addFine',{row:fineRow}));Promise.all(calls).then(function(){DB.tx[ti]=t;if(bi!==-1&&bookRow)DB.books[bi]=bookRow;if(fineRow)DB.fines.push(fineRow);toast(fineRow?'Book returned (fine recorded)':'Book returned successfully',fineRow?'i':'ok');refreshAdminTx();refreshAdminDash();refreshAdminFines();});}
+window._qr=quickReturn;
+window._dtx=function(id){var ti=DB.tx.findIndex(function(x){return x.id===id;});if(ti===-1)return;var t=DB.tx[ti];if(t.status==='issued'||t.status==='overdue'){var bi=DB.books.findIndex(function(b){return b.id===t.bookId;});if(bi!==-1){var br=Object.assign({},DB.books[bi],{availableCopies:Math.min(DB.books[bi].totalCopies,DB.books[bi].availableCopies+1)});apiCall('updateBook',{row:br}).then(function(){DB.books[bi]=br;});}}showConfirm('Delete Transaction','Delete this record?',function(){apiCall('deleteTx',{id:id}).then(function(){DB.tx=DB.tx.filter(function(x){return x.id!==id;});toast('Transaction deleted','i');refreshAdminTx();refreshAdminDash();});});};
+
+function refreshAdminTx(){updateTxStatus();var search=document.getElementById('aTxSearch').value.toLowerCase(),stF=chipVal('data-txf');var filtered=DB.tx.filter(function(t){var b=DB.books.find(function(x){return x.id===t.bookId;}),m=DB.members.find(function(x){return x.id===t.memberId;});return(!search||(b?b.title:'').toLowerCase().indexOf(search)!==-1||(m?m.name:'').toLowerCase().indexOf(search)!==-1)&&(!stF||t.status===stF);});filtered.sort(function(a,b){return(b.issueDate||'').localeCompare(a.issueDate||'');});var s=getS(),cur=s.currency||'\u20B9',sm={issued:'b-i',returned:'b-ok',overdue:'b-err'};var tb=document.getElementById('aTxTb');document.getElementById('aTxCount').textContent=filtered.length+' record'+(filtered.length!==1?'s':'');if(!filtered.length){tb.innerHTML='<tr><td colspan="8"><div class="tbl-empty"><i class="fas fa-exchange-alt"></i><p>No transactions.</p></div></td></tr>';return;}tb.innerHTML=filtered.map(function(t){var b=DB.books.find(function(x){return x.id===t.bookId;}),m=DB.members.find(function(x){return x.id===t.memberId;});var fine=t.fineAmount>0?'<span style="color:var(--err);font-weight:600">'+cur+t.fineAmount+'</span>':'\u2014';var rbtn=t.status!=='returned'?'<button class="btn btn-ok btn-sm" onclick="window._qr(\''+t.id+'\')"><i class="fas fa-undo"></i> Return</button>':'';return'<tr><td style="font-weight:500">'+esc(b?b.title:'Deleted')+'</td><td>'+esc(m?m.name:'Deleted')+'</td><td style="font-size:12px;color:var(--muted)">'+fd(t.issueDate)+'</td><td style="font-size:12px;color:var(--muted)">'+fd(t.dueDate)+'</td><td style="font-size:12px;color:var(--muted)">'+fd(t.returnDate)+'</td><td>'+fine+'</td><td><span class="badge '+sm[t.status]+'">'+t.status.charAt(0).toUpperCase()+t.status.slice(1)+'</span></td><td><div class="act-btns">'+rbtn+'<button class="btn btn-d btn-icon btn-sm" onclick="window._dtx(\''+t.id+'\')"><i class="fas fa-trash"></i></button></div></td></tr>';}).join('');var oc=DB.tx.filter(function(t){return t.status==='overdue';}).length;var ob=document.getElementById('aOverdueBadge');ob.style.display=oc>0?'inline':'none';ob.textContent=oc;var uc=DB.fines.filter(function(f){return f.status==='unpaid';}).length;var fb=document.getElementById('aFinesBadge');fb.style.display=uc>0?'inline':'none';fb.textContent=uc;}
+document.getElementById('aTxSearch').addEventListener('input',refreshAdminTx);
+
+function refreshAdminFines(){var search=document.getElementById('aFineSearch').value.toLowerCase(),stF=chipVal('data-ff'),s=getS(),cur=s.currency||'\u20B9';var filtered=DB.fines.filter(function(f){var b=DB.books.find(function(x){return x.id===f.bookId;}),m=DB.members.find(function(x){return x.id===f.memberId;});var ms=!search||(b?b.title:'').toLowerCase().indexOf(search)!==-1||(m?m.name:'').toLowerCase().indexOf(search)!==-1;return ms&&(!stF||f.status===stF);});filtered.sort(function(a,b){return(b.createdAt||'').localeCompare(a.createdAt||'');});var tb=document.getElementById('aFineTb'),stm={unpaid:'b-err',paid:'b-ok',waived:'b-w'};document.getElementById('aFineCount').textContent=filtered.length+' record'+(filtered.length!==1?'s':'');if(!filtered.length){tb.innerHTML='<tr><td colspan="7"><div class="tbl-empty"><i class="fas fa-coins"></i><p>No fine records.</p></div></td></tr>';return;}tb.innerHTML=filtered.map(function(f){var b=DB.books.find(function(x){return x.id===f.bookId;}),m=DB.members.find(function(x){return x.id===f.memberId;});var acts=f.status==='unpaid'?'<button class="btn btn-ok btn-sm" onclick="window._payFine(\''+f.id+'\')"><i class="fas fa-check"></i> Paid</button><button class="btn btn-w btn-sm" onclick="window._waiveFine(\''+f.id+'\')">Waive</button>':'';return'<tr><td>'+esc(b?b.title:'Deleted')+'</td><td>'+esc(m?m.name:'Deleted')+'</td><td>'+f.daysOverdue+' days</td><td style="font-weight:700;color:var(--err)">'+cur+f.amount+'</td><td><span class="badge '+stm[f.status]+'">'+f.status.charAt(0).toUpperCase()+f.status.slice(1)+'</span></td><td style="font-size:12px;color:var(--muted)">'+fd(f.createdAt)+'</td><td><div class="act-btns">'+acts+'</div></td></tr>';}).join('');}
+window._payFine=function(id){var i=DB.fines.findIndex(function(f){return f.id===id;});if(i===-1)return;var row=Object.assign({},DB.fines[i],{status:'paid'});apiCall('updateFine',{row:row}).then(function(){DB.fines[i]=row;toast('Fine marked as paid');refreshAdminFines();refreshAdminTx();});};
+window._waiveFine=function(id){var i=DB.fines.findIndex(function(f){return f.id===id;});if(i===-1)return;var row=Object.assign({},DB.fines[i],{status:'waived'});apiCall('updateFine',{row:row}).then(function(){DB.fines[i]=row;toast('Fine waived','i');refreshAdminFines();refreshAdminTx();});};
+document.getElementById('aFineSearch').addEventListener('input',refreshAdminFines);
+
+function refreshSettings(){var s=getS(),cur=s.currency||'\u20B9';document.getElementById('setCurrency').value=cur;document.getElementById('setFinePerDay').value=s.finePerDay||0;document.getElementById('setIssueDays').value=s.issueDays||14;var unpaid=DB.fines.filter(function(f){return f.status==='unpaid';}),paid=DB.fines.filter(function(f){return f.status==='paid';});var tu=0;unpaid.forEach(function(f){tu+=Number(f.amount)||0;});var tp=0;paid.forEach(function(f){tp+=Number(f.amount)||0;});document.getElementById('settingsDisplay').innerHTML='Currency: <strong style="color:var(--fg)">'+esc(cur)+'</strong><br>Fine per day: <strong style="color:var(--fg)">'+cur+(s.finePerDay||0)+'</strong><br>Issue period: <strong style="color:var(--fg)">'+(s.issueDays||14)+' days</strong><br><br>Total collected: <strong style="color:var(--ok)">'+cur+tp+'</strong><br>Outstanding: <strong style="color:var(--err)">'+cur+tu+'</strong> ('+unpaid.length+' records)';}
+document.getElementById('saveSettingsBtn').addEventListener('click',function(){var s={currency:document.getElementById('setCurrency').value.trim()||'\u20B9',finePerDay:parseInt(document.getElementById('setFinePerDay').value)||0,issueDays:parseInt(document.getElementById('setIssueDays').value)||14};apiCall('saveSettings',{settings:s}).then(function(){DB.settings=s;toast('Settings saved');refreshSettings();});});
+
+function refreshAdminDash(){updateTxStatus();var s=getS(),cur=s.currency||'\u20B9';var totalCopies=0;DB.books.forEach(function(b){totalCopies+=Number(b.totalCopies)||0;});var issued=DB.tx.filter(function(t){return t.status==='issued'||t.status==='overdue';}).length;var overdue=DB.tx.filter(function(t){return t.status==='overdue';}).length;var uf=0;DB.fines.filter(function(f){return f.status==='unpaid';}).forEach(function(f){uf+=Number(f.amount)||0;});document.getElementById('aStats').innerHTML=[['fas fa-book','Total Books',totalCopies],['fas fa-users','Members',DB.members.length],['fas fa-hand-holding','Currently Issued',issued],['fas fa-exclamation-triangle','Overdue',overdue],['fas fa-coins','Unpaid Fines',cur+uf]].map(function(s){return'<div class="stat-card"><div class="stat-icon"><i class="'+s[0]+'"></i></div><div class="stat-val">'+s[2]+'</div><div class="stat-lbl">'+s[1]+'</div></div>';}).join('');var recent=DB.tx.slice().sort(function(a,b){return(b.issueDate||'').localeCompare(a.issueDate||'');}).slice(0,6);var rd=document.getElementById('aRecentTx');if(!recent.length){rd.innerHTML='<div class="tbl-empty"><i class="fas fa-inbox"></i><p>No transactions yet</p></div>';return;}rd.innerHTML=recent.map(function(t){var b=DB.books.find(function(x){return x.id===t.bookId;}),m=DB.members.find(function(x){return x.id===t.memberId;});var ibg,ic,ii;if(t.status==='returned'){ibg='rgba(74,186,122,.12)';ic='var(--ok)';ii='fa-arrow-left';}else if(t.status==='overdue'){ibg='rgba(217,79,79,.12)';ic='var(--err)';ii='fa-exclamation';}else{ibg='rgba(74,154,186,.12)';ic='var(--info)';ii='fa-arrow-right';}return'<div class="recent-item"><div class="ri-icon" style="background:'+ibg+';color:'+ic+'"><i class="fas '+ii+'"></i></div><div class="ri-info"><div class="ri-title">'+esc(b?b.title:'Unknown')+'</div><div class="ri-sub">'+esc(m?m.name:'Unknown')+' \u00B7 '+fd(t.issueDate)+'</div></div><span class="badge '+({issued:'b-i',returned:'b-ok',overdue:'b-err'}[t.status]||'b-i')+'">'+t.status.charAt(0).toUpperCase()+t.status.slice(1)+'</span></div>';}).join('');}
+function refreshAllAdmin(){refreshAdminDash();refreshAdminBooks();refreshAdminMembers();refreshAdminTx();refreshAdminClasses();refreshAdminFines();refreshSettings();}
+
+var _sCatFilter=''; // student category filter
+function buildSBookCatChips(){
+  var wrap=document.getElementById('sBookCatChips');
+  if(!wrap)return;
+  var catSet={};
+  DB.books.forEach(function(b){if(b.category&&b.category.trim())catSet[b.category.trim()]=true;});
+  var cats=Object.keys(catSet).sort();
+  var html='<span class="chip '+(_sCatFilter===''?'active':'')+'" onclick="setSCatFilter(\'\')" style="font-size:11px"><i class="fas fa-layer-group" style="font-size:10px"></i> All</span>';
+  cats.forEach(function(c){
+    html+='<span class="chip '+(_sCatFilter===c?'active':'')+'" onclick="setSCatFilter(\''+c.replace(/'/g,"\\'")+'\')" style="font-size:11px">'+esc(c)+'</span>';
+  });
+  wrap.innerHTML=html;
+}
+function setSCatFilter(val){
+  _sCatFilter=val;
+  buildSBookCatChips();
+  filterStudentBooks();
+}
+function filterStudentBooks(){
+  var searchEl=document.getElementById('sBookSearch');
+  var search=(searchEl?searchEl.value:'').trim().toLowerCase();
+  var filtered=DB.books.filter(function(b){
+    // Search filter
+    var ms=!search||
+      (b.title||'').toLowerCase().indexOf(search)!==-1||
+      (b.author||'').toLowerCase().indexOf(search)!==-1||
+      (b.isbn||'').toLowerCase().indexOf(search)!==-1||
+      (b.category||'').toLowerCase().indexOf(search)!==-1;
+    // Availability filter - uses _savFilter variable directly
+    var av=Number(b.availableCopies)||0;
+    var ma=(_savFilter==='')||
+      (_savFilter==='yes'&&av>0)||
+      (_savFilter==='no'&&av===0);
+    // Category filter - uses _sCatFilter variable directly
+    var mc=(_sCatFilter==='')||(b.category===_sCatFilter);
+    return ms&&ma&&mc;
+  });
+  var tb=document.getElementById('sBookTb');
+  var countEl=document.getElementById('sBookCount');
+  if(countEl)countEl.textContent=filtered.length+' book'+(filtered.length!==1?'s':'');
+  if(!tb)return;
+  if(DB.books.length===0){
+    tb.innerHTML='<tr><td colspan="4"><div class="tbl-empty"><i class="fas fa-cloud-download-alt"></i><p>No books yet.</p><p style="font-size:12px;margin-top:6px">Press <strong>Sync</strong> to load books from server.</p></div></td></tr>';
+    return;
+  }
+  if(!filtered.length){
+    var why=search?'No books matching \u201c'+esc(search)+'\u201d':
+      _savFilter==='yes'?'No available books right now':
+      _savFilter==='no'?'All books are currently available':
+      'No books in this category';
+    tb.innerHTML='<tr><td colspan="4"><div class="tbl-empty"><i class="fas fa-search"></i><p>'+why+'</p></div></td></tr>';
+    return;
+  }
+  function hl(str){
+    if(!search||!str)return esc(str||'');
+    var escaped=esc(str);
+    var re=new RegExp('('+search.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi');
+    return escaped.replace(re,'<mark style="background:rgba(240,184,78,0.45);color:#111;border-radius:3px;padding:0 3px;font-weight:700">$1</mark>');
+  }
+  tb.innerHTML=filtered.map(function(b){
+    var av=Number(b.availableCopies)||0;
+    return'<tr><td style="font-weight:500">'+hl(b.title)+'</td><td>'+hl(b.author)+'</td><td>'+esc(b.category||'\u2014')+'</td><td>'+(av>0?'<span class="badge b-ok">'+av+' available</span>':'<span class="badge b-err">Unavailable</span>')+'</td></tr>';
+  }).join('');
+}
+function refreshStudentBooks(){
+  buildSBookCatChips();
+  filterStudentBooks();
+  var bar=document.getElementById('sCacheBar');
+  var msg=document.getElementById('sCacheMsg');
+  if(bar&&msg){
+    var age=getCacheAge();
+    if(age){bar.style.display='flex';msg.textContent='\u2601 Cached \u00B7 synced '+timeAgo(age);}
+    else{bar.style.display='none';}
+  }
+}
+function refreshStudentDash(){if(!currentUser)return;var myTx=DB.tx.filter(function(t){return t.memberId===currentUser.memberId;});var issued=myTx.filter(function(t){return t.status==='issued'||t.status==='overdue';});var overdue=myTx.filter(function(t){return t.status==='overdue';});var myFines=DB.fines.filter(function(f){return f.memberId===currentUser.memberId;});var s=getS(),cur=s.currency||'\u20B9',unpaid=0;myFines.filter(function(f){return f.status==='unpaid';}).forEach(function(f){unpaid+=Number(f.amount)||0;});document.getElementById('sStats').innerHTML=[['fas fa-book','Books Issued',issued.length],['fas fa-exclamation-triangle','Overdue',overdue.length],['fas fa-coins','Unpaid Fines',cur+unpaid]].map(function(s){return'<div class="stat-card"><div class="stat-icon"><i class="'+s[0]+'"></i></div><div class="stat-val">'+s[2]+'</div><div class="stat-lbl">'+s[1]+'</div></div>';}).join('');var sm={issued:'b-i',returned:'b-ok',overdue:'b-err'},tb=document.getElementById('sIssuedTb');if(!issued.length){tb.innerHTML='<tr><td colspan="4"><div class="tbl-empty"><i class="fas fa-book-open"></i><p>No books currently issued</p></div></td></tr>';return;}tb.innerHTML=issued.map(function(t){var b=DB.books.find(function(x){return x.id===t.bookId;});return'<tr><td style="font-weight:500">'+esc(b?b.title:'Unknown')+'</td><td>'+fd(t.issueDate)+'</td><td>'+fd(t.dueDate)+'</td><td><span class="badge '+sm[t.status]+'">'+t.status.charAt(0).toUpperCase()+t.status.slice(1)+'</span></td></tr>';}).join('');}
+function refreshStudentFines(){if(!currentUser)return;var myFines=DB.fines.filter(function(f){return f.memberId===currentUser.memberId;}),s=getS(),cur=s.currency||'\u20B9';var tb=document.getElementById('sFineTb'),stm={unpaid:'b-err',paid:'b-ok',waived:'b-w'};if(!myFines.length){tb.innerHTML='<tr><td colspan="5"><div class="tbl-empty"><i class="fas fa-smile"></i><p>No fines \u2014 great!</p></div></td></tr>';return;}tb.innerHTML=myFines.map(function(f){var b=DB.books.find(function(x){return x.id===f.bookId;});return'<tr><td>'+esc(b?b.title:'Unknown')+'</td><td>'+f.daysOverdue+' days</td><td style="font-weight:700;color:var(--err)">'+cur+f.amount+'</td><td><span class="badge '+stm[f.status]+'">'+f.status.charAt(0).toUpperCase()+f.status.slice(1)+'</span></td><td style="font-size:12px;color:var(--muted)">'+fd(f.createdAt)+'</td></tr>';}).join('');}
+document.getElementById('sBookSearch').addEventListener('input',filterStudentBooks);
+document.getElementById('sBookSearch').addEventListener('keydown',function(e){if(e.key==='Escape'){this.value='';filterStudentBooks();}});
+
+var _rpt='summary';
+document.querySelectorAll('.rpt-card').forEach(function(c){c.addEventListener('click',function(){document.querySelectorAll('.rpt-card').forEach(function(x){x.classList.remove('selected');});this.classList.add('selected');_rpt=this.dataset.rpt;document.getElementById('optRangeRow').style.display=(_rpt==='tx')?'flex':'none';document.getElementById('previewWrap').classList.add('hidden');});});
+document.querySelectorAll('.toggle').forEach(function(t){t.addEventListener('click',function(){this.classList.toggle('on');});});
+function gO(id){return document.getElementById(id).classList.contains('on');}
+
+function buildReport(type){updateTxStatus();var s=getS(),cur=s.currency||'\u20B9';var now=new Date(),nowStr=now.toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'})+' '+now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});var showH=gO('optHeader'),showD=gO('optDate'),showSt=gO('optStats');var hdr=showH?'<div class="ph"><div class="ph-l"><h1>NOOR</h1><p>Nusrath Organization of Open Resources</p></div><div class="ph-r"><strong>Library Report</strong>'+(showD?'<span>'+nowStr+'</span>':'')+'</div></div>':'';var ftr='<div class="pfoot"><span>NOOR \u00B7 Nusrath Secondary School</span>'+(showD?'<span>Generated: '+nowStr+'</span>':'')+'</div>';var totalCopies=0;DB.books.forEach(function(b){totalCopies+=Number(b.totalCopies)||0;});var issuedTx=DB.tx.filter(function(t){return t.status==='issued'||t.status==='overdue';});var overdueTx=DB.tx.filter(function(t){return t.status==='overdue';});var uf=DB.fines.filter(function(f){return f.status==='unpaid';}),ufAmt=0;uf.forEach(function(f){ufAmt+=Number(f.amount)||0;});var stHTML=showSt?'<div class="pstats">'+[['Total Books',totalCopies],['Members',DB.members.length],['Issued',issuedTx.length],['Overdue',overdueTx.length],['Unpaid Fines',cur+ufAmt]].map(function(x){return'<div class="pst"><div class="v">'+x[1]+'</div><div class="l">'+x[0]+'</div></div>';}).join('')+'</div>':'';var body='';if(type==='summary'){body='<div class="pt">Library Summary Report</div><div class="ps">Overview of all library activities</div>'+stHTML;var cats={};DB.books.forEach(function(b){var c=b.category||'Uncategorised';cats[c]=(cats[c]||0)+Number(b.totalCopies||0);});body+='<hr class="pdiv"><p style="font-weight:700;margin-bottom:10px">Books by Category</p><table class="ptbl"><thead><tr><th>Category</th><th>Copies</th></tr></thead><tbody>'+Object.keys(cats).map(function(c){return'<tr><td>'+esc(c)+'</td><td>'+cats[c]+'</td></tr>';}).join('')+'</tbody></table>';var clsSt=DB.classes.map(function(c){return{name:c.name,count:DB.members.filter(function(m){return m.classId===c.id;}).length};});body+='<hr class="pdiv"><p style="font-weight:700;margin-bottom:10px">Members by Class</p><table class="ptbl"><thead><tr><th>Class</th><th>Members</th></tr></thead><tbody>'+clsSt.map(function(c){return'<tr><td>'+esc(c.name)+'</td><td>'+c.count+'</td></tr>';}).join('')+'</tbody></table>';}else if(type==='books'){body='<div class="pt">Book Catalogue</div><div class="ps">'+DB.books.length+' titles \u00B7 '+totalCopies+' copies total</div>'+stHTML;body+='<table class="ptbl"><thead><tr><th>#</th><th>Title</th><th>Author</th><th>Category</th><th>ISBN</th><th>Total</th><th>Available</th></tr></thead><tbody>'+DB.books.map(function(b,i){var av=Number(b.availableCopies)||0;return'<tr><td>'+(i+1)+'</td><td style="font-weight:600">'+esc(b.title)+'</td><td>'+esc(b.author)+'</td><td>'+esc(b.category||'\u2014')+'</td><td>'+esc(b.isbn||'\u2014')+'</td><td>'+b.totalCopies+'</td><td><span class="pb '+(av>0?'pb-ok':'pb-err')+'">'+av+'</span></td></tr>';}).join('')+'</tbody></table>';}else if(type==='members'){var sm2=DB.members.slice().sort(function(a,b){var ca=DB.classes.find(function(x){return x.id===a.classId;}),cb=DB.classes.find(function(x){return x.id===b.classId;});return(ca?ca.name:'').localeCompare(cb?cb.name:'');});body='<div class="pt">Member List</div><div class="ps">'+DB.members.length+' registered members</div>';body+='<table class="ptbl"><thead><tr><th>#</th><th>Name</th><th>Class</th><th>Admission No</th><th>Phone</th></tr></thead><tbody>'+sm2.map(function(m,i){var cls=DB.classes.find(function(c){return c.id===m.classId;});return'<tr><td>'+(i+1)+'</td><td style="font-weight:600">'+esc(m.name)+'</td><td>'+esc(cls?cls.name:'\u2014')+'</td><td>'+esc(m.rollNo)+'</td><td>'+esc(m.phone||'\u2014')+'</td></tr>';}).join('')+'</tbody></table>';}else if(type==='issued'){body='<div class="pt">Currently Issued Books</div><div class="ps">'+issuedTx.length+' transactions not yet returned</div>';body+='<table class="ptbl"><thead><tr><th>#</th><th>Book</th><th>Member</th><th>Class</th><th>Issue Date</th><th>Due Date</th><th>Status</th></tr></thead><tbody>'+issuedTx.map(function(t,i){var b=DB.books.find(function(x){return x.id===t.bookId;}),m=DB.members.find(function(x){return x.id===t.memberId;}),cls=m?DB.classes.find(function(c){return c.id===m.classId;}):null;return'<tr><td>'+(i+1)+'</td><td style="font-weight:600">'+esc(b?b.title:'\u2014')+'</td><td>'+esc(m?m.name:'\u2014')+'</td><td>'+esc(cls?cls.name:'\u2014')+'</td><td>'+fd(t.issueDate)+'</td><td>'+fd(t.dueDate)+'</td><td><span class="pb '+(t.status==='overdue'?'pb-err':'pb-i')+'">'+t.status+'</span></td></tr>';}).join('')+'</tbody></table>';}else if(type==='overdue'){body='<div class="pt">Overdue Books</div><div class="ps">'+overdueTx.length+' books past due date</div>';body+='<table class="ptbl"><thead><tr><th>#</th><th>Book</th><th>Member</th><th>Adm. No</th><th>Due Date</th><th>Days Over</th><th>Fine ('+cur+')</th></tr></thead><tbody>'+overdueTx.map(function(t,i){var b=DB.books.find(function(x){return x.id===t.bookId;}),m=DB.members.find(function(x){return x.id===t.memberId;});var days=Math.ceil((new Date()-new Date((t.dueDate||'').split('T')[0]+'T00:00:00'))/86400000);var fine=days*(s.finePerDay||0);return'<tr><td>'+(i+1)+'</td><td style="font-weight:600">'+esc(b?b.title:'\u2014')+'</td><td>'+esc(m?m.name:'\u2014')+'</td><td>'+esc(m?m.rollNo:'\u2014')+'</td><td>'+fd(t.dueDate)+'</td><td style="color:#b71c1c;font-weight:700">'+days+'</td><td style="color:#b71c1c;font-weight:700">'+fine+'</td></tr>';}).join('')+'</tbody></table>';var totFine=overdueTx.reduce(function(acc,t){var days=Math.ceil((new Date()-new Date((t.dueDate||'').split('T')[0]+'T00:00:00'))/86400000);return acc+days*(s.finePerDay||0);},0);body+='<div style="text-align:right;font-weight:700;margin-top:6px">Total Outstanding: '+cur+totFine+'</div>';}else if(type==='fines'){var paidAmt=0,waivedAmt=0;DB.fines.filter(function(f){return f.status==='paid';}).forEach(function(f){paidAmt+=Number(f.amount)||0;});DB.fines.filter(function(f){return f.status==='waived';}).forEach(function(f){waivedAmt+=Number(f.amount)||0;});body='<div class="pt">Fine Statement</div><div class="ps">'+DB.fines.length+' fine records</div>';if(showSt)body+='<div class="pstats"><div class="pst"><div class="v">'+cur+ufAmt+'</div><div class="l">Unpaid</div></div><div class="pst"><div class="v">'+cur+paidAmt+'</div><div class="l">Collected</div></div><div class="pst"><div class="v">'+cur+waivedAmt+'</div><div class="l">Waived</div></div></div>';body+='<table class="ptbl"><thead><tr><th>#</th><th>Book</th><th>Member</th><th>Days Over</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead><tbody>'+DB.fines.map(function(f,i){var b=DB.books.find(function(x){return x.id===f.bookId;}),m=DB.members.find(function(x){return x.id===f.memberId;});var bm={unpaid:'pb-err',paid:'pb-ok',waived:'pb-w'}[f.status]||'pb-i';return'<tr><td>'+(i+1)+'</td><td>'+esc(b?b.title:'\u2014')+'</td><td>'+esc(m?m.name:'\u2014')+'</td><td>'+f.daysOverdue+'</td><td style="font-weight:700">'+cur+f.amount+'</td><td><span class="pb '+bm+'">'+f.status+'</span></td><td>'+fd(f.createdAt)+'</td></tr>';}).join('')+'</tbody></table>';}else if(type==='tx'){var from=document.getElementById('rptFrom').value,to=document.getElementById('rptTo').value;var txData=DB.tx.slice();if(from)txData=txData.filter(function(t){return(t.issueDate||'')>=from;});if(to)txData=txData.filter(function(t){return(t.issueDate||'')<=to;});txData.sort(function(a,b){return(b.issueDate||'').localeCompare(a.issueDate||'');});var rl=from&&to?' ('+fd(from)+' \u2013 '+fd(to)+')':from?' (from '+fd(from)+')':to?' (to '+fd(to)+')':' (all time)';body='<div class="pt">Transaction History</div><div class="ps">'+txData.length+' records'+rl+'</div>';body+='<table class="ptbl"><thead><tr><th>#</th><th>Book</th><th>Member</th><th>Issue</th><th>Due</th><th>Return</th><th>Fine</th><th>Status</th></tr></thead><tbody>'+txData.map(function(t,i){var b=DB.books.find(function(x){return x.id===t.bookId;}),m=DB.members.find(function(x){return x.id===t.memberId;});var sm3={issued:'pb-i',returned:'pb-ok',overdue:'pb-err'}[t.status]||'pb-i';var fine=t.fineAmount>0?'<strong>'+cur+t.fineAmount+'</strong>':'\u2014';return'<tr><td>'+(i+1)+'</td><td>'+esc(b?b.title:'\u2014')+'</td><td>'+esc(m?m.name:'\u2014')+'</td><td>'+fd(t.issueDate)+'</td><td>'+fd(t.dueDate)+'</td><td>'+fd(t.returnDate)+'</td><td>'+fine+'</td><td><span class="pb '+sm3+'">'+t.status+'</span></td></tr>';}).join('')+'</tbody></table>';}else if(type==='classwise'){body='<div class="pt">Class-wise Summary</div><div class="ps">Book issuance by class</div>';body+='<table class="ptbl"><thead><tr><th>Class</th><th>Members</th><th>Issued</th><th>Overdue</th><th>Unpaid Fines</th></tr></thead><tbody>'+DB.classes.map(function(c){var mids=DB.members.filter(function(m){return m.classId===c.id;}).map(function(m){return m.id;});var ci=DB.tx.filter(function(t){return mids.indexOf(t.memberId)!==-1&&(t.status==='issued'||t.status==='overdue');}).length;var co=DB.tx.filter(function(t){return mids.indexOf(t.memberId)!==-1&&t.status==='overdue';}).length;var cf=0;DB.fines.filter(function(f){return mids.indexOf(f.memberId)!==-1&&f.status==='unpaid';}).forEach(function(f){cf+=Number(f.amount)||0;});return'<tr><td style="font-weight:700">'+esc(c.name)+'</td><td>'+mids.length+'</td><td>'+ci+'</td><td style="color:'+(co>0?'#b71c1c':'#1a7a42')+'">'+co+'</td><td>'+cur+cf+'</td></tr>';}).join('')+'</tbody></table>';}return'<div class="pdoc">'+hdr+body+ftr+'</div>';}
+
+// PROFESSIONAL IFRAME-BASED PRINTING
+document.getElementById('doPreview').addEventListener('click',function(){var html=buildReport(_rpt);document.getElementById('previewContent').innerHTML=html;var w=document.getElementById('previewWrap');w.classList.remove('hidden');w.scrollIntoView({behavior:'smooth'});});
+
+document.getElementById('doPrint').addEventListener('click',function(){var reportHTML=buildReport(_rpt);printViaIframe(reportHTML);});
+
+function printViaIframe(contentHTML){
+  var iframe=document.createElement('iframe');
+  iframe.style.cssText='position:fixed;left:-9999px;top:0;width:210mm;height:297mm;border:none;';
+  document.body.appendChild(iframe);
+  var doc=iframe.contentWindow.document;
+  doc.open();
+  doc.write('<!DOCTYPE html><html><head><meta charset="UTF-8">');
+  doc.write('<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">');
+  doc.write('<style>');
+  doc.write('@page{margin:12mm 10mm;size:A4}');
+  doc.write('*{margin:0;padding:0;box-sizing:border-box}');
+  doc.write('body{font-family:"DM Sans",Arial,sans-serif;color:#111;background:#fff!important;font-size:11px;line-height:1.5;-webkit-print-color-adjust:exact;print-color-adjust:exact}');
+  doc.write('h1,h2,h3{font-family:"Playfair Display",Georgia,serif;color:#0f1a14}');
+  doc.write('.ph{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2.5px solid #1a2b21;padding-bottom:12px;margin-bottom:16px}');
+  doc.write('.ph-l h1{font-size:20px;font-weight:900;color:#0f1a14;margin-bottom:2px}');
+  doc.write('.ph-l p{font-size:10px;color:#555}');
+  doc.write('.ph-r{text-align:right;font-size:10px;color:#666}');
+  doc.write('.ph-r strong{display:block;font-size:12px;color:#111;margin-bottom:1px}');
+  doc.write('.pt{font-size:15px;font-weight:700;color:#0f1a14;margin-bottom:2px}');
+  doc.write('.ps{font-size:10px;color:#777;margin-bottom:14px}');
+  doc.write('.pstats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}');
+  doc.write('.pst{background:#f4f7f4!important;border:1px solid #ccd8cc;border-radius:5px;padding:8px 14px;text-align:center}');
+  doc.write('.pst .v{font-size:18px;font-weight:700;font-family:"Playfair Display",Georgia,serif;color:#0f1a14}');
+  doc.write('.pst .l{font-size:9px;color:#666;text-transform:uppercase;letter-spacing:.5px}');
+  doc.write('.ptbl{width:100%;border-collapse:collapse;margin-bottom:12px;page-break-inside:auto}');
+  doc.write('.ptbl th{background:#0f1a14!important;color:#fff!important;padding:6px 8px;text-align:left;font-size:9px;text-transform:uppercase;letter-spacing:.5px;font-weight:600;-webkit-print-color-adjust:exact;print-color-adjust:exact}');
+  doc.write('.ptbl td{padding:5px 8px;border-bottom:1px solid #e0e8e0;vertical-align:middle;font-size:10px}');
+  doc.write('.ptbl tr:nth-child(even) td{background:#f8fbf8!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}');
+  doc.write('.ptbl tr{page-break-inside:avoid;break-inside:avoid}');
+  doc.write('.pb{display:inline-block;padding:1px 7px;border-radius:8px;font-size:9px;font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact}');
+  doc.write('.pb-ok{background:#e6f7ed!important;color:#1a7a42!important}');
+  doc.write('.pb-err{background:#fdecea!important;color:#b71c1c!important}');
+  doc.write('.pb-i{background:#e3f2fd!important;color:#1565c0!important}');
+  doc.write('.pb-w{background:#fff8e1!important;color:#e65100!important}');
+  doc.write('.pfoot{border-top:1px solid #ccd8cc;padding-top:8px;margin-top:8px;font-size:9px;color:#888;display:flex;justify-content:space-between}');
+  doc.write('.pdiv{border:none;border-top:1px solid #e0e8e0;margin:12px 0}');
+  doc.write('strong{color:#111}');
+  doc.write('</style></head><body>');
+  doc.write(contentHTML);
+  doc.write('</body></html>');
+  doc.close();
+  setTimeout(function(){try{iframe.contentWindow.focus();iframe.contentWindow.print();}catch(e){console.error('Print error:',e);}setTimeout(function(){if(iframe.parentNode)iframe.parentNode.removeChild(iframe);},3000);},800);
+}
+
+function dlCSV(fname,cols,rows){var lines=[cols.join(',')].concat(rows.map(function(r){return cols.map(function(c){var v=r[c]||'';return'"'+String(v).replace(/"/g,'""')+'"';}).join(',');}));var a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(lines.join('\n'));a.download=fname;a.click();}
+document.getElementById('aExportBtn').addEventListener('click',function(){var ts=new Date().toISOString().replace(/[:.]/g,'-').slice(0,19);dlCSV('books_'+ts+'.csv',['id','title','author','isbn','category','totalCopies','availableCopies','addedDate'],DB.books);setTimeout(function(){dlCSV('members_'+ts+'.csv',['id','name','classId','rollNo','phone','email','addedDate'],DB.members);},400);setTimeout(function(){dlCSV('transactions_'+ts+'.csv',['id','bookId','memberId','issueDate','dueDate','returnDate','status','fineAmount','fineStatus'],DB.tx);},800);setTimeout(function(){dlCSV('fines_'+ts+'.csv',['id','txId','bookId','memberId','daysOverdue','amount','currency','status','createdAt'],DB.fines);},1200);setTimeout(function(){dlCSV('classes_'+ts+'.csv',['id','name'],DB.classes);},1600);toast('Exporting CSV files\u2026','i');});
+document.getElementById('aExportJsonBtn').addEventListener('click',function(){
+  function dedup(arr){var seen={};return arr.filter(function(x){if(!x.id||seen[x.id])return false;seen[x.id]=true;return true;});}
+  var data={ts:new Date().toISOString(),books:dedup(DB.books),members:dedup(DB.members),tx:dedup(DB.tx),fines:dedup(DB.fines),classes:dedup(DB.classes),settings:DB.settings};
+  var removed=(DB.books.length+DB.members.length+DB.tx.length+DB.fines.length+DB.classes.length)-(data.books.length+data.members.length+data.tx.length+data.fines.length+data.classes.length);
+  var a=document.createElement('a');a.href='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(data,null,2));a.download='alees_backup_'+new Date().toISOString().replace(/[:.]/g,'-').slice(0,19)+'.json';a.click();
+  toast(removed>0?'\u2714 JSON exported ('+removed+' duplicate'+(removed!==1?'s':'')+' removed)':'JSON backup downloaded','ok');
+});
+// ── UPLOAD PROGRESS HELPERS ──────────────────────────────────────────────────
+function showUploadPanel(title){
+  var p=document.getElementById('uploadProgressPanel');
+  document.getElementById('uploadPanelTitle').textContent=title;
+  document.getElementById('uploadOverallBar').style.width='0%';
+  document.getElementById('uploadOverallBar').style.background='linear-gradient(90deg,var(--ok),var(--accent))';
+  document.getElementById('uploadOverallText').textContent='Preparing…';
+  document.getElementById('uploadPanelEta').textContent='';
+  document.getElementById('uploadSections').innerHTML='';
+  document.getElementById('uploadDoneMsg').style.display='none';
+  document.getElementById('uploadDoneMsg').style.color='var(--ok)';
+  document.getElementById('uploadDoneMsg').innerHTML='<i class="fas fa-check-circle"></i> All data uploaded to Alees Server successfully!';
+  p.style.display='block';
+  p.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function addSectionRow(id,label,color,total){
+  var row=document.createElement('div');
+  row.className='upload-row';row.id='urow-'+id;
+  row.innerHTML='<div class="upload-row-label">'+label+'</div><div class="upload-row-bar-wrap"><div class="upload-row-bar" id="ubar-'+id+'" style="background:'+color+'"></div></div><div class="upload-row-count" id="ucnt-'+id+'">0 / '+total+'</div>';
+  document.getElementById('uploadSections').appendChild(row);
+}
+function updateSectionRow(id,done,total,failed){
+  var bar=document.getElementById('ubar-'+id);
+  var cnt=document.getElementById('ucnt-'+id);
+  var row=document.getElementById('urow-'+id);
+  var pct=total>0?Math.round(done/total*100):100;
+  if(bar)bar.style.width=pct+'%';
+  if(cnt)cnt.textContent=(failed?'\u26A0 ':'')+done+' / '+total;
+  if(row&&done>=total)row.classList.add('done');
+  if(row&&failed)row.classList.add('err');
+}
+function updateOverall(done,total,startTime){
+  var bar=document.getElementById('uploadOverallBar');
+  var txt=document.getElementById('uploadOverallText');
+  var eta=document.getElementById('uploadPanelEta');
+  var pct=total>0?Math.round(done/total*100):0;
+  if(bar)bar.style.width=pct+'%';
+  if(txt)txt.textContent=done+' / '+total+' records ('+pct+'%)';
+  if(eta&&done>2&&startTime){
+    var elapsed=(Date.now()-startTime)/1000;
+    var rate=done/elapsed;
+    var secs=rate>0?Math.ceil((total-done)/rate):0;
+    eta.textContent=secs>3?'~'+secs+'s left':'Almost done\u2026';
+  }
+}
+// Upload in sequential chunks of 3 concurrent calls
+function batchUpload(action,rows,sectionId,overallState,onDone){
+  var CHUNK=3;
+  var done=0,failed=0,total=rows.length;
+  if(total===0){if(onDone)onDone();return;}
+  function processChunk(idx){
+    if(idx>=total){updateSectionRow(sectionId,done,total,failed>0);if(onDone)onDone();return;}
+    var chunk=rows.slice(idx,idx+CHUNK);
+    var promises=chunk.map(function(row){
+      // For delete actions, payload is {id:row.id}; for add/update it's {row:row}
+      var payload=action.indexOf('delete')===0?{id:row.id}:{row:row};
+      return apiCall(action,payload,true).then(function(){
+        done++;overallState.done++;
+        updateSectionRow(sectionId,done,total,false);
+        updateOverall(overallState.done,overallState.total,overallState.startTime);
+      }).catch(function(){
+        done++;failed++;overallState.done++;
+        updateSectionRow(sectionId,done,total,true);
+        updateOverall(overallState.done,overallState.total,overallState.startTime);
+      });
+    });
+    Promise.all(promises).then(function(){processChunk(idx+CHUNK);});
+  }
+  processChunk(0);
+}
+// ── CSV IMPORT ────────────────────────────────────────────────────────────────
+// Maps filename keywords → sheet config (columns + DB key + upload action)
+var CSV_SHEET_MAP = [
+  { key:'books',    cols:['id','title','author','isbn','category','totalCopies','availableCopies','addedDate'],   action:'addBook',    label:'Books',        color:'var(--accent)', sectionId:'csv-bks' },
+  { key:'members',  cols:['id','name','classId','rollNo','phone','email','addedDate'],                           action:'addMember',  label:'Members',      color:'var(--ok)',     sectionId:'csv-mem' },
+  { key:'classes',  cols:['id','name'],                                                                          action:'addClass',   label:'Classes',      color:'var(--info)',   sectionId:'csv-cls' },
+  { key:'transactions', cols:['id','bookId','memberId','issueDate','dueDate','returnDate','status','fineAmount','fineStatus'], action:'addTx', label:'Transactions', color:'var(--warn)', sectionId:'csv-txs' },
+  { key:'fines',    cols:['id','txId','bookId','memberId','daysOverdue','amount','currency','status','createdAt'], action:'addFine', label:'Fines',         color:'var(--err)',    sectionId:'csv-fin' }
+];
+
+// Detect which sheet config matches a filename
+function detectCsvSheet(filename) {
+  var name = filename.toLowerCase();
+  for (var i = 0; i < CSV_SHEET_MAP.length; i++) {
+    if (name.indexOf(CSV_SHEET_MAP[i].key) !== -1) return CSV_SHEET_MAP[i];
+  }
+  return null;
+}
+
+// Parse a CSV string → array of objects using the sheet's column definitions
+// Robust: handles quoted fields, empty values, extra columns gracefully
+function parseCSV(text, sheetConfig) {
+  var lines = text.replace(/\r\n/g,'\n').replace(/\r/g,'\n').split('\n').filter(function(l){return l.trim()!=='';});
+  if (lines.length < 2) return [];
+
+  // Parse a single CSV line accounting for quoted commas
+  function parseLine(line) {
+    var result = [], cur = '', inQ = false;
+    for (var i = 0; i < line.length; i++) {
+      var ch = line[i];
+      if (ch === '"') {
+        if (inQ && line[i+1] === '"') { cur += '"'; i++; }
+        else inQ = !inQ;
+      } else if (ch === ',' && !inQ) {
+        result.push(cur); cur = '';
+      } else {
+        cur += ch;
+      }
+    }
+    result.push(cur);
+    return result;
+  }
+
+  var headers = parseLine(lines[0]).map(function(h){ return h.trim(); });
+  var rows = [];
+  for (var i = 1; i < lines.length; i++) {
+    var vals = parseLine(lines[i]);
+    var obj = {};
+    // Map by header name (tolerant — uses CSV headers, not fixed positions)
+    headers.forEach(function(h, idx) {
+      if (sheetConfig.cols.indexOf(h) !== -1) {
+        obj[h] = vals[idx] !== undefined ? vals[idx].trim() : '';
+      }
+    });
+    // Ensure all expected cols present (default to empty string)
+    sheetConfig.cols.forEach(function(c){ if (obj[c] === undefined) obj[c] = ''; });
+    if (obj.id) rows.push(obj); // skip rows without id
+  }
+  return rows;
+}
+
+document.getElementById('aImportCsvBtn').addEventListener('click', function(){
+  document.getElementById('csvFileInput').click();
+});
+
+document.getElementById('csvFileInput').addEventListener('change', function(e) {
+  var files = Array.prototype.slice.call(e.target.files);
+  e.target.value = '';
+  if (!files.length) return;
+  if (_uploadInProgress) { toast('Upload already in progress, please wait…','i'); return; }
+
+  // Parse all files, detect sheet type for each
+  var pending = files.length;
+  var parsed = {}; // sheetKey → { config, rows[] }
+  var parseErrors = [];
+
+  files.forEach(function(file) {
+    var cfg = detectCsvSheet(file.name);
+    if (!cfg) {
+      parseErrors.push(file.name + ' (unrecognised — expected filename to contain: books / members / classes / transactions / fines)');
+      pending--;
+      if (pending === 0) reviewAndUpload();
+      return;
+    }
+    var reader = new FileReader();
+    reader.onload = function(ev) {
+      var rows = parseCSV(ev.target.result, cfg);
+      if (!parsed[cfg.key]) parsed[cfg.key] = { config: cfg, rows: [] };
+      // Merge (in case user picks 2 files for the same sheet)
+      parsed[cfg.key].rows = parsed[cfg.key].rows.concat(rows);
+      pending--;
+      if (pending === 0) reviewAndUpload();
+    };
+    reader.onerror = function() {
+      parseErrors.push(file.name + ' (read error)');
+      pending--;
+      if (pending === 0) reviewAndUpload();
+    };
+    reader.readAsText(file);
+  });
+
+  function reviewAndUpload() {
+    if (parseErrors.length) {
+      toast('Skipped: ' + parseErrors.join('; '), 'i');
+    }
+    var sheetKeys = Object.keys(parsed);
+    if (!sheetKeys.length) { toast('No valid CSV files found.','err'); return; }
+
+    // Deduplicate within each file AND against existing DB data (skip IDs already on server)
+    var summary = [];
+    var grandTotal = 0;
+    var uploadPlan = {}; // sheetKey → { config, newRows[], skippedDup, skippedExist }
+
+    sheetKeys.forEach(function(key) {
+      var cfg = parsed[key].config;
+      var rows = parsed[key].rows;
+
+      // Step 1: deduplicate within the CSV itself (keep first occurrence)
+      var seenInFile = {};
+      var dedupedRows = rows.filter(function(r) {
+        if (!r.id || seenInFile[r.id]) return false;
+        seenInFile[r.id] = true; return true;
+      });
+      var skippedDup = rows.length - dedupedRows.length;
+
+      // Step 2: skip IDs that already exist in local DB (server already has them)
+      var existingIds = {};
+      var dbArr = key === 'books' ? DB.books : key === 'members' ? DB.members :
+                  key === 'classes' ? DB.classes : key === 'transactions' ? DB.tx : DB.fines;
+      dbArr.forEach(function(r){ if(r.id) existingIds[r.id] = true; });
+
+      var newRows = dedupedRows.filter(function(r){ return !existingIds[r.id]; });
+      var skippedExist = dedupedRows.length - newRows.length;
+
+      uploadPlan[key] = { config: cfg, newRows: newRows, skippedDup: skippedDup, skippedExist: skippedExist };
+      grandTotal += newRows.length;
+
+      var parts = [];
+      if (newRows.length)     parts.push('<strong style="color:var(--ok)">'+newRows.length+' new</strong>');
+      if (skippedExist)       parts.push('<span style="color:var(--muted)">'+skippedExist+' already exist</span>');
+      if (skippedDup)         parts.push('<span style="color:var(--warn)">'+skippedDup+' in-file duplicates</span>');
+      summary.push('<div style="margin:4px 0"><span style="min-width:110px;display:inline-block;font-weight:600">'+cfg.label+':</span> '+parts.join(' &nbsp;·&nbsp; ')+'</div>');
+    });
+
+    if (grandTotal === 0) {
+      showConfirm('Import CSV — Nothing New',
+        '<div style="margin-bottom:10px">All records in these CSV files already exist on the server:</div>'+summary.join('')+
+        '<br><small style="color:var(--muted)">No records will be uploaded. Export a fresh CSV if you believe this is wrong, then re-import.</small>',
+        function(){ /* nothing to do */ }
+      );
+      return;
+    }
+
+    showConfirm('Import CSV to Alees Server',
+      '<div style="margin-bottom:12px">Review what will be uploaded:</div>'+summary.join('')+
+      '<br><small style="color:var(--ok)">✔ Only NEW records (not already on server) will be uploaded. Existing records are untouched.</small>',
+      function() {
+        if (_uploadInProgress) { toast('Upload already running','i'); return; }
+        _uploadInProgress = true;
+        adminNav('a-backup');
+        showUploadPanel('Importing CSV to Alees Server…');
+        document.getElementById('uploadOverallBar').style.background = 'linear-gradient(90deg,var(--accent),var(--ok))';
+
+        var state = { done: 0, total: grandTotal, startTime: Date.now() };
+
+        // Add section rows for sheets that have new records
+        // Upload order: classes → books → members → transactions → fines (dependency order)
+        var ORDER = ['classes','books','members','transactions','fines'];
+        ORDER.forEach(function(key) {
+          if (uploadPlan[key] && uploadPlan[key].newRows.length) {
+            var p = uploadPlan[key];
+            addSectionRow(p.config.sectionId, p.config.label, p.config.color, p.newRows.length);
+          }
+        });
+
+        // Sequential upload respecting dependency order
+        var idx = 0;
+        function uploadNext() {
+          if (idx >= ORDER.length) {
+            // All done — refresh local DB from server
+            _uploadInProgress = false;
+            document.getElementById('uploadPanelTitle').textContent = '✔ CSV Import Complete!';
+            document.getElementById('uploadPanelEta').textContent = '';
+            var dm = document.getElementById('uploadDoneMsg');
+            dm.style.display = 'block'; dm.style.color = 'var(--ok)';
+            dm.innerHTML = '<i class="fas fa-check-circle"></i> Done! ' + grandTotal + ' new record' + (grandTotal!==1?'s':'') + ' imported from CSV.';
+            apiCall('getAll', {}, true).then(function(res) {
+              if (res && res.data) {
+                DB.books = res.data.books||[]; DB.members = res.data.members||[];
+                DB.classes = res.data.classes||[]; DB.tx = res.data.tx||[]; DB.fines = res.data.fines||[];
+                saveToLocal(); refreshAllAdmin();
+              }
+              toast('✔ CSV import complete — data refreshed from server', 'ok');
+            });
+            return;
+          }
+          var key = ORDER[idx++];
+          var plan = uploadPlan[key];
+          if (!plan || !plan.newRows.length) { uploadNext(); return; }
+          batchUpload(plan.config.action, plan.newRows, plan.config.sectionId, state, uploadNext);
+        }
+        uploadNext();
+      }
+    );
+  }
+});
+
+document.getElementById('aImportBtn').addEventListener('click',function(){
+  document.getElementById('restoreFileInput').click();
+});
+document.getElementById('restoreFileInput').addEventListener('change',function(e){
+  var f=e.target.files[0];if(!f)return;
+  if(_uploadInProgress){toast('Upload already in progress, please wait…','i');e.target.value='';return;}
+  var reader=new FileReader();
+  reader.onload=function(ev){
+    try{
+      var data=JSON.parse(ev.target.result);
+      var books=data.books||[],members=data.members||[],classes=data.classes||[],txs=data.tx||[],fines=data.fines||[];
+      // Deduplicate JSON sections by id before uploading
+      function dedup(arr){var seen={};return arr.filter(function(x){if(!x.id||seen[x.id])return false;seen[x.id]=true;return true;});}
+      books=dedup(books);members=dedup(members);classes=dedup(classes);txs=dedup(txs);fines=dedup(fines);
+      var total=books.length+members.length+classes.length+txs.length+fines.length;
+      showConfirm('Upload to Alees Server',
+        'Upload <strong>'+total+' records</strong> to Alees Server?<br><small style="color:var(--muted)">📚 Books: '+books.length+' &nbsp;👤 Members: '+members.length+' &nbsp;🏫 Classes: '+classes.length+' &nbsp;🔄 Transactions: '+txs.length+' &nbsp;💰 Fines: '+fines.length+'</small>',
+        function(){
+          if(_uploadInProgress){toast('Upload already running','i');return;}
+          _uploadInProgress=true;
+          adminNav('a-backup');
+          showUploadPanel('Uploading to Alees Server…');
+          var state={done:0,total:total,startTime:Date.now()};
+          if(classes.length)addSectionRow('cls','Classes','var(--info)',classes.length);
+          if(books.length)addSectionRow('bks','Books','var(--accent)',books.length);
+          if(members.length)addSectionRow('mem','Members','var(--ok)',members.length);
+          if(txs.length)addSectionRow('txs','Transactions','var(--warn)',txs.length);
+          if(fines.length)addSectionRow('fin','Fines','var(--err)',fines.length);
+          function s1(){batchUpload('addClass',classes,'cls',state,s2);}
+          function s2(){batchUpload('addBook',books,'bks',state,s3);}
+          function s3(){batchUpload('addMember',members,'mem',state,s4);}
+          function s4(){batchUpload('addTx',txs,'txs',state,s5);}
+          function s5(){batchUpload('addFine',fines,'fin',state,s6);}
+          function s6(){
+            var sp=data.settings?apiCall('saveSettings',{settings:data.settings},true):Promise.resolve();
+            sp.then(function(){
+              _uploadInProgress=false;
+              document.getElementById('uploadDoneMsg').style.display='block';
+              document.getElementById('uploadPanelTitle').textContent='✓ Upload Complete!';
+              document.getElementById('uploadPanelEta').textContent='';
+              if(books.length)DB.books=books;
+              if(members.length)DB.members=members;
+              if(classes.length)DB.classes=classes;
+              if(txs.length)DB.tx=txs;
+              if(fines.length)DB.fines=fines;
+              if(data.settings)DB.settings=data.settings;
+              saveToLocal();refreshAllAdmin();
+              toast('\u2714 All data uploaded to Alees Server!','ok');
+            }).catch(function(){_uploadInProgress=false;});
+          }
+          s1();
+        }
+      );
+    }catch(err){toast('Invalid JSON file: '+err.message,'err');}
+  };
+  reader.readAsText(f);e.target.value='';
+});
+
+document.getElementById('aClearBtn').addEventListener('click',function(){
+  if(_uploadInProgress){toast('An operation is already in progress','i');return;}
+  var total=DB.books.length+DB.members.length+DB.classes.length+DB.tx.length+DB.fines.length;
+  showConfirm('Clear ALL Data from Alees Server',
+    '<strong style="color:var(--err)">Permanently delete '+total+' records</strong> from Alees Server?<br><small style="color:var(--muted)">📚 '+DB.books.length+' books &nbsp;👤 '+DB.members.length+' members &nbsp;🔄 '+DB.tx.length+' transactions &nbsp;💰 '+DB.fines.length+' fines</small><br><br><small style="color:var(--warn)">⚠ Export a JSON backup first!</small>',
+    function(){
+      adminNav('a-backup');
+      if(total===0){toast('Nothing to clear','i');return;}
+      _uploadInProgress=true;
+      showUploadPanel('Clearing Alees Server…');
+      document.getElementById('uploadOverallBar').style.background='linear-gradient(90deg,var(--err),var(--warn))';
+      var bks=DB.books.slice(),mems=DB.members.slice(),cls=DB.classes.slice(),txs=DB.tx.slice(),fins=DB.fines.slice();
+      var state={done:0,total:total,startTime:Date.now()};
+      if(cls.length)addSectionRow('cls','Classes','var(--info)',cls.length);
+      if(bks.length)addSectionRow('bks','Books','var(--accent)',bks.length);
+      if(mems.length)addSectionRow('mem','Members','var(--ok)',mems.length);
+      if(txs.length)addSectionRow('txs','Transactions','var(--warn)',txs.length);
+      if(fins.length)addSectionRow('fin','Fines','var(--err)',fins.length);
+      var sections=[
+        {action:'deleteClass',rows:cls,sec:'cls'},
+        {action:'deleteBook',rows:bks,sec:'bks'},
+        {action:'deleteMember',rows:mems,sec:'mem'},
+        {action:'deleteTx',rows:txs,sec:'txs'},
+        {action:'deleteFine',rows:fins,sec:'fin'}
+      ];
+      var si=0;
+      function nextSection(){
+        if(si>=sections.length){
+          DB={books:[],members:[],tx:[],classes:[],fines:[],settings:DB.settings||{}};
+          saveToLocal();refreshAllAdmin();
+          _uploadInProgress=false;
+          var dm=document.getElementById('uploadDoneMsg');
+          dm.style.display='block';dm.style.color='var(--err)';
+          dm.innerHTML='<i class="fas fa-check-circle"></i> All data cleared from Alees Server!';
+          document.getElementById('uploadPanelTitle').textContent='Clear Complete!';
+          toast('All data cleared from Alees Server','i');
+          return;
+        }
+        var sec=sections[si++];
+        // For delete, send id in row field
+        batchUpload(sec.action,sec.rows,sec.sec,state,nextSection);
+      }
+      nextSection();
+    }
+  );
+});
+
+document.getElementById('aDedupeBtn').addEventListener('click',function(){
+  if(_uploadInProgress){toast('An operation is already in progress','i');return;}
+
+  // Count duplicates locally (cache may differ from server — server check is authoritative)
+  function countDups(arr){
+    var seen={},count=0;
+    arr.forEach(function(x){if(!x.id)return;if(seen[x.id])count++;else seen[x.id]=true;});
+    return count;
+  }
+  var dupBks=countDups(DB.books),dupMems=countDups(DB.members),dupCls=countDups(DB.classes),
+      dupTxs=countDups(DB.tx),dupFins=countDups(DB.fines);
+  var total=dupBks+dupMems+dupCls+dupTxs+dupFins;
+
+  // Always allow the server-side scan even if local cache shows 0 — server is the source of truth
+  var localNote = total > 0
+    ? 'Local cache shows <strong style="color:var(--warn)">'+total+' duplicate row'+(total!==1?'s':'')+
+      '</strong>.<br><small style="color:var(--muted)">\ud83d\udcda Books: '+dupBks+
+      ' &nbsp;\ud83d\udc64 Members: '+dupMems+' &nbsp;\ud83c\udfeb Classes: '+dupCls+
+      ' &nbsp;\ud83d\udd04 Transactions: '+dupTxs+' &nbsp;\ud83d\udcb0 Fines: '+dupFins+'</small><br><br>'
+    : '<span style="color:var(--muted)">Local cache looks clean, but the server may still have duplicates.</span><br><br>';
+
+  showConfirm('Remove Duplicates',
+    localNote+
+    '<small style="color:var(--ok)">\u2714 Server will scan every sheet, keep the <strong>first (top-most)</strong> copy of each record and delete any later duplicates only. No unique records will be touched.</small>',
+    function(){
+      if(_uploadInProgress){toast('An operation is already in progress','i');return;}
+      _uploadInProgress=true;
+      adminNav('a-backup');
+      showUploadPanel('Scanning server for duplicates\u2026');
+      document.getElementById('uploadOverallBar').style.background='linear-gradient(90deg,var(--warn),var(--ok))';
+      var state={done:0,total:1,startTime:Date.now()};
+      addSectionRow('dedup','Deduplicating all sheets on server','var(--ok)',1);
+
+      // Single API call — Apps Script handles everything server-side safely
+      // The server keeps the FIRST (top) occurrence of each ID and removes later duplicates only.
+      apiCall('deleteDuplicates',{},true)
+        .then(function(res){
+          _uploadInProgress=false;
+          var removed=res.removed||0;
+          updateSectionRow('dedup',1,1,false);
+          updateOverall(1,1,state.startTime);
+          var dm=document.getElementById('uploadDoneMsg');
+          dm.style.display='block';dm.style.color='var(--ok)';
+          if(removed===0){
+            dm.innerHTML='<i class="fas fa-check-circle"></i> No duplicates found on server. All records are clean!';
+          } else {
+            dm.innerHTML='<i class="fas fa-check-circle"></i> Done! '+removed+' duplicate row'+(removed!==1?'s':'')+' removed. First copy of each record kept.';
+          }
+          document.getElementById('uploadPanelTitle').textContent='\u2714 Deduplication Complete!';
+          document.getElementById('uploadPanelEta').textContent='';
+          // Refresh local data from server
+          return apiCall('getAll',{},true);
+        })
+        .then(function(res){
+          if(res&&res.data){
+            DB.books=res.data.books||[];DB.members=res.data.members||[];
+            DB.classes=res.data.classes||[];DB.tx=res.data.tx||[];DB.fines=res.data.fines||[];
+            saveToLocal();refreshAllAdmin();
+          }
+          toast('\u2714 Server scan complete \u2014 data refreshed','ok');
+        })
+        .catch(function(err){
+          _uploadInProgress=false;
+          toast('Dedup failed: '+(err.message||'server error'),'err');
+        });
+    }
+  );
+});
+
+(function(){var safetyTimer=setTimeout(function(){showLogin();},4000);try{fetch(API_URL,{mode:'no-cors'}).then(function(){clearTimeout(safetyTimer);showLogin();}).catch(function(){clearTimeout(safetyTimer);showLogin();});}catch(e){clearTimeout(safetyTimer);showLogin();}})();
+
+} catch(e) {
+  console.error('NOOR JS Error:', e);
+  setTimeout(function(){var lo=document.getElementById('loadingOverlay');var lp=document.getElementById('loginPage');if(lo)lo.style.display='none';if(lp)lp.style.display='flex';},1000);
+}
+</script>
+</body>
+</html>
